@@ -2,6 +2,7 @@
 
 ## Objective
 State the objective of the project
+TO create a game similar to flappy bird where taps change the height of a character.
 
 ## Technical Requirements
 ### Knowledge
