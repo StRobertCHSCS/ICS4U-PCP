@@ -8,6 +8,6 @@ from kivy.vector import Vector
 from kivy.clock import Clock
 
 
-class PongApp(App):
+class NameApp(App):
     def build(self):
         pass
