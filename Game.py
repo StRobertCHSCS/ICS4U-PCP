@@ -18,10 +18,12 @@ from kivy.uix.widget import Widget
 class Background(Widget):
     background = ObjectProperty(Image())
 
+
 class NameApp(App):
     def build(self):
-        game = Background()
-        Clock.schedule_interval(game.update, 1.0/60.0)
-        return game
+        return Background()
 
-NameApp().run()
+
+if __name__ == "__main__":
+    NameApp().run()
+
