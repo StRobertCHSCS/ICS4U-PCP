@@ -2,19 +2,19 @@
 
 task main()
 {
-	while(true)
+ 	while(true)
 	{
-		while(getBumberValue() ==  )
+	while(getBumberValue() ==  )
+		{
+		if(getDistanceValue() < )
 			{
-				if(getDistanceValue() < )
-	        }
-            forward();
-					}
-				else
-				  {
-				    backward();
-				  }
+            		forward();
 			}
+		else
+			{
+			backward();
+			}
+		}
 	}
 }
 
