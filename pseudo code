@@ -1,0 +1,29 @@
+// Motor and Sensor Setup
+
+task main()
+{
+	while(true)
+	{
+		while(getBumberValue() ==  )
+			{
+				if(getDistanceValue() < )
+	        }
+            forward();
+					}
+				else
+				  {
+				    backward();
+				  }
+			}
+	}
+}
+
+
+getColor…()
+getGyroValue()
+getLEDValue()
+setMultipleMotor()
+turnLeft()
+turnRight()
+stopAllMotors()
+
