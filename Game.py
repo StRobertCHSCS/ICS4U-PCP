@@ -18,21 +18,29 @@ from kivy.uix.widget import Widget
 
 class Background(Widget):
     background = ObjectProperty(Image())
+
     velocity_x = NumericProperty(0)
     velocity_y = NumericProperty(0)
-
-    def move(self):
-        self.x = self.x + self.velocity_x
-        self.y = self.y + self.velocity_y
+    velocity = ReferenceListProperty(velocity_x, velocity_y)
 
     def update(self, dt):
-        self.move()
+        self.background.pos = Vector(*self.velocity) + self.background.pos
+        self.background.pos = Vector(*self.velocity) + self.background.pos
+        if self.background.right <= 0:
+            self.backgroung.pos = (self.width, 0)
 
+class Game(Widget):
+    background = ObjectProperty(Background())
 
+    def __init__(self):
+        self.background.velocity = [-2, 0]
+
+    def update(self):
+        self.background.update()
 
 class NameApp(App):
     def build(self):
-        game = Background()
+        game = Game()
         Clock.schedule_interval(game.update, 1.0 / 60.0)
         return game
 
