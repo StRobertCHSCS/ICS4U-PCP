@@ -17,17 +17,25 @@ from kivy.uix.widget import Widget
 
 
 class Background(Widget):
-    background = ObjectProperty(Image())
+    image1 = ObjectProperty(Image())
+    image2 = ObjectProperty(Image())
 
     velocity_x = NumericProperty(0)
     velocity_y = NumericProperty(0)
     velocity = ReferenceListProperty(velocity_x, velocity_y)
 
     def update(self):
-        self.background.pos = Vector(*self.velocity) + self.background.pos
-        self.background.pos = Vector(*self.velocity) + self.background.pos
-        if self.background.right <= 0:
-            self.background.pos = (self.width, 0)
+        self.image1.pos = Vector(*self.velocity) + self.image1.pos
+        self.image2.pos = Vector(*self.velocity) + self.image2.pos
+
+        if self.image1.right <= 0:
+            self.image1.pos = (self.width, 0)
+        if self.image2.right <= 0:
+            self.image2.pos = (self.width, 0)
+
+    def update_position(self):
+        self.image1.pos = (0, 0)
+        self.image2.pos = (self.width, 0)
 
 
 class Game(Widget):
@@ -36,6 +44,7 @@ class Game(Widget):
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
         self.background.velocity = [-0.5, 0]
+        self.bind(size=self.size_callback)
 
     def size_callback(self, instance, value):
         self.background.size = value
