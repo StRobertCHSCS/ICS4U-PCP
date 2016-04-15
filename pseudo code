@@ -26,4 +26,6 @@ setMultipleMotor()
 turnLeft()
 turnRight()
 stopAllMotors()
+setMotor()
+
 
