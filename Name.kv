@@ -1,7 +1,20 @@
-<Background>:
+<Game>:
     background: background
-    Image:
+    Background:
         id: background
+        pos: root.pos
+
+<Background>:
+    image1: image1
+    image2: image2
+
+    Image:
+        id: image1
         source: "images/forest2.png"
         pos: 0, 0
+        size: 800, 600
+    Image:
+        id: image2
+        source: "images/forest.png"
+        pos: root.width, 0
         size: 800, 600
