@@ -41,20 +41,19 @@ class Background(Widget):
 
 class PlayerObj(Image):
 
-    source = "images/flappynormal.png"
-    def __init__(self, **kwargs):
-        self.image = ObjectProperty(Image())
-        super(PlayerObj, self).__init__(**kwargs)
+    def __init__(self, pos):
+        self.source = "images/flappynormal.png"
+        super(PlayerObj, self).__init__(pos = pos)
         self.velocity_y = 0
-        self.gravity = -0.5
-
-    def on_touch_down(self, touch):
-        self.velocity_y += 3
+        self.gravity = .05
 
     def update(self):
-        self.velocity_y += self.gravity
-        self.velocity_y = max(self.velocity_y, -1.5)
+        if self.velocity_y >= -1.5:
+            self.velocity_y -= self.gravity
         self.y += self.velocity_y
+
+    def on_touch_down(self, *ignore):
+        self.velocity_y += 5
 
 
 
@@ -66,6 +65,7 @@ class Game(Widget):
         super(Game, self).__init__(**kwargs)
         self.background.velocity = [-1, 0]
         self.bind(size=self.size_callback)
+
         self.player = PlayerObj(pos = (self.width / 4, self.height/2))
         self.add_widget(self.player)
 
@@ -83,7 +83,7 @@ class Game(Widget):
 class NameApp(App):
     def build(self):
         game = Game()
-        Clock.schedule_interval(game.update, 1.0 / 100.0)
+        Clock.schedule_interval(game.update, 1.0 / 60.0)
         return game
 if __name__ == "__main__":
     NameApp().run()
