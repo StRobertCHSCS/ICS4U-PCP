@@ -52,12 +52,13 @@ class PlayerObj(Image):
         self.gravity = .05
 
     def update(self):
-        if self.velocity_y >= -1.5:
+        if self.velocity_y >= -2.3:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
 
     def on_touch_down(self, *ignore):
-        self.velocity_y += 5
+        if self.velocity_y <= 4:
+            self.velocity_y += 5.5
 
 
 
