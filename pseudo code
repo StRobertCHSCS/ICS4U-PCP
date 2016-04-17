@@ -17,9 +17,9 @@ task main()
 			forward(180, degrees, 50);
 			moveMotor(claw, 90, degrees, 50);
 			turnLeft(275, degrees, 50);
-			moveMotor(lift, 360, degrees, 100);
+			moveMotor(lift, 3, rotations, 100);
 			forward(360, degrees, 50);
-			moveMotor(lift, -360, degrees, 100);
+			moveMotor(lift, 3, rotations, -100);
 			moveMotor(claw, 90, degrees, -50);
 			backward(360, degrees, -50);
 			turnRight(275, degrees, 50);
@@ -38,9 +38,9 @@ task main()
 			forward(180, degrees, 50);
 			moveMotor(claw, 90, degrees, 50);
 			turnRight(275, degrees, 50);
-			moveMotor(lift, 360, degrees, 100);
+			moveMotor(lift, 3, rotations, 100);
 			forward(360, degrees, 50);
-			moveMotor(lift, -360, degrees, 100);
+			moveMotor(lift, 3, rotations, -100);
 			moveMotor(claw, 90, degrees, -50);
 			backward(360, degrees, -50);
 			turnLeft(275, degrees, 50);
