@@ -26,6 +26,10 @@ class Background(Widget):
     velocity_y = NumericProperty(0)
     velocity = ReferenceListProperty(velocity_x, velocity_y)
 
+    def __init__(self, **kwarg):
+        super(Background, self).__init__(**kwarg)
+        self.size = (800,600)
+
     def update(self):
         self.image1.pos = Vector(*self.velocity) + self.image1.pos
         self.image2.pos = Vector(*self.velocity) + self.image2.pos
