@@ -43,7 +43,7 @@ class Game(Widget):
 
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
-        self.background.velocity = [-1, 0]
+        self.background.velocity = [-0.25, 0]
         self.bind(size=self.size_callback)
 
     def size_callback(self, instance, value):
@@ -59,6 +59,7 @@ class NameApp(App):
         game = Game()
         Clock.schedule_interval(game.update, 1.0 / 100.0)
         return game
+
 
 if __name__ == "__main__":
     NameApp().run()
