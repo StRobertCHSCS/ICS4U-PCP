@@ -47,8 +47,9 @@ class PlayerObj(Image):
     def __init__(self, pos):
 
         #placeholder image
-        self.source = "images/flappynormal.png"
-
+        self.allow_stretch = True
+        self.source = "images/Rock.gif"
+        self.size=(60, 60)
         super(PlayerObj, self).__init__(pos = pos)
 
         self.velocity_y = 0
