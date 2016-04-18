@@ -16,8 +16,6 @@ from kivy.core.window import Window
 from kivy.uix.widget import Widget
 
 
-
-
 class Background(Widget):
     image1 = ObjectProperty(Image())
     image2 = ObjectProperty(Image())
@@ -43,22 +41,27 @@ class Background(Widget):
         self.image1.pos = (0, 0)
         self.image2.pos = (self.width, 0)
 
+
 class PlayerObj(Image):
 
     def __init__(self, pos):
+
+        #placeholder image
         self.source = "images/flappynormal.png"
+
         super(PlayerObj, self).__init__(pos = pos)
+
         self.velocity_y = 0
         self.gravity = .05
 
     def update(self):
-        if self.velocity_y >= -2.3:
+        if self.velocity_y >= -2.7:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
 
     def on_touch_down(self, *ignore):
-        if self.velocity_y <= 4:
-            self.velocity_y += 5.5
+        if self.velocity_y <= 3.5:
+            self.velocity_y += 6
 
 
 
@@ -68,9 +71,11 @@ class Game(Widget):
 
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
+
         self.background.velocity = [-1, 0]
         self.bind(size=self.size_callback)
-
+        self.size = Background().size
+        #player's object
         self.player = PlayerObj(pos = (self.width / 4, self.height/2))
         self.add_widget(self.player)
 
