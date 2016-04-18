@@ -68,7 +68,6 @@ class PlayerObj(Image):
 class Game(Widget):
     background = ObjectProperty(Background())
 
-
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
 
