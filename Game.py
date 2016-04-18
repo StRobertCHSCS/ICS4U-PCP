@@ -72,9 +72,10 @@ class Game(Widget):
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
 
-        self.background.velocity = [-1, 0]
+        self.background.velocity = [-0.25, 0]
         self.bind(size=self.size_callback)
         self.size = Background().size
+
         #player's object
         self.player = PlayerObj(pos = (self.width / 4, self.height/2))
         self.add_widget(self.player)
@@ -95,6 +96,7 @@ class NameApp(App):
         game = Game()
         Clock.schedule_interval(game.update, 1.0 / 60.0)
         return game
+
 if __name__ == "__main__":
     NameApp().run()
 
