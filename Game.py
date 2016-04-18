@@ -11,9 +11,11 @@ from kivy.uix.image import Image
 from kivy.vector import Vector
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.uix.label import Label
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
+
 
 
 class Background(Widget):
@@ -77,9 +79,14 @@ class Game(Widget):
         self.bind(size=self.size_callback)
         self.size = Background().size
 
-        #player's object
+        #player's object - the rock
         self.player = PlayerObj(pos = (self.width / 4, self.height/2))
         self.add_widget(self.player)
+
+        #score
+        self.score = 0
+        self.scorelabel = Label(pos = (self.height/4*3, self.width/2), text = str(self.score))
+        self.add_widget(self.scorelabel)
 
         Clock.schedule_interval(self.update, 1.0/60.0)
 
@@ -90,6 +97,10 @@ class Game(Widget):
     def update(self, dt):
         self.background.update()
         self.player.update()
+
+        """
+        if x of player is gratert than x of obstacle, score += 1
+        """
 
 
 class NameApp(App):
