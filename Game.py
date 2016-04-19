@@ -67,10 +67,23 @@ class PlayerObj(Image):
         self.velocity_y += 4
 
 
+class Obstacle(Image):
+
+    def __init__(self, pos):
+        self.allow_stretch = True
+        self.source = "images/platform.png"
+        self.size = (200, 200)
+        super(Obstacle, self).__init__(pos=pos)
+
+        self.velocity_x = -2
+
+    def update(self):
+        self.x += self.velocity_x
+
+
 
 class Game(Widget):
     background = ObjectProperty(Background())
-
 
     def __init__(self, **kwargs):
         super(Game, self).__init__(**kwargs)
@@ -80,8 +93,12 @@ class Game(Widget):
         self.size = Background().size
 
         #player's object - the rock
-        self.player = PlayerObj(pos = (self.width / 4, self.height/2))
+        self.player = PlayerObj(pos=(self.width / 4, self.height/2))
         self.add_widget(self.player)
+
+        #obstacle
+        self.obstacle = Obstacle(pos=(900, -50))
+        self.add_widget(self.obstacle)
 
         #score
         self.score = 0
@@ -97,14 +114,21 @@ class Game(Widget):
     def update(self, dt):
         self.background.update()
         self.player.update()
+        self.obstacle.update()
+
+        if self.obstacle.x + self.obstacle.width + random.randint(20, 70) == 0:
+            self.remove_widget(self.obstacle)
+            self.obstacle = Obstacle(pos=(900, -50))
+            self.add_widget(self.obstacle)
+
         """
         if self.player.x >= self.obstacle.x:
             self.score += 1
         """
         # get obstacle pos in order to increase score instead of just this for testing
         self.score += 1
-
         self.scorelabel.text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score))
+
 
 
 
