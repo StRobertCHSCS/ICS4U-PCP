@@ -133,15 +133,15 @@ class Game(Widget):
 
         self.obstacle.update()
 
-        if self.obstacle.x + self.obstacle.width == 0:
+        # obstacle movement
+        y = random.randint(10,100)
+        if self.obstacle.x + self.obstacle.width <= 0:
             self.remove_widget(self.obstacle)
-            self.obstacle = Obstacle(pos=(900, -50))
+            self.obstacle = Obstacle(pos=(900+y, -50))
             self.add_widget(self.obstacle)
             self.score_bool = False
 
         # get obstacle pos in order to increase score instead of just this for testing, score update call
-
-
         if self.player.x >= self.obstacle.x and self.score_bool == False:
             self.score_bool = True
             self.score += 1
@@ -156,7 +156,7 @@ class Game(Widget):
 class NameApp(App):
     def build(self):
         game = Game()
-        Clock.schedule_interval(game.update, 1.0 / 100.0)
+        Clock.schedule_interval(game.update, 1.0 / 1000.0)
         return game
 
 if __name__ == "__main__":
