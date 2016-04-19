@@ -48,10 +48,11 @@ class PlayerObj(Image):
 
     def __init__(self, pos):
 
-        #placeholder image
+        # image properties
         self.allow_stretch = True
         self.source = "images/Rock.gif"
         self.size=(60, 60)
+
         super(PlayerObj, self).__init__(pos = pos)
 
         self.velocity_y = 0
@@ -82,6 +83,7 @@ class Obstacle(Image):
 
 
 
+
 class Game(Widget):
     background = ObjectProperty(Background())
 
@@ -102,7 +104,7 @@ class Game(Widget):
 
         #score
         self.score = 0
-        self.scorelabel = Label(pos = (self.width/2 - 10, self.height/4*3), text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup = True,)
+        self.scorelabel = Label(pos = (self.width * 2.2/3, self.height/4*3.2), text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup = True,)
         self.add_widget(self.scorelabel)
 
         Clock.schedule_interval(self.update, 1.0/60.0)
@@ -112,8 +114,20 @@ class Game(Widget):
         self.background.update_position()
 
     def update(self, dt):
+        # collision stuff
+
+        if self.player.y <= 0 or self.player.y >= self.height-self.player.height:
+            return
+
+        """
+        if self.player.collide_widget(self.obstacle thingy):
+            return
+        """
+
+        # update calls
         self.background.update()
         self.player.update()
+
         self.obstacle.update()
 
         if self.obstacle.x + self.obstacle.width + random.randint(20, 70) == 0:
@@ -121,12 +135,13 @@ class Game(Widget):
             self.obstacle = Obstacle(pos=(900, -50))
             self.add_widget(self.obstacle)
 
+        # get obstacle pos in order to increase score instead of just this for testing, score update call
+        self.score += 1
         """
         if self.player.x >= self.obstacle.x:
             self.score += 1
         """
-        # get obstacle pos in order to increase score instead of just this for testing
-        self.score += 1
+
         self.scorelabel.text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score))
 
 
