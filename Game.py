@@ -54,13 +54,13 @@ class PlayerObj(Image):
         super(PlayerObj, self).__init__(pos=pos)
 
         self.velocity_y = 0
-        self.gravity = .05
+        self.gravity = 0.09
 
 
 
     def update(self):
 
-        if self.velocity_y >= -2.7:
+        if self.velocity_y >= -3:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
 
