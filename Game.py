@@ -4,6 +4,7 @@ import kivy
 
 import random
 import sys
+import time
 
 from kivy.properties import NumericProperty, ReferenceListProperty, BooleanProperty, ObjectProperty, ListProperty
 from kivy.uix.image import Image
@@ -47,10 +48,11 @@ class PlayerObj(Image):
 
     def __init__(self, pos):
 
-        #placeholder image
+        # image properties
         self.allow_stretch = True
         self.source = "images/Rock.gif"
         self.size=(60, 60)
+
         super(PlayerObj, self).__init__(pos = pos)
 
         self.velocity_y = 0
@@ -81,6 +83,7 @@ class Obstacle(Image):
 
 
 
+
 class Game(Widget):
     background = ObjectProperty(Background())
 
@@ -101,7 +104,8 @@ class Game(Widget):
 
         #score
         self.score = 0
-        self.scorelabel = Label(pos = (self.width/2 - 10, self.height/4*3), text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup = True,)
+        self.score_bool = False
+        self.scorelabel = Label(pos = (self.width * 2.2/3, self.height/4*3.2), text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup = True,)
         self.add_widget(self.scorelabel)
 
         Clock.schedule_interval(self.update, 1.0/60.0)
@@ -111,28 +115,45 @@ class Game(Widget):
         self.background.update_position()
 
     def update(self, dt):
+        # collision stuff
+
+        if self.player.y <= 0 or self.player.y >= self.height-self.player.height:
+            """
+            character just slides, not game ending
+            """
+        """
+        if self.player.collide_widget(self.obstacle thingy):
+            return
+        """
+
+        # update calls
         self.background.update()
         self.player.update()
+
         self.obstacle.update()
 
-        if self.obstacle.x + self.obstacle.width == 0:
+        # obstacle movement
+        y = random.randint(10,100)
+        if self.obstacle.x + self.obstacle.width <= 0:
             self.remove_widget(self.obstacle)
-            self.obstacle = Obstacle(pos=(900, -50))
+            self.obstacle = Obstacle(pos=(900+y, -50))
             self.add_widget(self.obstacle)
+            self.score_bool = False
 
-        """
-        if self.player.x >= self.obstacle.x:
+        # get obstacle pos in order to increase score instead of just this for testing, score update call
+        if self.player.x >= self.obstacle.x and self.score_bool == False:
+            self.score_bool = True
             self.score += 1
-        """
-        # get obstacle pos in order to increase score instead of just this for testing
-        self.score += 1
+
+
+
         self.scorelabel.text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score))
 
 
 class NameApp(App):
     def build(self):
         game = Game()
-        Clock.schedule_interval(game.update, 1.0 / 100.0)
+        Clock.schedule_interval(game.update, 1.0 / 1000.0)
         return game
 
 if __name__ == "__main__":
