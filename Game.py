@@ -85,7 +85,7 @@ class Game(Widget):
 
         #score
         self.score = 0
-        self.scorelabel = Label(pos = (self.height/4*3, self.width/2), text = str(self.score))
+        self.scorelabel = Label(pos = (self.width/2 - 10, self.height/4*3), text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup = True,)
         self.add_widget(self.scorelabel)
 
         Clock.schedule_interval(self.update, 1.0/60.0)
@@ -97,16 +97,21 @@ class Game(Widget):
     def update(self, dt):
         self.background.update()
         self.player.update()
+        """
+        if self.player.x >= self.obstacle.x:
+            self.score += 1
+        """
+        # get obstacle pos in order to increase score instead of just this for testing
+        self.score += 1
 
-        """
-        if x of player is gratert than x of obstacle, score += 1
-        """
+        self.scorelabel.text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score))
+
 
 
 class NameApp(App):
     def build(self):
         game = Game()
-        Clock.schedule_interval(game.update, 1.0 / 60.0)
+        Clock.schedule_interval(game.update, 1.0 / 100.0)
         return game
 
 if __name__ == "__main__":
