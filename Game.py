@@ -56,16 +56,11 @@ class PlayerObj(Image):
         self.velocity_y = 0
         self.gravity = .05
 
-
-
     def update(self):
 
         if self.velocity_y >= -2.7:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
-
-
-
 
     def on_touch_down(self, *ignore):
         self.velocity_y = 0
@@ -150,7 +145,6 @@ class Game(Widget):
             self.score += 1
 
         self.scorelabel.text = "[size=40][color=0266C9]{0}[/color][/size]".format(str(self.score))
-
 
 
 class NameApp(App):
