@@ -137,7 +137,7 @@ class Game(Widget):
         self.obstacle.update()
 
         # obstacle movement
-        y = random.randint(10, 100)
+        y = random.randint(10, 300)
         if self.obstacle.x + self.obstacle.width <= 0:
             self.remove_widget(self.obstacle)
             self.obstacle = Obstacle(pos=(900 + y, -50))
