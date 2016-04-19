@@ -5,6 +5,7 @@ kivy.require("1.8.0")
 
 import random
 import sys
+import time
 
 from kivy.properties import NumericProperty, ReferenceListProperty, BooleanProperty, ObjectProperty, ListProperty
 from kivy.uix.image import Image
@@ -104,6 +105,7 @@ class Game(Widget):
 
         #score
         self.score = 0
+        self.score_bool = False
         self.scorelabel = Label(pos = (self.width * 2.2/3, self.height/4*3.2), text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup = True,)
         self.add_widget(self.scorelabel)
 
@@ -117,8 +119,9 @@ class Game(Widget):
         # collision stuff
 
         if self.player.y <= 0 or self.player.y >= self.height-self.player.height:
-            return
-
+            """
+            character just slides, not game ending
+            """
         """
         if self.player.collide_widget(self.obstacle thingy):
             return
@@ -130,17 +133,20 @@ class Game(Widget):
 
         self.obstacle.update()
 
-        if self.obstacle.x + self.obstacle.width + random.randint(20, 70) == 0:
+        # obstacle movement
+        y = random.randint(10,100)
+        if self.obstacle.x + self.obstacle.width <= 0:
             self.remove_widget(self.obstacle)
-            self.obstacle = Obstacle(pos=(900, -50))
+            self.obstacle = Obstacle(pos=(900+y, -50))
             self.add_widget(self.obstacle)
+            self.score_bool = False
 
         # get obstacle pos in order to increase score instead of just this for testing, score update call
-        self.score += 1
-        """
-        if self.player.x >= self.obstacle.x:
+        if self.player.x >= self.obstacle.x and self.score_bool == False:
+            self.score_bool = True
             self.score += 1
-        """
+
+
 
         self.scorelabel.text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score))
 
@@ -150,7 +156,7 @@ class Game(Widget):
 class NameApp(App):
     def build(self):
         game = Game()
-        Clock.schedule_interval(game.update, 1.0 / 100.0)
+        Clock.schedule_interval(game.update, 1.0 / 1000.0)
         return game
 
 if __name__ == "__main__":
