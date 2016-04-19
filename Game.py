@@ -46,10 +46,12 @@ class Background(Widget):
 
 class PlayerObj(Image):
     def __init__(self, pos):
+
         # image properties
         self.allow_stretch = True
         self.source = "images/Rock.gif"
-        self.size = (60, 60)
+        self.size = (60,60)
+
 
         super(PlayerObj, self).__init__(pos=pos)
 
