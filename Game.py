@@ -1,7 +1,6 @@
 __author__ = "Justin", "Danny"
 
 import kivy
-kivy.require("1.8.0")
 
 import random
 import sys
@@ -116,7 +115,7 @@ class Game(Widget):
         self.player.update()
         self.obstacle.update()
 
-        if self.obstacle.x + self.obstacle.width + random.randint(20, 70) == 0:
+        if self.obstacle.x + self.obstacle.width == 0:
             self.remove_widget(self.obstacle)
             self.obstacle = Obstacle(pos=(900, -50))
             self.add_widget(self.obstacle)
@@ -128,8 +127,6 @@ class Game(Widget):
         # get obstacle pos in order to increase score instead of just this for testing
         self.score += 1
         self.scorelabel.text = "[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score))
-
-
 
 
 class NameApp(App):
