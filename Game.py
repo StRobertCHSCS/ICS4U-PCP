@@ -63,8 +63,8 @@ class PlayerObj(Image):
         self.y += self.velocity_y
 
     def on_touch_down(self, *ignore):
-        if self.velocity_y <= 3.5:
-            self.velocity_y += 6
+        self.velocity_y = 0
+        self.velocity_y += 4
 
 
 
