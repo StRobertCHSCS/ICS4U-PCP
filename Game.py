@@ -54,7 +54,7 @@ class PlayerObj(Image):
         super(PlayerObj, self).__init__(pos=pos)
 
         self.velocity_y = 0
-        self.gravity = 0.09
+        self.gravity = 0.06
 
 
 
@@ -68,8 +68,7 @@ class PlayerObj(Image):
 
 
     def on_touch_down(self, *ignore):
-        self.velocity_y = 0
-        self.velocity_y += 4
+        self.velocity_y = 4
 
 
 class Obstacle(Image):
@@ -106,8 +105,7 @@ class Game(Widget):
         # score
         self.score = 0
         self.score_bool = False
-        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2),
-                                text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
+        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2), text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
         self.add_widget(self.scorelabel)
 
         Clock.schedule_interval(self.update, 1.0 / 60.0)
@@ -125,10 +123,9 @@ class Game(Widget):
             self.player.y = self.height-self.player.height
             self.player.velocity_y = 0
 
-        """
-        if self.player.collide_widget(self.obstacle thingy):
+        # collision; the shape of the widgets needs to change to acurately reflect the collision
+        if self.player.collide_widget(self.obstacle):
             return
-        """
 
         # update calls
         self.background.update()
