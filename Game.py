@@ -117,8 +117,9 @@ class Game(Widget):
         # collision stuff
 
         if self.player.y <= 0 or self.player.y >= self.height-self.player.height:
-            return
-
+            """
+            character just slides, not game ending
+            """
         """
         if self.player.collide_widget(self.obstacle thingy):
             return
@@ -130,7 +131,7 @@ class Game(Widget):
 
         self.obstacle.update()
 
-        if self.obstacle.x + self.obstacle.width + random.randint(20, 70) == 0:
+        if self.obstacle.x + self.obstacle.width == 0:
             self.remove_widget(self.obstacle)
             self.obstacle = Obstacle(pos=(900, -50))
             self.add_widget(self.obstacle)
