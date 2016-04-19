@@ -96,6 +96,7 @@ class Game(Widget):
 
         # obstacle
         self.obstacle = Obstacle(pos=(900, -50))
+        self.obstacle1 = Obstacle(pos=(340, -50))
         self.add_widget(self.obstacle)
 
         # score
@@ -128,8 +129,8 @@ class Game(Widget):
         # update calls
         self.background.update()
         self.player.update()
-
         self.obstacle.update()
+        self.obstacle1.update()
 
         # obstacle movement
         y = random.randint(10, 100)
@@ -137,6 +138,11 @@ class Game(Widget):
             self.remove_widget(self.obstacle)
             self.obstacle = Obstacle(pos=(900 + y, -50))
             self.add_widget(self.obstacle)
+            self.score_bool = False
+        if self.obstacle1.x + self.obstacle1.width <= 0:
+            self.remove_widget(self.obstacle1)
+            self.obstacle1 = Obstacle(pos=(900 + y, -50))
+            self.add_widget(self.obstacle1)
             self.score_bool = False
 
         # get obstacle pos in order to increase score instead of just this for testing, score update call
