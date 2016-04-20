@@ -96,7 +96,7 @@ class Game(Widget):
 
         # obstacle
         self.obstacle = Obstacle(pos=(900, -50))
-        self.obstacle1 = Obstacle(pos=(340, -50))
+        self.obstacle1 = Obstacle(pos=(350, -50))
         self.add_widget(self.obstacle)
 
         # score
