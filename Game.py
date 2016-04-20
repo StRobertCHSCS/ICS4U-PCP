@@ -65,7 +65,7 @@ class Obstacle(Image):
     def __init__(self, pos):
         self.allow_stretch = True
         self.source = "images/platform.png"
-        self.size = (200, 200)
+        self.size = (200,200)
         super(Obstacle, self).__init__(pos=pos)
 
         self.velocity_x = -2
@@ -116,8 +116,11 @@ class Game(Widget):
 
         # collision; the shape of the widgets needs to change to acurately reflect the collision
         if self.player.collide_widget(self.obstacle):
-            return
-
+            print "hit obj 1"
+        elif self.player.collide_widget(self.obstacle1):
+            print "hit obj 2"
+        else:
+            print "no"
         # update calls
         self.background.update()
         self.player.update()
