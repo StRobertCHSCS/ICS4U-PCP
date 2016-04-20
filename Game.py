@@ -1,12 +1,4 @@
-__author__ = "Justin", "Danny"
-
 import kivy
-
-kivy.require("1.8.0")
-
-import random
-import sys
-
 from kivy.properties import NumericProperty, ReferenceListProperty, BooleanProperty, ObjectProperty, ListProperty
 from kivy.uix.image import Image
 from kivy.vector import Vector
@@ -16,7 +8,8 @@ from kivy.uix.label import Label
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
-
+import random
+import sys
 
 class Background(Widget):
     image1 = ObjectProperty(Image())
