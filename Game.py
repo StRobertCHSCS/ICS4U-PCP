@@ -1,12 +1,4 @@
-__author__ = "Justin", "Danny"
-
 import kivy
-
-kivy.require("1.8.0")
-
-import random
-import sys
-
 from kivy.properties import NumericProperty, ReferenceListProperty, BooleanProperty, ObjectProperty, ListProperty
 from kivy.uix.image import Image
 from kivy.vector import Vector
@@ -16,7 +8,8 @@ from kivy.uix.label import Label
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
-
+import random
+import sys
 
 class Background(Widget):
     image1 = ObjectProperty(Image())
@@ -58,16 +51,11 @@ class PlayerObj(Image):
         self.velocity_y = 0
         self.gravity = 0.06
 
-
-
     def update(self):
 
         if self.velocity_y >= -3:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
-
-
-
 
     def on_touch_down(self, *ignore):
         self.velocity_y = 4
@@ -102,6 +90,7 @@ class Game(Widget):
 
         # obstacle
         self.obstacle = Obstacle(pos=(900, -50))
+        self.obstacle1 = Obstacle(pos=(350, -50))
         self.add_widget(self.obstacle)
 
         # score
@@ -132,15 +121,20 @@ class Game(Widget):
         # update calls
         self.background.update()
         self.player.update()
-
         self.obstacle.update()
+        self.obstacle1.update()
 
         # obstacle movement
-        y = random.randint(10, 300)
+
         if self.obstacle.x + self.obstacle.width <= 0:
             self.remove_widget(self.obstacle)
-            self.obstacle = Obstacle(pos=(900 + y, -50))
+            self.obstacle = Obstacle(pos=(900, -50))
             self.add_widget(self.obstacle)
+            self.score_bool = False
+        if self.obstacle1.x + self.obstacle1.width <= 0:
+            self.remove_widget(self.obstacle1)
+            self.obstacle1 = Obstacle(pos=(900, -50))
+            self.add_widget(self.obstacle1)
             self.score_bool = False
 
         # get obstacle pos in order to increase score instead of just this for testing, score update call
