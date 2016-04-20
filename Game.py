@@ -126,15 +126,14 @@ class Game(Widget):
         self.obstacle1.update()
 
         # obstacle movement
-        y = random.randint(10, 100)
         if self.obstacle.x + self.obstacle.width <= 0:
             self.remove_widget(self.obstacle)
-            self.obstacle = Obstacle(pos=(900 + y, -50))
+            self.obstacle = Obstacle(pos=(900, -50))
             self.add_widget(self.obstacle)
             self.score_bool = False
         if self.obstacle1.x + self.obstacle1.width <= 0:
             self.remove_widget(self.obstacle1)
-            self.obstacle1 = Obstacle(pos=(900 + y, -50))
+            self.obstacle1 = Obstacle(pos=(900, -50))
             self.add_widget(self.obstacle1)
             self.score_bool = False
 
