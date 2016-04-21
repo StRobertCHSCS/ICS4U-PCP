@@ -66,7 +66,7 @@ class Obstacle(Image):
     def __init__(self, pos):
         self.allow_stretch = True
         self.source = "images/Pillar1.png"
-        self.size = (200, 350)
+        self.size = (60, 350)
         super(Obstacle, self).__init__(pos=pos)
 
         self.velocity_x = -2
@@ -112,7 +112,7 @@ class Game(Widget):
         if self.player.y <= 0:
             self.player.y = 0
         elif self.player.y >= self.height - self.player.height:
-            self.player.y = self.height-self.player.height
+            self.player.y = self.height - self.player.height
             self.player.velocity_y = 0
 
         # collision; the shape of the widgets needs to change to acurately reflect the collision
