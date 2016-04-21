@@ -44,7 +44,7 @@ class PlayerObj(Image):
         # image properties
         self.allow_stretch = True
 
-        self.source = "images/Box.gif"
+        self.source = "images/Water.gif"
         self.size = (60, 60)
 
         super(PlayerObj, self).__init__(pos=pos)
@@ -115,7 +115,7 @@ class Game(Widget):
             self.player.y = self.height - self.player.height
             self.player.velocity_y = 0
 
-        # collision; the shape of the widgets needs to change to acurately reflect the collision
+        # collision; the shape of the widgets needs to change to accurately reflect the collision
         if self.player.collide_widget(self.obstacle):
             return
 
