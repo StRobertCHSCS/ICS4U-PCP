@@ -11,6 +11,7 @@ from kivy.uix.widget import Widget
 import random
 import sys
 
+
 class Background(Widget):
     image1 = ObjectProperty(Image())
     image2 = ObjectProperty(Image())
@@ -41,7 +42,7 @@ class PlayerObj(Image):
     def __init__(self, pos):
         # image properties
         self.allow_stretch = True
-        self.source = "images/Rock.gif"
+        self.source = "images/Box.gif"
         self.size = (60, 60)
 
         super(PlayerObj, self).__init__(pos=pos)
@@ -63,8 +64,8 @@ class PlayerObj(Image):
 class Obstacle(Image):
     def __init__(self, pos):
         self.allow_stretch = True
-        self.source = "images/platform.png"
-        self.size = (200, 200)
+        self.source = "images/Pillar1.png"
+        self.size = (200, 350)
         super(Obstacle, self).__init__(pos=pos)
 
         self.velocity_x = -2
@@ -88,8 +89,8 @@ class Game(Widget):
         self.add_widget(self.player)
 
         # obstacle
-        self.obstacle = Obstacle(pos=(900, -50))
-        self.obstacle1 = Obstacle(pos=(350, -50))
+        self.obstacle = Obstacle(pos=(900, 0))
+        self.obstacle1 = Obstacle(pos=(350, 0))
         self.add_widget(self.obstacle)
 
         # score
@@ -128,12 +129,12 @@ class Game(Widget):
         # obstacle movement
         if self.obstacle.x + self.obstacle.width <= 0:
             self.remove_widget(self.obstacle)
-            self.obstacle = Obstacle(pos=(900, -50))
+            self.obstacle = Obstacle(pos=(900, 0))
             self.add_widget(self.obstacle)
             self.score_bool = False
         if self.obstacle1.x + self.obstacle1.width <= 0:
             self.remove_widget(self.obstacle1)
-            self.obstacle1 = Obstacle(pos=(900, -50))
+            self.obstacle1 = Obstacle(pos=(900, 0))
             self.add_widget(self.obstacle1)
             self.score_bool = False
 
