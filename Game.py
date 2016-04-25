@@ -116,7 +116,8 @@ class Game(Widget):
         self.player = PlayerObj(pos=(self.width / 4, self.height / 2))
         self.add_widget(self.player)
 
-        self.playerhb = PlayerHB(pos=(self.width / 4, self.height / 2))
+        self.playerhb = PlayerHB(pos=self.player.pos)
+        self.playerhb.y += 7
         self.add_widget(self.playerhb)
 
 
