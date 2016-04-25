@@ -44,8 +44,10 @@ class PlayerObj(Image):
 
         # image properties
         self.allow_stretch = True
+
         self.source = "images/Ball.gif"
         self.size = (60, 60)
+
 
         super(PlayerObj, self).__init__(pos=pos)
 
@@ -146,7 +148,7 @@ class Game(Widget):
 class NameApp(App):
     def build(self):
         game = Game()
-        Clock.schedule_interval(game.update, 1.0 / 60.0)
+        Clock.schedule_interval(game.update, 1.0/60.0)
         return game
 
 
