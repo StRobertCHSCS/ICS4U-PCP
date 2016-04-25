@@ -22,6 +22,7 @@ class Background(Widget):
 
     def __init__(self, **kwarg):
         super(Background, self).__init__(**kwarg)
+        self.allow_stretch = True
         self.size = (800, 600)
 
     def update(self):
@@ -44,11 +45,13 @@ class PlayerObj(Image):
         # image properties
         self.allow_stretch = True
 
-        self.source = "images/Water.gif"
-        self.size = (100, 100)
+        self.source = "images/Ball.gif"
+        self.size = (60, 60)
+
 
         super(PlayerObj, self).__init__(pos=pos)
 
+        self.anim_delay = 0.25
         self.velocity_y = 0
         self.gravity = 0.06
 
@@ -80,8 +83,9 @@ class Game(Widget):
     background = ObjectProperty(Background())
 
     def __init__(self, **kwargs):
-        super(Game, self).__init__(**kwargs)
 
+        super(Game, self).__init__(**kwargs)
+        self.background.anim_delay = 0.05
         self.background.velocity = [-0.25, 0]
         self.bind(size=self.size_callback)
         self.size = Background().size
@@ -92,7 +96,6 @@ class Game(Widget):
 
         # obstacle
         self.obstacle = Obstacle(pos=(900, 0))
-        self.obstacle1 = Obstacle(pos=(350, 0))
         self.add_widget(self.obstacle)
 
         # score
@@ -127,7 +130,6 @@ class Game(Widget):
         self.background.update()
         self.player.update()
         self.obstacle.update()
-        self.obstacle1.update()
 
         # obstacle movement
 
@@ -135,11 +137,6 @@ class Game(Widget):
             self.remove_widget(self.obstacle)
             self.obstacle = Obstacle(pos=(900, 0))
             self.add_widget(self.obstacle)
-            self.score_bool = False
-        if self.obstacle1.x + self.obstacle1.width <= 0:
-            self.remove_widget(self.obstacle1)
-            self.obstacle1 = Obstacle(pos=(900, 0))
-            self.add_widget(self.obstacle1)
             self.score_bool = False
 
         # get obstacle pos in order to increase score instead of just this for testing, score update call
