@@ -120,8 +120,6 @@ class Game(Widget):
         # collision; the shape of the widgets needs to change to accurately reflect the collision
         if self.player.collide_widget(self.obstacle):
             print "hit obj 1"
-        elif self.player.collide_widget(self.obstacle1):
-            print "hit obj 2"
         else:
             print "no"
         # update calls
