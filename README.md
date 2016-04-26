@@ -14,7 +14,7 @@ Android Studio
 
 ## Install and Set Up
 Outline the steps required to install and run your project
-1. Install Android studio
+1. Install kivy
 2. Learn to use it
 3. Develop an idea on what application to create
 4. Begin to create the app
