@@ -65,6 +65,18 @@ class PlayerObj(Image):
         self.velocity_y = 4
 
 
+class PlayerHB(Widget):
+    def __init__(self, pos):
+
+        super(PlayerHB, self).__init__(pos = pos)
+        self.size = (10,10)
+
+
+
+
+
+
+
 class Obstacle(Image):
     def __init__(self, pos):
         self.allow_stretch = True
@@ -94,6 +106,10 @@ class Game(Widget):
         self.player = PlayerObj(pos=(self.width / 4, self.height / 2))
         self.add_widget(self.player)
 
+        self.playerhb = PlayerHB(pos=(self.player.center_x-0.5*35, self.player.center_y))
+        self.add_widget(self.playerhb)
+
+
         # obstacle
         x = random.randint(250, 750)
         self.obstacle = Obstacle(pos=(900, -x))
@@ -120,14 +136,18 @@ class Game(Widget):
             self.player.y = self.height - self.player.height
             self.player.velocity_y = 0
 
+        self.playerhb.center_x = self.player.center_x
+        self.playerhb.center_y = self.player.center_y
+
         # collision; the shape of the widgets needs to change to accurately reflect the collision
-        if self.player.collide_widget(self.obstacle):
-            print "hit obj 1"
+        if self.playerhb.collide_widget(self.obstacle):
+            return
         else:
             print "no"
         # update calls
         self.background.update()
         self.player.update()
+
         self.obstacle.update()
 
         # obstacle movement
