@@ -79,9 +79,9 @@ class PlayerHB(Widget):
 
 class Obstacle(Image):
     def __init__(self, pos):
-        self.allow_stretch = True
+        self.allow_stretch = False
         self.source = "images/PillarE.png"
-        self.size = (200, 1600)
+        self.size = (67, 1600)
 
         super(Obstacle, self).__init__(pos=pos)
 
