@@ -68,8 +68,8 @@ class PlayerObj(Image):
 class Obstacle(Image):
     def __init__(self, pos):
         self.allow_stretch = True
-        self.source = "images/Pillar1.png"
-        self.size = (60, 350)
+        self.source = "images/PillarE.png"
+        self.size = (200, 1600)
 
         super(Obstacle, self).__init__(pos=pos)
 
@@ -95,7 +95,8 @@ class Game(Widget):
         self.add_widget(self.player)
 
         # obstacle
-        self.obstacle = Obstacle(pos=(900, 0))
+        x = random.randint(250, 750)
+        self.obstacle = Obstacle(pos=(900, -x))
         self.add_widget(self.obstacle)
 
         # score
@@ -132,8 +133,9 @@ class Game(Widget):
         # obstacle movement
 
         if self.obstacle.x + self.obstacle.width <= 0:
+            x = random.randint(250, 750)
             self.remove_widget(self.obstacle)
-            self.obstacle = Obstacle(pos=(900, 0))
+            self.obstacle = Obstacle(pos=(900, -x))
             self.add_widget(self.obstacle)
             self.score_bool = False
 
