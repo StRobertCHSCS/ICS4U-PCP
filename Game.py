@@ -68,23 +68,13 @@ class PlayerObj(Image):
 class PlayerHB(Widget):
     def __init__(self, pos):
 
-
         super(PlayerHB, self).__init__(pos = pos)
-        self.size = (35,35)
-
-        self.velocity_y = 0
-        self.gravity = 0.06
+        self.size = (10,10)
 
 
 
-    def update(self):
 
-        if self.velocity_y >= -3:
-            self.velocity_y -= self.gravity
-        self.y += self.velocity_y
 
-    def on_touch_down(self, *ignore):
-        self.velocity_y = 4
 
 
 class Obstacle(Image):
@@ -116,8 +106,7 @@ class Game(Widget):
         self.player = PlayerObj(pos=(self.width / 4, self.height / 2))
         self.add_widget(self.player)
 
-        self.playerhb = PlayerHB(pos=self.player.pos)
-        self.playerhb.y += 7
+        self.playerhb = PlayerHB(pos=(self.player.center_x-0.5*35, self.player.center_y))
         self.add_widget(self.playerhb)
 
 
@@ -146,6 +135,9 @@ class Game(Widget):
             self.player.y = self.height - self.player.height
             self.player.velocity_y = 0
 
+        self.playerhb.center_x = self.player.center_x
+        self.playerhb.center_y = self.player.center_y
+
         # collision; the shape of the widgets needs to change to accurately reflect the collision
         if self.playerhb.collide_widget(self.obstacle):
             return
@@ -154,7 +146,7 @@ class Game(Widget):
         # update calls
         self.background.update()
         self.player.update()
-        self.playerhb.update()
+
         self.obstacle.update()
 
         # obstacle movement
