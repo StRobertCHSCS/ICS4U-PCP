@@ -1,0 +1,157 @@
+#- Overall timeline ---------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------
+- Brainstorm/analyze the problem - 1 week
+-----------------------------------------------------
+Week of Mar 20
+
+TODO:
+
+  Project:
+  - What's the goal?
+  - What's needed?
+    - Fun part
+    - Practical part
+  - Preview on User interface
+
+  Python
+  - Practiced list and loop (wk1 - wk5)
+  - Vim - 2nd day of learning
+
+DONE:
+
+  Goal - Make a typing game to help a computer beginner
+  Need
+    - curse python library
+
+    - fun part
+      - falling speed, the number of word / sec
+      - Combo -> more score/sound
+      - best score vs current score
+      - Top rankers
+      - keep a user profile
+      - Show statistics
+      - life (+ or -)
+
+    - Practical part
+      - a list of python commands
+      - words in dictionary
+      - choose your level
+      - grouping - alphabetic, numeric, alphanumeric, symbols
+
+  Python
+  - wk4. practiced for/while over string and numbers
+
+
+-----------------------------------------------------
+- Design/Create specifications(top down design) - 2 weeks
+-----------------------------------------------------
+Week of Mar 27
+  - Spec(Determine what the program does)
+    - IPO chart
+    - User interface
+
+TODO:
+
+  Project:
+  - Finalize the user interface - a few of drawings
+  - Draw an IPO chart
+    Example: http://northern.lkdsb.net/Kedwell/ICS3U/Unit_ProbSolv/IPO_Chart.htm
+            https://dansddmajor.wordpress.com/2008/04/
+
+  Python:
+  - wk5. Learn lists
+  - wk5. Learn loop over lists
+
+DONE:
+
+  IPO chart:
+
+    During game
+
+      Inputs      Processes        Outputs
+      ------      ---------        --------
+      alphas                       Display entered alphas on the screen
+      numbers
+      symbols
+
+      space                        blank
+      shift                        Caps when pressed
+
+      enter                        Check the entered values are same as one of falling words
+      esc                          Exit the game
+
+      down arrow                   pause game
+      (other than above)           (ignore)
+
+      mouse                        (ignore)
+
+
+  User interface
+
+  Main screen
+  +------------------------------------+
+  |        "NAME....."                 |
+  |                                    |
+  |     (P) Play - typing game     - Easy
+  |              - coding practice   Medium
+  |                                  Hard
+  |                                    |
+  |     (Q) Quit                       |
+  |                                    |
+  |                                    |
+  +------------------------------------+
+
+  Python:
+  - wk5. Practised lists /w loops
+
+
+Week of Apr 3
+  - Design(Determine how the program does)
+    - Top-down design chart
+    - flowChart
+
+  TODO:
+    - Review design
+    - Wk6. Learn dict 1/2
+           Learn File
+           review list
+
+    - Design top-down design
+
+  DONE:
+    - Done FILE - write and read a file
+    - Done first a user interface - drawing is available
+    - Exercised list and dict type
+    - Reviewed school homework (roll dices game)
+
+-----------------------------------------------------
+- Development - 5 Weeks
+-----------------------------------------------------
+Week of Apr 10
+
+  TODO:
+    - Play with curses. Create the main page
+
+Week of Apr 17
+  TODO:
+    - Complete the main page
+    - Create the last page - stats, read/write from/to a file
+
+  Week of Apr 24
+  Week of May 1
+  Week of May 8
+
+In progress:
+  reference:
+  https://docs.python.org/3.3/howto/curses.html
+
+Testing & Fixing - 2 Weeks
+  Week of May 15
+  Week of May 22
+
+Documentation - 1 Week
+  Week of May 29
+
+spare time - 1 week
+
+Total - 12 weeks
