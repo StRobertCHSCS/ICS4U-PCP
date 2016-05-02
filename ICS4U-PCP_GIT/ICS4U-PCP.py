@@ -3,11 +3,17 @@ from random import randint
 from curses import wrapper
 import time
 
+mydebugOn = True
 stdscr = curses.initscr()
 stdscr.clear()
 stdscr.border(0)
 stdscr.refresh()
 print "hello"
+
+def debug(mystr):
+  if mydebugOn:
+    stdscr.addstr(30,30,"Debug:" + str(mystr))
+
 
 def optimize_screen():
   """
@@ -28,8 +34,8 @@ def optimize_screen():
   REQ_L = 46
 
   if width < REQ_W or length < REQ_L:
-    #debug
-    stdscr.addstr(9,3,str(stdscr.getmaxyx()))
+    debug(stdscr.getmaxyx)
+    #stdscr.addstr(9,3,str(stdscr.getmaxyx()))
     stdscr.addstr(10,3,str(width) + " " + str(length))
     stdscr.addstr(20,45,"Please make your screen size"+str(REQ_W)+"x"
                   +str(REQ_L))
@@ -41,6 +47,8 @@ def optimize_screen():
     return False
 
   return True
+
+
 
 
 def coordinates(stdscr):
@@ -73,19 +81,21 @@ def coordinates(stdscr):
 def main(stdscr):
   # check user's screen size
   is_small_screen = True
-  while is_small_screen:
-    #test
-    is_small_screen =not optimize_screen()
-    stdscr.addstr(7,2,str(is_small_screen))
-    stdscr.getch()
+  #while is_small_screen:
+  #  #test
+  #  is_small_screen =not optimize_screen()
+  #  stdscr.addstr(7,2,str(is_small_screen))
+  #  stdscr.getch()
 
   # make screen
   stdscr.clear()
+  stdscr.refresh()
 
   # debug only
   coordinates(stdscr)
   # load first page
-
+  first_screen(stdscr)
+  #debug("test")
   stdscr.getch()
 
   """
@@ -107,13 +117,18 @@ def main(stdscr):
 
 
 def first_screen(stdscr):
-  begin_x = 20; begin_y = 7
-  height = 5; width = 40
-  win = curses.newwin(height,width,begin_x,begin_y)
-  stdscr.clear()
-  curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
-  stdscr.addstr("Pretty text", curses.color_pair(1))
+
+  #                          V  H
+  title_pad = curses.newpad(10,10)
+
+
+  title_pad.addstr(2,5,"boarder")
+  title_pad.refresh(1,2,5,10,15,20)
+
+  debug("test")
+
   stdscr.refresh()
+
 curses.endwin()
 
 
