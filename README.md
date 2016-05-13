@@ -1,16 +1,8 @@
-# ICS4U Personal Coding Project
+# llsif
+Love live app for final project
 
-## Objective
-State the objective of the project
+TODO:
 
-## Technical Requirements
-### Knowledge
-### Hardware
-### Required Software
-
-## Install and Set Up
-Outline the steps required to install and run your project
-
-## Usage
-Outline anything the user needs to know to use your application
+1. Set up buttons with triggers
+2. Clean up the app?
 
