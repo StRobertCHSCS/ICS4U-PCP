@@ -139,15 +139,12 @@ Week of Apr 17
 
   Week of Apr 24
   Week of May 1
+-------------------------------------------------
   Week of May 8
-
-In progress:
-  reference:
-  https://docs.python.org/3.3/howto/curses.html
-
 Testing & Fixing - 2 Weeks
-  Week of May 15
+  Week of May 15  <---------- finish first delivery
   Week of May 22
+--------------------------------------------------
 
 Documentation - 1 Week
   Week of May 29
@@ -155,3 +152,7 @@ Documentation - 1 Week
 spare time - 1 week
 
 Total - 12 weeks
+
+In progress:
+  reference:
+  https://docs.python.org/3.3/howto/curses.html
