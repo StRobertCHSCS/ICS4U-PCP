@@ -76,7 +76,7 @@ class Obstacle(Image):
     def __init__(self, pos):
         self.allow_stretch = False
         self.source = "images/PillarE.png"
-        self.size = (70, 1600)
+        self.size = (70,1600)
 
         super(Obstacle, self).__init__(pos=pos)
 
@@ -96,6 +96,9 @@ class Game(Widget):
         self.background.velocity = [-0.25, 0]
         self.bind(size=self.size_callback)
         self.size = Background().size
+
+
+
 
         # player's object - the rock
         self.player = PlayerObj(pos=(self.width / 4, self.height / 2))
@@ -118,6 +121,9 @@ class Game(Widget):
 
         Clock.schedule_interval(self.update, 1.0 / 60.0)
 
+
+
+
     def size_callback(self, instance, value):
         self.background.size = value
         self.background.update_position()
@@ -135,8 +141,8 @@ class Game(Widget):
         self.playerhb.center_y = self.player.center_y
 
         # collision; the shape of the widgets needs to change to accurately reflect the collision
-        if self.playerhb.collide_widget(self.obstacle):
-            return
+        if self.playerhb.collide_widget(self.obstacle) and not self.obstacle.x + 250 <= self.playerhb.x <= self.obstacle.x + 500:
+            print "hit"
         else:
             print "no"
         # update calls
