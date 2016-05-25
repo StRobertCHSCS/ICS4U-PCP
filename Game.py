@@ -75,7 +75,8 @@ class Obstacle(Image):
     def __init__(self, pos):
         self.allow_stretch = False
         self.source = "images/one_pillar.png"
-        self.size = (70,650)
+        self.size = (70, 700)
+
 
         super(Obstacle, self).__init__(pos=pos)
 
@@ -108,11 +109,17 @@ class Game(Widget):
 
 
         # obstacle
-        x = random.randint(250, 750)
-        self.obstacle1 = Obstacle(pos=(900, -x))
-        self.obstacle2 = Obstacle(pos=(1400, -x))
+        x1 = random.randint(250, 750)
+        x2 = random.randint(250, 750)
+        self.obstacle1 = Obstacle(pos=(900, -x1))
+        self.obstacle2 = Obstacle(pos=(1400, -x2))
         self.add_widget(self.obstacle1)
         self.add_widget(self.obstacle2)
+
+        self.obstacle1top = Obstacle(pos=(900, 900-x1))
+        self.obstacle2top = Obstacle(pos=(1400, 900-x2))
+        self.add_widget(self.obstacle1top)
+        self.add_widget(self.obstacle2top)
 
         # score
         self.score = 0
@@ -142,9 +149,7 @@ class Game(Widget):
         self.playerhb.center_y = self.player.center_y
 
         # collision; the shape of the widgets needs to change to accurately reflect the collision
-
-        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2):
-
+        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(self.obstacle2top):
             print "hit"
         else:
             print "no"
@@ -154,6 +159,8 @@ class Game(Widget):
 
         self.obstacle1.update()
         self.obstacle2.update()
+        self.obstacle1top.update()
+        self.obstacle2top.update()
 
         # obstacle movement
 
@@ -162,6 +169,11 @@ class Game(Widget):
             self.remove_widget(self.obstacle1)
             self.obstacle1 = Obstacle(pos=(900, -x))
             self.add_widget(self.obstacle1)
+
+            self.remove_widget(self.obstacle1top)
+            self.obstacle1top = Obstacle(pos=(900, 900-x))
+            self.add_widget(self.obstacle1top)
+
             self.score_bool = False
 
         if self.obstacle2.x + self.obstacle2.width <= 0:
@@ -169,7 +181,12 @@ class Game(Widget):
             self.remove_widget(self.obstacle2)
             self.obstacle2 = Obstacle(pos=(900, -x))
             self.add_widget(self.obstacle2)
+
+            self.remove_widget(self.obstacle2top)
+            self.obstacle2top = Obstacle(pos=(900, 900-x))
+            self.add_widget(self.obstacle2top)
             self.score_bool = False
+
 
         # get obstacle pos in order to increase score instead of just this for testing, score update call
         if self.player.x >= self.obstacle1.x and self.score_bool == False:
