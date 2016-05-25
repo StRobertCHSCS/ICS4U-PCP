@@ -45,9 +45,8 @@ class PlayerObj(Image):
         # image properties
         self.allow_stretch = True
 
-        self.source = "images/Ball.gif"
+        self.source = "images/Box.gif"
         self.size = (60, 60)
-
 
         super(PlayerObj, self).__init__(pos=pos)
 
@@ -68,8 +67,8 @@ class PlayerObj(Image):
 class PlayerHB(Widget):
     def __init__(self, pos):
 
-        super(PlayerHB, self).__init__(pos = pos)
-        self.size = (10,10)
+        super(PlayerHB, self).__init__(pos=pos)
+        self.size = (10, 10)
 
 
 class Obstacle(Image):
@@ -80,7 +79,7 @@ class Obstacle(Image):
 
         super(Obstacle, self).__init__(pos=pos)
 
-        self.velocity_x = -2
+        self.velocity_x = -1.5
 
     def update(self):
         self.x += self.velocity_x
@@ -107,8 +106,10 @@ class Game(Widget):
 
         # obstacle
         x = random.randint(250, 750)
-        self.obstacle = Obstacle(pos=(900, -x))
-        self.add_widget(self.obstacle)
+        self.obstacle1 = Obstacle(pos=(900, -x))
+        self.obstacle2 = Obstacle(pos=(1400, -x))
+        self.add_widget(self.obstacle1)
+        self.add_widget(self.obstacle2)
 
         # score
         self.score = 0
@@ -135,27 +136,39 @@ class Game(Widget):
         self.playerhb.center_y = self.player.center_y
 
         # collision; the shape of the widgets needs to change to accurately reflect the collision
-        if self.playerhb.collide_widget(self.obstacle):
-            return
+        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2):
+            print "hit"
         else:
             print "no"
         # update calls
         self.background.update()
         self.player.update()
 
-        self.obstacle.update()
+        self.obstacle1.update()
+        self.obstacle2.update()
 
         # obstacle movement
 
-        if self.obstacle.x + self.obstacle.width <= 0:
+        if self.obstacle1.x + self.obstacle1.width <= 0:
             x = random.randint(250, 750)
-            self.remove_widget(self.obstacle)
-            self.obstacle = Obstacle(pos=(900, -x))
-            self.add_widget(self.obstacle)
+            self.remove_widget(self.obstacle1)
+            self.obstacle1 = Obstacle(pos=(900, -x))
+            self.add_widget(self.obstacle1)
+            self.score_bool = False
+
+        if self.obstacle2.x + self.obstacle2.width <= 0:
+            x = random.randint(250, 750)
+            self.remove_widget(self.obstacle2)
+            self.obstacle2 = Obstacle(pos=(900, -x))
+            self.add_widget(self.obstacle2)
             self.score_bool = False
 
         # get obstacle pos in order to increase score instead of just this for testing, score update call
-        if self.player.x >= self.obstacle.x and self.score_bool == False:
+        if self.player.x >= self.obstacle1.x and self.score_bool == False:
+            self.score_bool = True
+            self.score += 1
+
+        if self.player.x >= self.obstacle2.x and self.score_bool == False:
             self.score_bool = True
             self.score += 1
 
