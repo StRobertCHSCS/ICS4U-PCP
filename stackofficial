@@ -35,17 +35,21 @@ void cubeHolderDrop()
 }
 void cubePushandStack()
 {
-	while (getBumperValue(bumper) = 1)
+	while (getBumperValue(bumper) == 1)
 	{
 		backward(1, rotations, 50);
 		cubeDrop();
-		cubeHolderDrop()
+		cubeHolderDrop();
 	}
 }
 void checkCubeColor()
 {
-	
+}	
+
 task main()
 {
-	
+cubeHolder();
+cubePickUp();
+cubePushandStack();
+checkCubeColor();
 }
