@@ -13,6 +13,20 @@ test_val = 1
 SCR_Y_MAX = 40
 SCR_X_MAX = 60
 
+def drawCoor(scr):
+  scr_y = curses.LINES - 1
+  scr_x = curses.COLS - 1
+  for x in range(scr_x):
+    scr.addstr(3,x, str(x%10))
+    if (x % 10 == 0):
+      scr.addstr(2,x, str(x//10))
+
+  x = 0
+  for y in range(scr_y):
+    scr.addstr(y,2, str(y%10))
+    if (y % 10 == 0):
+      scr.addstr(y,1, str(y//10))
+
 def my_raw_input(stdscr, r, c, prompt_string):
     curses.echo()
     stdscr.addstr(r, c, prompt_string)
@@ -24,7 +38,7 @@ def clear_line(y):
   """ (int) -> None
   """
   empty = " " * SCR_X_MAX
-  win.addstr(y, 1, empty)
+  stdscr.addstr(y, 1, empty)
 
 def debug(msg, level):
   """ (str, int, int) -> None
@@ -176,8 +190,54 @@ while 1:
     if event == 27:
         break
 
+def main(stdscr):
+
+  #curses.noecho()
+  #curses.curs_set(0)
+  #stdscr.clear()
+  #stdscr.resize(50, 50)
+  #stdscr.border(0)
+  #x=input("...waiting..")
+  #curses.endwin()
+
+  stdscr.border(0)
+  stdscr.refresh()
+
+  stdscr_y = curses.LINES - 1
+  stdscr_x = curses.COLS - 1
+
+  drawCoor(stdscr)
+
+  pad = curses.newpad(20, 20)
+  pad2 = curses.newpad(20, 20)
+  # These loops fill the pad with letters; addch() is
+  # explained in the next section
+  for y in range(0, 19):
+    for x in range(0, 19):
+      pad.addch(y,x, ord('a') + (x*x+y*y) % 26)
+
+  for y in range(0, 19):
+    for x in range(0, 19):
+      pad2.addch(y,x, ord('-'))
+
+  pad.border(0)
+  pad2.border(0)
+
+  pad2.refresh(0,0, 15,5, 25,10)
+  pad.refresh(0,0, 5,5, 10,10)
+
+  stdscr.refresh()
+
+  curses.noecho()
+  while 1:
+    event = stdscr.getch()
+    stdscr.addstr(20,20,str(event))
+    curses.beep()
+    curses.flash()
+  #curses.echo();
 
 
 curses.endwin()
+curses.wrapper(main)
 #print("\nScore - " + str(score))
 print("http://bitemelater.in\n")
