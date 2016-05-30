@@ -42,7 +42,6 @@ def move_down(screen, word):
   screen.addstr(word[0], word[1], word[2])
 
 def create_work():
-
   word_len = 4
   word = ""
   for ch_num in range(word_len):
@@ -58,7 +57,6 @@ def create_word(screen, word):
     #screen.border(0)
     global test_val
     global ent
-
 
     if word:
       screen.addstr(12, 12, 'testval:'+str(test_val));
