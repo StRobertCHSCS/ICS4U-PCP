@@ -1,4 +1,5 @@
 import kivy
+from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import NumericProperty, ReferenceListProperty, BooleanProperty, ObjectProperty, ListProperty
 from kivy.uix.image import Image
 from kivy.vector import Vector
@@ -144,6 +145,7 @@ class Game(Widget):
         # collision; the shape of the widgets needs to change to accurately reflect the collision
         if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(self.obstacle2top):
             print "hit"
+            return
         else:
             print "no"
         # update calls
@@ -180,7 +182,6 @@ class Game(Widget):
             self.add_widget(self.obstacle2top)
             self.score_bool = False
 
-
         # get obstacle pos in order to increase score instead of just this for testing, score update call
         if self.player.x >= self.obstacle1.x and self.score_bool == False:
             self.score_bool = True
@@ -192,12 +193,22 @@ class Game(Widget):
 
         self.scorelabel.text = "[size=40][color=0266C9]{0}[/color][/size]".format(str(self.score))
 
+# make menu screen class - can just be empty background with a text box saying yes/no
 
 class NameApp(App):
+    def __init__(self):
+        self.run = False
+
     def build(self):
-        game = Game()
-        Clock.schedule_interval(game.update, 1.0/60.0)
-        return game
+        # build menu screen
+
+        if self.run:
+            game = Game()
+            Clock.schedule_interval(game.update, 1.0/60.0)
+            return game
+
+            # clear screen back to menu
+
 
 
 if __name__ == "__main__":
