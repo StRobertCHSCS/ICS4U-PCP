@@ -19,17 +19,17 @@ void cubePickUp()
 {
 	forward(180, degrees, 50);
 	moveMotor(claw, 90, degrees, 50);
-	moveMotor(lift, 2, rotations, 50);
+	moveMotor(lift, 1, rotations, 50);
 }
 void cubeDrop()
 {
-	moveMotor(claw, 90, degrees, -50);
 	moveMotor(lift, 2, rotations, -50);
+	moveMotor(claw, 90, degrees, -50);
 }
 void cubeHolderDrop()
 {
 	moveMotor(lift, 3, rotations, 50);
-	moveMotor(claw, 90, degrees, 50);	
+	moveMotor(claw, 90, degrees, 50);
 	moveMotor(lift, 3, rotations, -50);
 	moveMotor(claw, 90, degrees, -50);
 }
@@ -42,14 +42,48 @@ void cubePushandStack()
 		cubeHolderDrop();
 	}
 }
+
 void checkCubeColor()
 {
-}	
+	bool color; 
+	while (color)
+	{
+		if (getColorName(colour) == colorGreen)
+		{
+			color = false;
+		}
+		if (getColorName(colour) == colorRed)
+		{
+			color = false;
+			stopAllMotors();
+		}
+	}
+}
 
 task main()
 {
-cubeHolder();
-cubePickUp();
-cubePushandStack();
-checkCubeColor();
+	int i = 0;
+	while (i != 3)
+	{
+		displayTextLine(1, "hello world");
+		setMultipleMotors(50, left, right);	
+		while (i == 0)
+		{
+			checkCubeColor();
+			cubeHolder();
+			i++;
+		}
+		while (i == 1)
+		{
+			checkCubeColor();
+			cubePickUp();
+			i++;
+		}
+		while (i == 2)
+		{
+			cubePushandStack();
+			checkCubeColor();
+			i++;
+		}	
+	}
 }
