@@ -30,7 +30,7 @@ Indicate any challenges you foresee going into the project
 - Adapting to a new programming environment
 
 ## High-Level Learning & Action Outline
-As best you can, provide a general outline of how you will dedicate your time from now until mid-June.  You can outline in units of weeks for now.  For example, if you were to work towards creating an iOS application, an outline could look like this:
+As best you can, provide a general outline of how you will dedicate your time from now until mid-June.  You can outline in units of weeks for now.
 - Brainstorm application functionality - 1 Week
 - Learn c# - 4 Weeks
 - Development - 6 Weeks
