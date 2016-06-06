@@ -2,11 +2,73 @@
 # Use ARROW KEYS to play, SPACE BAR for pausing/resuming and Esc Key for exiting
 # https://gist.githubusercontent.com/sanchitgangwar/2158089/raw/5f3d0003801acfe1a29c4b24f2c8975efacf6f66/snake.py
 
+MAX_Y = 0            # current screen Y
+MAX_X = 0            # current screen X
+REQ_Y = 0            # required screen size Y
+REQ_X = 0            # required screen size X
+ENG_WORDS = []
+ENG_WORDS_LEN = 0
+PY_WORDS = []
+PY_WORDS_LEN = 0
+
 import curses
 from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
 from random import randint
 import time
 import threading
+
+class Word(object):
+  """
+  Representation of words
+  """
+  def __init__(self, diffc="hard", ptype="coding"):
+    """
+    selects a word according to user difficulty
+    :param diffc: str - difficulty selected by user
+    :param ptype: str - game type selected by user
+    :return: None
+    """
+    word = ""
+
+    # Practice
+    if ptype == "prac":
+      # Easy or medium
+      if diffc == "easy" or diffc == "medium":
+        max_word_len = 0
+        if diffc == "easy":
+          min_word_len = 3
+          max_word_len = 4
+        elif diffc == "medium":
+          min_word_len = 5
+          max_word_len = 20
+
+        # Create a word
+        word = ENG_WORDS[randint(0, ENG_WORDS_LEN - 1)].strip()
+        while len(word) > max_word_len or len(word) < min_word_len :
+          word = ENG_WORDS[randint(0, ENG_WORDS_LEN-1)].strip()
+      # Hard
+      else:
+        max_word_len = 7
+        for dummy in range(max_word_len):
+          ch = chr(randint(ord('!'), ord('~')))
+          word += ch
+    # Coding
+    else:
+      max_word_len = 0
+      # Easy or medium
+      if diffc == "easy":
+        min_word_len = 3
+        max_word_len = 5
+      elif diffc == "medium":
+        min_word_len = 5
+        max_word_len = 10
+      # Hard
+      else:
+        min_word_len = 5
+        max_word_len = 30
+
+
+
 
 ent = ""
 test_val = 1
