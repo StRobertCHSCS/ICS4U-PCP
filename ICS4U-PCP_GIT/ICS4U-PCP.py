@@ -158,68 +158,13 @@ stdscr.refresh()
 #print("CHOICE: " +str(choice))
 #choice = my_raw_input(stdscr, 2, 3, "cool or hot?").lower()
 
-#win = curses.newwin(SCR_Y_MAX, SCR_X_MAX, 0, 0)
 
-#win.keypad(1)
-#curses.noecho()
-#curses.curs_set(0)
-#win.border(0)
 
 
 #key = KEY_RIGHT                                                    # Initializing values
-#curses.delay_output(1000)
-#curses.echo()
-
 new_word = create_work()
 #win.border(0)
 
-#---------------------------------------
-#win = curses.newwin(10,10,0,0)
-#win.border(0)
-#win.addstr(0,0,'hELLo')
-#win.refresh()
-#---------------------------------------
-
-
-# pad ----------------------------------------
-#pad = curses.newpad(100, 100)
-##  These loops fill the pad with letters; this is
-## explained in the next section
-#for y in range(0, 100):
-#    for x in range(0, 100):
-#        try:
-#            pad.addch(y,x, ord('a') + (x*x+y*y) % 26)
-#        except curses.error:
-#            pass
-
-#  Displays a section of the pad in the middle of the screen
-#pad.refresh(0,0, 5,5, 20,75)
-#win.getch()
-
-#win2 = curses.newwin(5,5,41,00)
-#
-#while key != 27:
-#    win2.border(0)
-#    win2.refresh()
-#
-#    win.border(0)
-#    win.refresh()
-#    #win.timeout(500)
-#    #prevKey = key
-#    #win.getch()
-#
-#    ## no key is pressed
-#    #if event == -1:
-#    #    key = key
-#    #else:
-#    #    key = event
-#
-#    #debug('key: ' + str(key) + ' ' +
-#    #      'chr(' + str(key) + '): ' + str(chr(key)), 1)
-#    move_down(new_word)
-#    time.sleep(0.5)
-#    #choice = my_raw_input(stdscr, 2, 3, "cool or hot?").lower()
-#    #print("CHOICE: " +str(choice))
 
 clock = threading.Thread(target=create_word, args=(stdscr,new_word))
 clock.daemon = True
