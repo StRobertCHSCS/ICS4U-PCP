@@ -2,6 +2,8 @@
 # Use ARROW KEYS to play, SPACE BAR for pausing/resuming and Esc Key for exiting
 # https://gist.githubusercontent.com/sanchitgangwar/2158089/raw/5f3d0003801acfe1a29c4b24f2c8975efacf6f66/snake.py
 
+#Init variables
+
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
 REQ_Y = 0            # required screen size Y
@@ -10,9 +12,11 @@ ENG_WORDS = []
 ENG_WORDS_LEN = 0
 PY_WORDS = []
 PY_WORDS_LEN = 0
+STDSCR = ""
 
 import curses
-from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
+#below code needs to be fixed
+#from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
 from random import randint
 import time
 import threading
@@ -39,33 +43,9 @@ class Word(object):
           min_word_len = 3
           max_word_len = 4
         elif diffc == "medium":
-          min_word_len = 5
+          min_word_len = 10
           max_word_len = 20
 
-        # Create a word
-        word = ENG_WORDS[randint(0, ENG_WORDS_LEN - 1)].strip()
-        while len(word) > max_word_len or len(word) < min_word_len :
-          word = ENG_WORDS[randint(0, ENG_WORDS_LEN-1)].strip()
-      # Hard
-      else:
-        max_word_len = 7
-        for dummy in range(max_word_len):
-          ch = chr(randint(ord('!'), ord('~')))
-          word += ch
-    # Coding
-    else:
-      max_word_len = 0
-      # Easy or medium
-      if diffc == "easy":
-        min_word_len = 3
-        max_word_len = 5
-      elif diffc == "medium":
-        min_word_len = 5
-        max_word_len = 10
-      # Hard
-      else:
-        min_word_len = 5
-        max_word_len = 30
 
 
 
@@ -75,19 +55,25 @@ test_val = 1
 SCR_Y_MAX = 40
 SCR_X_MAX = 60
 
-def drawCoor(scr):
-  scr_y = curses.LINES - 1
-  scr_x = curses.COLS - 1
-  for x in range(scr_x):
-    scr.addstr(3,x, str(x%10))
+def drawCoor():
+  """
+  draws coordinates on the screen while debugging
+  :return: None
+  """
+  STDSCR.clear()
+  STDSCR.border(0)
+  STDSCR.refresh()
+  for x in range(MAX_X):
+    STDSCR.addstr(2,x, str(x%10))
     if (x % 10 == 0):
-      scr.addstr(2,x, str(x//10))
+      STDSCR.addstr(1,x, str(x//10))
 
-  x = 0
-  for y in range(scr_y):
-    scr.addstr(y,2, str(y%10))
+  for y in range(MAX_Y):
+    STDSCR.addstr(y,2, str(y%10))
     if (y % 10 == 0):
-      scr.addstr(y,1, str(y//10))
+      STDSCR.addstr(y,1, str(y//10))
+
+  STDSCR.refresh()
 
 def my_raw_input(stdscr, r, c, prompt_string):
     curses.echo()
@@ -109,14 +95,6 @@ def debug(msg, level):
   clear_line(y)
   #win.addstr(y, 1, 'DEBUG: '+msg)
 
-def move_down(screen, word):
-  if word == None:
-    return
-  empty = " " * len(word[2])
-  screen.addstr(word[0], word[1], empty)
-  word[0] += 1
-  screen.addstr(word[0], word[1], word[2])
-
 def create_work():
   word_len = 4
   word = ""
@@ -136,8 +114,7 @@ def create_word(screen, word):
 
     if word:
       screen.addstr(12, 12, 'testval:'+str(test_val));
-      move_down(screen, word)
-      #screen.addstr(12, 12, time.strftime("%a, %d %b %Y %H:%M:%S"))
+      Word.move_down(screen, word)
       screen.refresh()
 
       if ent == word[2]:
@@ -158,9 +135,6 @@ stdscr.refresh()
 #print("CHOICE: " +str(choice))
 #choice = my_raw_input(stdscr, 2, 3, "cool or hot?").lower()
 
-
-
-
 #key = KEY_RIGHT                                                    # Initializing values
 new_word = create_work()
 #win.border(0)
@@ -171,13 +145,6 @@ clock.daemon = True
 clock.start()
 saved =""
 while 1:
-    #time.sleep(1)
-    #new_word = create_work()
-    #clock2 = threading.Thread(target=create_word, args=(stdscr,new_word))
-    #clock2.daemon = True
-    #clock2.start()
-
-    #time.sleep(1)
     global test_val
     test_val += 1
     event = stdscr.getch()
@@ -199,21 +166,14 @@ while 1:
 
 def main(stdscr):
 
-  #curses.noecho()
-  #curses.curs_set(0)
-  #stdscr.clear()
-  #stdscr.resize(50, 50)
-  #stdscr.border(0)
-  #x=input("...waiting..")
-  #curses.endwin()
-
   stdscr.border(0)
   stdscr.refresh()
 
   stdscr_y = curses.LINES - 1
   stdscr_x = curses.COLS - 1
-
-  drawCoor(stdscr)
+  global STDSCR
+  STDSCR = stdscr
+  drawCoor(STDSCR)
 
   pad = curses.newpad(20, 20)
   pad2 = curses.newpad(20, 20)
@@ -246,5 +206,4 @@ def main(stdscr):
 
 curses.endwin()
 curses.wrapper(main)
-#print("\nScore - " + str(score))
-print("http://bitemelater.in\n")
+
