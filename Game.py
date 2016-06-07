@@ -11,6 +11,31 @@ from kivy.core.window import Window
 from kivy.uix.widget import Widget
 import random
 import sys
+from kivy.uix.button import Button
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.boxlayout import BoxLayout
+from kivy.core.window import Window
+from kivy.graphics import Rectangle, Color, Canvas
+from functools import partial
+
+# setup graphics
+from kivy.config import Config
+
+Config.set('graphics', 'resizable', 0)
+
+# Graphics fix
+from kivy.core.window import Window;
+
+Window.clearcolor = (0, 0, 0, 1.)
+
+
+# Window.clearcolor = (1,0,0,1.)
+
+class MyButton(Button):
+    # class used to get uniform button styles
+    def __init__(self, **kwargs):
+        super(MyButton, self).__init__(**kwargs)
+        self.font_size = Window.width * 0.018
 
 
 class Background(Widget):
@@ -42,7 +67,6 @@ class Background(Widget):
 
 class PlayerObj(Image):
     def __init__(self, pos):
-
         # image properties
         self.allow_stretch = True
 
@@ -56,7 +80,6 @@ class PlayerObj(Image):
         self.gravity = 0.06
 
     def update(self):
-
         if self.velocity_y >= -3:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
@@ -67,7 +90,6 @@ class PlayerObj(Image):
 
 class PlayerHB(Widget):
     def __init__(self, pos):
-
         super(PlayerHB, self).__init__(pos=pos)
         self.size = (10, 10)
 
@@ -101,7 +123,7 @@ class Game(Widget):
         self.player = PlayerObj(pos=(self.width / 4, self.height / 2))
         self.add_widget(self.player)
 
-        self.playerhb = PlayerHB(pos=(self.player.center_x-0.5*35, self.player.center_y))
+        self.playerhb = PlayerHB(pos=(self.player.center_x - 0.5 * 35, self.player.center_y))
         self.add_widget(self.playerhb)
 
 
@@ -113,15 +135,16 @@ class Game(Widget):
         self.add_widget(self.obstacle1)
         self.add_widget(self.obstacle2)
 
-        self.obstacle1top = Obstacle(pos=(900, 900-x1))
-        self.obstacle2top = Obstacle(pos=(1400, 900-x2))
+        self.obstacle1top = Obstacle(pos=(900, 900 - x1))
+        self.obstacle2top = Obstacle(pos=(1400, 900 - x2))
         self.add_widget(self.obstacle1top)
         self.add_widget(self.obstacle2top)
 
         # score
         self.score = 0
         self.score_bool = False
-        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2), text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
+        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2),
+                                text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
         self.add_widget(self.scorelabel)
 
         Clock.schedule_interval(self.update, 1.0 / 60.0)
@@ -143,7 +166,9 @@ class Game(Widget):
         self.playerhb.center_y = self.player.center_y
 
         # collision; the shape of the widgets needs to change to accurately reflect the collision
-        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(self.obstacle2top):
+        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(
+                self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(
+                self.obstacle2top):
             print "hit"
             return
         else:
@@ -166,7 +191,7 @@ class Game(Widget):
             self.add_widget(self.obstacle1)
 
             self.remove_widget(self.obstacle1top)
-            self.obstacle1top = Obstacle(pos=(900, 900-x))
+            self.obstacle1top = Obstacle(pos=(900, 900 - x))
             self.add_widget(self.obstacle1top)
 
             self.score_bool = False
@@ -178,7 +203,7 @@ class Game(Widget):
             self.add_widget(self.obstacle2)
 
             self.remove_widget(self.obstacle2top)
-            self.obstacle2top = Obstacle(pos=(900, 900-x))
+            self.obstacle2top = Obstacle(pos=(900, 900 - x))
             self.add_widget(self.obstacle2top)
             self.score_bool = False
 
@@ -193,30 +218,91 @@ class Game(Widget):
 
         self.scorelabel.text = "[size=40][color=0266C9]{0}[/color][/size]".format(str(self.score))
 
-# make menu screen class - can just be empty background with a text box saying yes/no
-class Menu(Widget):
-    def __init__(self):
-        super(Menu, self).__init__()
-        self.run = False
+
+class SmartMenu(Widget):
+    buttonList = []
+
+    def __init__(self, **kwargs):
+        # create custom events first
+        self.register_event_type(
+            'on_button_release')  # creating a custom event called 'on_button_release' that will be used to pass information from the menu to the parent instance
+
+        super(SmartMenu, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        self.layout.width = Window.width / 2
+        self.layout.height = Window.height / 2
+        self.layout.x = Window.width / 2 - self.layout.width / 2
+        self.layout.y = Window.height / 2 - self.layout.height / 2
+        self.add_widget(self.layout)
 
 
+def on_button_release(self, *args):
+    # print 'The on_button_release event was just dispatched', args
+    # don't need to do anything here. needed for dispatch
+    pass
+
+
+def callback(self, instance):
+    # print('The button %s is being pressed' % instance.text)
+    self.buttonText = instance.text
+    self.dispatch(
+        'on_button_release')  # dispatching the callback event 'on_button_release' to tell teh parent instance to read the button text
+
+
+def addButtons(self):
+    for k in self.buttonList:
+        tmpBtn = MyButton(text=k)
+        tmpBtn.background_color = [.4, .4, .4, .4]
+        tmpBtn.bind(on_release=self.callback)  # when the button is released the callback function is called
+        self.layout.add_widget(tmpBtn)
+
+
+def buildUp(self):
+    # self.colorWindow()
+    self.addButtons()
+
+class SmartStartMenu(SmartMenu):
+#setup the menu button names
+    buttonList = ['start']
+
+    def __init__(self, **kwargs):
+        super(SmartStartMenu, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation = 'vertical')
+        self.layout.width = Window.width/2
+        self.layout.height = Window.height/2
+        self.layout.x = Window.width/2 - self.layout.width/2
+        self.layout.y = Window.height/2 - self.layout.height/2
+        self.add_widget(self.layout)
+
+        self.msg = Label(text = 'Flappy Bird Clone')
+        self.msg.font_size = Window.width*0.07
+        self.msg.pos = (Window.width*0.45,Window.height*0.75)
+        self.add_widget(self.msg)
 
 class NameApp(App):
-    def __init__(self):
-        super(NameApp, self).__init__()
-
-
     def build(self):
         # build menu screen
-        menu = Menu
-        if self.menu.run:
-            game = Game()
-            Clock.schedule_interval(game.update, 1.0/60.0)
-            return game
 
-            # clear screen back to menu
+        self.sm = SmartStartMenu()
+        self.sm.buildUp()
+
+        def check_button(obj):
+            # check to see which button was pressed
+            if self.sm.buttonText == 'start':
+                # remove menu
+                self.parent.remove_widget(self.sm)
+                # start the game
+                print ' we should start the game now'
+                game = Game()
+                Clock.unschedule(self.app.update)
+                Clock.schedule_interval(game.update, 1.0 / 60.0)
 
 
+
+            # setup listeners for smartstartmenu
+            self.parent.add_widget(self.sm)
+            self.parent.add_widget(self.app)  # use this hierarchy to make it easy to deal w/buttons
+            return self.parent
 
 if __name__ == "__main__":
     NameApp().run()
