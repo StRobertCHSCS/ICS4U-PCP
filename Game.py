@@ -194,15 +194,22 @@ class Game(Widget):
         self.scorelabel.text = "[size=40][color=0266C9]{0}[/color][/size]".format(str(self.score))
 
 # make menu screen class - can just be empty background with a text box saying yes/no
+class Menu(Widget):
+    def __init__(self):
+        super(Menu, self).__init__()
+        self.run = False
+
+
 
 class NameApp(App):
     def __init__(self):
-        self.run = False
+        super(NameApp, self).__init__()
+
 
     def build(self):
         # build menu screen
-
-        if self.run:
+        menu = Menu
+        if self.menu.run:
             game = Game()
             Clock.schedule_interval(game.update, 1.0/60.0)
             return game
