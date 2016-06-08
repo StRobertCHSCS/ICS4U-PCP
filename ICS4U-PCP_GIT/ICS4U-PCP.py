@@ -2,6 +2,14 @@
 # Use ARROW KEYS to play, SPACE BAR for pausing/resuming and Esc Key for exiting
 # https://gist.githubusercontent.com/sanchitgangwar/2158089/raw/5f3d0003801acfe1a29c4b24f2c8975efacf6f66/snake.py
 
+#below code needs to be fixed
+#from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
+from random import randint
+import time
+import curses.panel
+import threading
+
+
 # -------------------------------------------------------
 # Global Varibles
 # -------------------------------------------------------
@@ -15,13 +23,6 @@ ENG_WORDS_LEN = 0
 PY_WORDS = []
 PY_WORDS_LEN = 0
 STDSCR = ""
-
-import curses
-#below code needs to be fixed
-#from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
-from random import randint
-import time
-import threading
 
 class Word(object):
   """
@@ -55,10 +56,7 @@ SCR_Y_MAX = 40
 SCR_X_MAX = 60
 
 def drawCoor():
-  """
-  draws coordinates on the screen while debugging
-  :return: None
-  """
+
   STDSCR.clear()
   STDSCR.border(0)
   STDSCR.refresh()
@@ -112,7 +110,7 @@ def create_word(screen, word):
     global ent
 
     if word:
-      screen.addstr(12, 12, 'testval:'+str(test_val));
+      screen.addstr(12, 12, 'testval:'+str(test_val))
       #Word.move_down(screen, word)
       screen.refresh()
 
@@ -162,21 +160,33 @@ while 1:
     #if event == ord("q"):
     if event == 27:
         break
-def mainscreen():
-  option = "PLAY"
-  option2 = "USER STATS"
-  option3 = "EXIT"
 
-  drawCoor(stdscr)
+def mainGameScreen():
+  STDSCR.clear()
+  STDSCR.refresh()
+  drawCoor(STDSCR)
 
-  menu_win = curses.newwin(4,10,5,30)
+  menu1 = "P: PLAY"
+  menu2 = "S: USER STATS"
+  menu3 = "X: EXIT"
+  menu_win = curses.newwin(11, 30  , 30, 78)
+  menu_win.addstr(1, 1, menu1)
+  menu_win.addstr(2, 1, menu2)
+  menu_win.addstr(3, 1, menu3)
+  menu_panel = curses.panel.new_panel(menu_win)
+  menu_panel.top();curses.panel.update_panels()
+  menu_win.noutrefresh(); curses.doupdate()
+
   menu_pan = curses.panel.new_panel(menu_win)
   menu_pan.top()
   curses.panel.update_panels()
-  menu_win.noutfresh()
+  menu_win.noutrefresh()
   curses.doupdate()
+
+
+
+
 def main(stdscr):
-  mainscreen()
 
   stdscr.border(0)
   stdscr.refresh()
@@ -186,6 +196,8 @@ def main(stdscr):
   global STDSCR
   STDSCR = stdscr
   drawCoor(STDSCR)
+
+  mainGameScreen()
 
   pad = curses.newpad(20, 20)
   pad2 = curses.newpad(20, 20)
@@ -208,12 +220,6 @@ def main(stdscr):
   stdscr.refresh()
 
   curses.noecho()
-  while 1:
-    event = stdscr.getch()
-    stdscr.addstr(20,20,str(event))
-    curses.beep()
-    curses.flash()
-  #curses.echo();
 
 
 curses.endwin()
