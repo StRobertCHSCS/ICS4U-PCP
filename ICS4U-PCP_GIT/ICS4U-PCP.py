@@ -28,7 +28,7 @@ class Word(object):
   """
   Representation of words
   """
-  def __init__(self, diffc="hard", ptype="coding"):
+  def __init__(self, diffc, ptype):
     """
     selects a word according to user difficulty
     :param diffc: str - difficulty selected by user
@@ -48,7 +48,6 @@ class Word(object):
         elif diffc == "medium":
           min_word_len = 10
           max_word_len = 15
-
 
 ent = ""
 test_val = 1
@@ -128,20 +127,39 @@ stdscr.clear()
 #stdscr.resize(50, 50)
 stdscr.border(0)
 stdscr.refresh()
-#choice = my_raw_input(stdscr, 2, 3, "cool or hot?").lower()
-#print("CHOICE: " +str(choice))
-#choice = my_raw_input(stdscr, 2, 3, "cool or hot?").lower()
 
 #key = KEY_RIGHT                                                    # Initializing values
 new_word = create_work()
 #win.border(0)
 
-
 clock = threading.Thread(target=create_word, args=(stdscr,new_word))
 clock.daemon = True
 clock.start()
 saved =""
-while 1:
+
+def mainGameScreen():
+  STDSCR.clear()
+  STDSCR.refresh()
+  drawCoor()
+
+  menu1 = "P: PLAY"
+  menu2 = "S: USER STATS"
+  menu3 = "X: EXIT"
+  menu_win = curses.newwin(11, 30  , 30, 78)
+  menu_win.addstr(1, 1, menu1)
+  menu_win.addstr(2, 1, menu2)
+  menu_win.addstr(3, 1, menu3)
+  menu_panel = curses.panel.new_panel(menu_win)
+  menu_panel.top();curses.panel.update_panels()
+  menu_win.noutrefresh(); curses.doupdate()
+
+  menu_pan = curses.panel.new_panel(menu_win)
+  menu_pan.top()
+  curses.panel.update_panels()
+  menu_win.noutrefresh()
+  curses.doupdate()
+
+  while 1:
     global test_val
     test_val += 1
     event = stdscr.getch()
@@ -161,31 +179,6 @@ while 1:
     if event == 27:
         break
 
-def mainGameScreen():
-  STDSCR.clear()
-  STDSCR.refresh()
-  drawCoor(STDSCR)
-
-  menu1 = "P: PLAY"
-  menu2 = "S: USER STATS"
-  menu3 = "X: EXIT"
-  menu_win = curses.newwin(11, 30  , 30, 78)
-  menu_win.addstr(1, 1, menu1)
-  menu_win.addstr(2, 1, menu2)
-  menu_win.addstr(3, 1, menu3)
-  menu_panel = curses.panel.new_panel(menu_win)
-  menu_panel.top();curses.panel.update_panels()
-  menu_win.noutrefresh(); curses.doupdate()
-
-  menu_pan = curses.panel.new_panel(menu_win)
-  menu_pan.top()
-  curses.panel.update_panels()
-  menu_win.noutrefresh()
-  curses.doupdate()
-
-
-
-
 def main(stdscr):
 
   stdscr.border(0)
@@ -195,7 +188,7 @@ def main(stdscr):
   stdscr_x = curses.COLS - 1
   global STDSCR
   STDSCR = stdscr
-  drawCoor(STDSCR)
+  drawCoor()
 
   mainGameScreen()
 
@@ -218,9 +211,7 @@ def main(stdscr):
   pad.refresh(0,0, 5,5, 10,10)
 
   stdscr.refresh()
-
   curses.noecho()
-
 
 curses.endwin()
 curses.wrapper(main)
