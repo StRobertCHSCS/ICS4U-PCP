@@ -2,7 +2,9 @@
 # Use ARROW KEYS to play, SPACE BAR for pausing/resuming and Esc Key for exiting
 # https://gist.githubusercontent.com/sanchitgangwar/2158089/raw/5f3d0003801acfe1a29c4b24f2c8975efacf6f66/snake.py
 
-#Init variables
+# -------------------------------------------------------
+# Global Varibles
+# -------------------------------------------------------
 
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
@@ -40,14 +42,11 @@ class Word(object):
       if diffc == "easy" or diffc == "medium":
         max_word_len = 0
         if diffc == "easy":
-          min_word_len = 3
-          max_word_len = 4
+          min_word_len = 2
+          max_word_len = 5
         elif diffc == "medium":
           min_word_len = 10
-          max_word_len = 20
-
-
-
+          max_word_len = 15
 
 
 ent = ""
@@ -114,7 +113,7 @@ def create_word(screen, word):
 
     if word:
       screen.addstr(12, 12, 'testval:'+str(test_val));
-      Word.move_down(screen, word)
+      #Word.move_down(screen, word)
       screen.refresh()
 
       if ent == word[2]:
@@ -163,8 +162,21 @@ while 1:
     #if event == ord("q"):
     if event == 27:
         break
+def mainscreen():
+  option = "PLAY"
+  option2 = "USER STATS"
+  option3 = "EXIT"
 
+  drawCoor(stdscr)
+
+  menu_win = curses.newwin(4,10,5,30)
+  menu_pan = curses.panel.new_panel(menu_win)
+  menu_pan.top()
+  curses.panel.update_panels()
+  menu_win.noutfresh()
+  curses.doupdate()
 def main(stdscr):
+  mainscreen()
 
   stdscr.border(0)
   stdscr.refresh()
