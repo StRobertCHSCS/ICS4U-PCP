@@ -9,7 +9,6 @@ import time
 import curses.panel
 import threading
 
-
 # -------------------------------------------------------
 # Global Varibles
 # -------------------------------------------------------
@@ -79,17 +78,15 @@ def my_raw_input(stdscr, r, c, prompt_string):
     return input  #       ^^^^  reading input at next line
 
 def clear_line(y):
-  """ (int) -> None
-  """
   empty = " " * SCR_X_MAX
   stdscr.addstr(y, 1, empty)
 
 def debug(msg, level):
-  """ (str, int, int) -> None
+  """
   """
   y = SCR_Y_MAX - 10 + level
   clear_line(y)
-  #win.addstr(y, 1, 'DEBUG: '+msg)
+
 
 def create_work():
   word_len = 4
@@ -110,7 +107,6 @@ def create_word(screen, word):
 
     if word:
       screen.addstr(12, 12, 'testval:'+str(test_val))
-      #Word.move_down(screen, word)
       screen.refresh()
 
       if ent == word[2]:
@@ -124,18 +120,61 @@ stdscr = curses.initscr()
 curses.noecho()
 curses.curs_set(0)
 stdscr.clear()
-#stdscr.resize(50, 50)
+
 stdscr.border(0)
 stdscr.refresh()
-
-#key = KEY_RIGHT                                                    # Initializing values
+                                                    # Initializing values
 new_word = create_work()
-#win.border(0)
 
 clock = threading.Thread(target=create_word, args=(stdscr,new_word))
 clock.daemon = True
 clock.start()
 saved =""
+
+def mainGameScreen():
+
+  while True:
+    STDSCR.clear()
+    STDSCR.refresh()
+
+    saved =""
+
+    y_entered = MAX_Y
+    x_entered = 10
+
+    enter_win = curses.newwin(1, 80, y_entered, x_entered)  # l, w, y, x
+    enter_panel = curses.panel.new_panel(enter_win)
+    enter_panel.top()
+
+    while 1:
+      event = STDSCR.getch()
+
+      if event != 10 and event !=263:  # enter and backspace
+        # saved += chr(event)
+        if event == 263:  # backspace
+          saved = saved[:-1]
+
+        enter_win.noutrefresh()
+        curses.doupdate()
+
+        # enter
+        if event == 10:
+          global USER_ENT
+          USER_ENT = saved
+          saved = ""
+
+          enter_win.addstr(0,0,saved)
+          enter_win.noutrefresh()
+          curses.doupdate()
+
+        if event == 9: #tab to exit
+          EXIT_GAME = True
+
+        if event == 27: #esc
+          break
+
+    if EXIT_GAME:
+      break
 
 def mainGameScreen():
   STDSCR.clear()
