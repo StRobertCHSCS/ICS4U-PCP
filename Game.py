@@ -136,6 +136,12 @@ class Game(Widget):
         self.background.size = value
         self.background.update_position()
 
+    def endgame(self):
+        parent = self.parent
+        self.remove_widget(self)
+        parent.add_widget(Menu())
+
+
     def update(self, dt):
         # collision stuff - window boundaries
 
@@ -151,6 +157,7 @@ class Game(Widget):
         # collision with pillars; the shape of the widgets needs to change to accurately reflect the collision
         if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(self.obstacle2top):
             print "hit"
+            self.endgame()
             return
         else:
             print "no"
@@ -202,11 +209,26 @@ class Game(Widget):
         self.scorelabel.text = "[size=40][color=0266C9]{0}[/color][/size]".format(str(self.score))
 
 
+
+
+
+class Menu(Widget):
+    def __init__(self):
+        super(Menu, self).__init__()
+        self.size = (800,600)
+        self.add_widget(Label(center=self.center, text="tap to start"))
+
+    def on_touch_down(self, *ignore):
+        parent = self.parent
+        parent.remove_widget(self)
+        parent.add_widget(Game())
+
+
 class NameApp(App):
     def build(self):
-        game = Game()
-        Clock.schedule_interval(game.update, 1.0/60.0)
-        return game
+        top = Widget()
+        top.add_widget(Menu())
+        return top
 
 
 if __name__ == "__main__":
