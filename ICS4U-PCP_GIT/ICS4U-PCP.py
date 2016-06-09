@@ -87,7 +87,6 @@ def debug(msg, level):
   y = SCR_Y_MAX - 10 + level
   clear_line(y)
 
-
 def create_work():
   word_len = 4
   word = ""
@@ -126,19 +125,14 @@ stdscr.refresh()
                                                     # Initializing values
 new_word = create_work()
 
-clock = threading.Thread(target=create_word, args=(stdscr,new_word))
-clock.daemon = True
-clock.start()
 saved =""
 
-def mainGameScreen():
-
+def GameScreen():
   while True:
     STDSCR.clear()
     STDSCR.refresh()
 
     saved =""
-
     y_entered = MAX_Y
     x_entered = 10
 
@@ -188,10 +182,10 @@ def mainGameScreen():
   menu_win.addstr(1, 1, menu1)
   menu_win.addstr(2, 1, menu2)
   menu_win.addstr(3, 1, menu3)
+
   menu_panel = curses.panel.new_panel(menu_win)
   menu_panel.top();curses.panel.update_panels()
   menu_win.noutrefresh(); curses.doupdate()
-
   menu_pan = curses.panel.new_panel(menu_win)
   menu_pan.top()
   curses.panel.update_panels()
@@ -214,23 +208,19 @@ def mainGameScreen():
       ent = saved
       saved = ""
       stdscr.addstr(10,10, 'saved:['+str(saved) + '] event: ' +str(event))
-    #if event == ord("q"):
+
     if event == 27:
         break
 
 def main(stdscr):
-
   stdscr.border(0)
   stdscr.refresh()
 
-  stdscr_y = curses.LINES - 1
-  stdscr_x = curses.COLS - 1
   global STDSCR
   STDSCR = stdscr
   drawCoor()
-
-  mainGameScreen()
-
+  #mainGameScreen()
+  GameScreen()
   pad = curses.newpad(20, 20)
   pad2 = curses.newpad(20, 20)
   # These loops fill the pad with letters; addch() is
