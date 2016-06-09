@@ -46,7 +46,7 @@ class PlayerObj(Image):
         # image properties
         self.allow_stretch = True
 
-        self.source = "images/Box.gif"
+        self.source = "images/Water.gif"
         self.size = (60, 60)
 
         super(PlayerObj, self).__init__(pos=pos)
@@ -103,7 +103,6 @@ class Game(Widget):
 
         self.playerhb = PlayerHB(pos=(self.player.center_x-0.5*35, self.player.center_y))
         self.add_widget(self.playerhb)
-
 
         # obstacle
         x1 = random.randint(250, 750)
@@ -195,9 +194,8 @@ class Game(Widget):
 
 # make menu screen class - can just be empty background with a text box saying yes/no
 
+
 class NameApp(App):
-    def __init__(self):
-        self.run = False
 
     def build(self):
         # build menu screen
@@ -208,7 +206,6 @@ class NameApp(App):
             return game
 
             # clear screen back to menu
-
 
 
 if __name__ == "__main__":
