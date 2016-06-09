@@ -1,5 +1,4 @@
 import kivy
-from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import NumericProperty, ReferenceListProperty, BooleanProperty, ObjectProperty, ListProperty
 from kivy.uix.image import Image
 from kivy.vector import Vector
@@ -11,13 +10,6 @@ from kivy.core.window import Window
 from kivy.uix.widget import Widget
 import random
 import sys
-from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.core.window import Window
-from kivy.graphics import Rectangle, Color, Canvas
-from functools import partial
-
 
 
 class Background(Widget):
@@ -49,6 +41,7 @@ class Background(Widget):
 
 class PlayerObj(Image):
     def __init__(self, pos):
+
         # image properties
         self.allow_stretch = True
 
@@ -62,6 +55,7 @@ class PlayerObj(Image):
         self.gravity = 0.06
 
     def update(self):
+
         if self.velocity_y >= -3:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
@@ -72,6 +66,7 @@ class PlayerObj(Image):
 
 class PlayerHB(Widget):
     def __init__(self, pos):
+
         super(PlayerHB, self).__init__(pos=pos)
         self.size = (10, 10)
 
@@ -81,6 +76,7 @@ class Obstacle(Image):
         self.allow_stretch = False
         self.source = "images/one_pillar.png"
         self.size = (70, 700)
+
 
         super(Obstacle, self).__init__(pos=pos)
 
@@ -101,11 +97,14 @@ class Game(Widget):
         self.bind(size=self.size_callback)
         self.size = Background().size
 
+
+
+
         # player's object - the rock
         self.player = PlayerObj(pos=(self.width / 4, self.height / 2))
         self.add_widget(self.player)
 
-        self.playerhb = PlayerHB(pos=(self.player.center_x - 0.5 * 35, self.player.center_y))
+        self.playerhb = PlayerHB(pos=(self.player.center_x-0.5*35, self.player.center_y))
         self.add_widget(self.playerhb)
 
 
@@ -117,26 +116,28 @@ class Game(Widget):
         self.add_widget(self.obstacle1)
         self.add_widget(self.obstacle2)
 
-        self.obstacle1top = Obstacle(pos=(900, 900 - x1))
-        self.obstacle2top = Obstacle(pos=(1400, 900 - x2))
+        self.obstacle1top = Obstacle(pos=(900, 900-x1))
+        self.obstacle2top = Obstacle(pos=(1400, 900-x2))
         self.add_widget(self.obstacle1top)
         self.add_widget(self.obstacle2top)
 
         # score
         self.score = 0
         self.score_bool = False
-        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2),
-                                text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
+        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2), text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
         self.add_widget(self.scorelabel)
 
         Clock.schedule_interval(self.update, 1.0 / 60.0)
+
+
+
 
     def size_callback(self, instance, value):
         self.background.size = value
         self.background.update_position()
 
     def update(self, dt):
-        # collision stuff
+        # collision stuff - window boundaries
 
         if self.player.y <= 0:
             self.player.y = 0
@@ -147,14 +148,13 @@ class Game(Widget):
         self.playerhb.center_x = self.player.center_x
         self.playerhb.center_y = self.player.center_y
 
-        # collision; the shape of the widgets needs to change to accurately reflect the collision
-        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(
-                self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(
-                self.obstacle2top):
+        # collision with pillars; the shape of the widgets needs to change to accurately reflect the collision
+        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(self.obstacle2top):
             print "hit"
             return
         else:
             print "no"
+
         # update calls
         self.background.update()
         self.player.update()
@@ -173,7 +173,7 @@ class Game(Widget):
             self.add_widget(self.obstacle1)
 
             self.remove_widget(self.obstacle1top)
-            self.obstacle1top = Obstacle(pos=(900, 900 - x))
+            self.obstacle1top = Obstacle(pos=(900, 900-x))
             self.add_widget(self.obstacle1top)
 
             self.score_bool = False
@@ -185,9 +185,10 @@ class Game(Widget):
             self.add_widget(self.obstacle2)
 
             self.remove_widget(self.obstacle2top)
-            self.obstacle2top = Obstacle(pos=(900, 900 - x))
+            self.obstacle2top = Obstacle(pos=(900, 900-x))
             self.add_widget(self.obstacle2top)
             self.score_bool = False
+
 
         # get obstacle pos in order to increase score instead of just this for testing, score update call
         if self.player.x >= self.obstacle1.x and self.score_bool == False:
@@ -201,15 +202,12 @@ class Game(Widget):
         self.scorelabel.text = "[size=40][color=0266C9]{0}[/color][/size]".format(str(self.score))
 
 
-
 class NameApp(App):
     def build(self):
-
         game = Game()
-
-        Clock.unschedule(self.app.update)
-        Clock.schedule_interval(game.update, 1.0 / 60.0)
+        Clock.schedule_interval(game.update, 1.0/60.0)
         return game
+
 
 if __name__ == "__main__":
     NameApp().run()
