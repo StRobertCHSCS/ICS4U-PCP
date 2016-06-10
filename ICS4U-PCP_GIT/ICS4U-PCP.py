@@ -23,6 +23,7 @@ PY_WORDS = []
 PY_WORDS_LEN = 0
 STDSCR = ""
 
+
 class Word(object):
   """
   Representation of words
@@ -98,6 +99,7 @@ def create_work():
   #debug("new word: "+str(y_x_word), 2)
   return y_x_word
 
+
 def create_word(screen, word):
   while 1:
     #screen.border(0)
@@ -127,7 +129,8 @@ new_word = create_work()
 
 saved =""
 
-def GameScreen():
+def GamePlay():
+
   while True:
     STDSCR.clear()
     STDSCR.refresh()
@@ -136,19 +139,36 @@ def GameScreen():
     y_entered = MAX_Y
     x_entered = 10
 
-    enter_win = curses.newwin(1, 80, y_entered, x_entered)  # l, w, y, x
+    enter_win = curses.newwin(1, 70, y_entered, x_entered)  # l, w, y, x
     enter_panel = curses.panel.new_panel(enter_win)
     enter_panel.top()
+    while True:
 
-    while 1:
       event = STDSCR.getch()
 
+      global test_val
+      test_val += 1
+      event = stdscr.getch()
+      if event != 10:
+        saved += chr(event)
+      if event == 8:
+        stdscr.addstr(15,10, 'backspace')
+        saved = saved[:-2]
+      stdscr.addstr(10,10, '                                                          ')
+      stdscr.addstr(10,10, 'saved:['+str(saved) + '] event: ' +str(event))
+      if event == 10:
+        global ent
+        ent = saved
+        saved = ""
+        stdscr.addstr(10,10, 'saved:['+str(saved) + '] event: ' +str(event))
+
+      if event == 27:
+        break
       if event != 10 and event !=263:  # enter and backspace
         # saved += chr(event)
         if event == 263:  # backspace
           saved = saved[:-1]
-
-        enter_win.noutrefresh()
+          enter_win.noutrefresh()
         curses.doupdate()
 
         # enter
@@ -170,18 +190,20 @@ def GameScreen():
     if EXIT_GAME:
       break
 
-def mainGameScreen():
+def mainScreen():
   STDSCR.clear()
   STDSCR.refresh()
   drawCoor()
 
-  menu1 = "P: PLAY"
-  menu2 = "S: USER STATS"
-  menu3 = "X: EXIT"
+  #Draw menu
+  menu1 = "[P] PLAY"
+  menu2 = "[S] USER STATS"
+  menu3 = "[X] EXIT"
   menu_win = curses.newwin(11, 30  , 30, 78)
   menu_win.addstr(1, 1, menu1)
-  menu_win.addstr(2, 1, menu2)
-  menu_win.addstr(3, 1, menu3)
+  menu_win.addstr(3, 1, menu2)
+  menu_win.addstr(5, 1, menu3)
+  menu_win.box()
 
   menu_panel = curses.panel.new_panel(menu_win)
   menu_panel.top();curses.panel.update_panels()
@@ -192,26 +214,6 @@ def mainGameScreen():
   menu_win.noutrefresh()
   curses.doupdate()
 
-  while 1:
-    global test_val
-    test_val += 1
-    event = stdscr.getch()
-    if event != 10:
-      saved += chr(event)
-    if event == 8:
-      stdscr.addstr(15,10, 'backspace')
-      saved = saved[:-2]
-    stdscr.addstr(10,10, '                                                          ')
-    stdscr.addstr(10,10, 'saved:['+str(saved) + '] event: ' +str(event))
-    if event == 10:
-      global ent
-      ent = saved
-      saved = ""
-      stdscr.addstr(10,10, 'saved:['+str(saved) + '] event: ' +str(event))
-
-    if event == 27:
-        break
-
 def main(stdscr):
   stdscr.border(0)
   stdscr.refresh()
@@ -220,7 +222,8 @@ def main(stdscr):
   STDSCR = stdscr
   drawCoor()
   #mainGameScreen()
-  GameScreen()
+  mainScreen()
+  GamePlay()
   pad = curses.newpad(20, 20)
   pad2 = curses.newpad(20, 20)
   # These loops fill the pad with letters; addch() is
