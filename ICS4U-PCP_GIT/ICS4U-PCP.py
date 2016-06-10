@@ -84,6 +84,13 @@ class Word(object):
 
       time.sleep(0.5)
 
+  def getX(self):
+
+    return self.x
+
+  def getY(self):
+
+    return self.y
 ent = ""
 test_val = 1
 SCR_Y_MAX = 40
@@ -165,6 +172,12 @@ def GamePlay():
 
       if event == 27:
         break
+
+      #stats screen
+      if chr(event) == 's' or 'S':
+        enter_panel.hide()
+        userstats()
+
       if event != 10 and event !=263:  # enter and backspace
         # saved += chr(event)
         if event == 263:  # backspace
@@ -215,6 +228,21 @@ def mainScreen():
   menu_win.noutrefresh()
   curses.doupdate()
 
+  #initialize
+  main_screen_num = 0
+
+  while True:
+    event = STDSCR.getch()
+    #event_low = event.lowwer()
+
+    if event == 263:
+      continue
+
+    if chr(event) == "e":
+      main_screen_num = 0
+      break
+
+
 def main(stdscr):
   stdscr.border(0)
   stdscr.refresh()
@@ -247,6 +275,17 @@ def main(stdscr):
   curses.noecho()
 
 #curses.endwin()
+
+def userstats():
+  stat_win = curses.newwin(30, 10, 10, 15)
+  stat_win.addstr(5,6,"This is userstats window")
+  stat_win.box()
+  score_formatline = []
+
+  stat_win.addstr(6,6,"user name: ")
+  stat_win.addstr(7,6,"level#: ")
+  stat_win.addstr(8,6,"score#: ")
+
 
 
 def printError(msg):
