@@ -7,7 +7,8 @@
 from random import randint
 import time
 import curses.panel
-import threading
+#import threading
+import sys
 
 # -------------------------------------------------------
 # Global Varibles
@@ -17,37 +18,71 @@ MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
 REQ_Y = 0            # required screen size Y
 REQ_X = 0            # required screen size X
-ENG_WORDS = []
+ENG_WORDS = ["apple","hi","hello","aaron",""]
 ENG_WORDS_LEN = 0
 PY_WORDS = []
 PY_WORDS_LEN = 0
 STDSCR = ""
-
+MIN_WORD_LEN = 0
+MAX_WORD_LEN = 0
+WORD = ""
 
 class Word(object):
   """
   Representation of words
   """
-  def __init__(self, diffc, ptype):
+  def __init__(self, diff,  ptype):
     """
     selects a word according to user difficulty
     :param diffc: str - difficulty selected by user
     :param ptype: str - game type selected by user
-    :return: None
+    :return: str -
     """
     word = ""
 
-    # Practice
+    #add more difficulties
     if ptype == "prac":
-      # Easy or medium
-      if diffc == "easy" or diffc == "medium":
-        max_word_len = 0
-        if diffc == "easy":
-          min_word_len = 2
-          max_word_len = 5
-        elif diffc == "medium":
-          min_word_len = 10
-          max_word_len = 15
+      if diff == "easy" or diff == "medium":
+        global MIN_WORD_LEN,MAX_WORD_LEN,WORD
+        MIN_WORD_LEN = 0
+        MAX_WORD_LEN = 3
+        for idx in range(len(ENG_WORDS)):
+          if len(ENG_WORDS[idx]) > MIN_WORD_LEN and len(ENG_WORDS[idx]) <= MAX_WORD_LEN:
+            Word = ENG_WORDS[idx]
+
+  def move_down(screen, word):
+   word = WORD
+   empty = " " * len(word[2])
+   screen.addstr(word[0], word[1], empty)
+   word[0] += 1
+   screen.addstr(word[0], word[1], word[2])
+
+
+  def create_word(screen, word):
+    while 1:
+      word_len = 4
+      word = ""
+      for ch_num in range(word_len):
+        ch = chr(randint(ord('a'), ord('z')))
+        word += ch
+        x = randint(0, SCR_X_MAX)
+        y_x_word = [ 0, x, word ]
+        #debug("new word: "+str(y_x_word), 2)
+        return y_x_word
+        #screen.border(0)
+        global test_val
+        global ent
+
+      if word:
+        screen.addstr(12, 12, 'testval:'+str(test_val))
+        screen.refresh()
+
+        if ent == word[2]:
+          global curses
+          curses.beep()
+          word = None
+
+      time.sleep(0.5)
 
 ent = ""
 test_val = 1
@@ -80,7 +115,7 @@ def my_raw_input(stdscr, r, c, prompt_string):
 
 def clear_line(y):
   empty = " " * SCR_X_MAX
-  stdscr.addstr(y, 1, empty)
+  STDSCR.addstr(y, 1, empty)
 
 def debug(msg, level):
   """
@@ -88,50 +123,16 @@ def debug(msg, level):
   y = SCR_Y_MAX - 10 + level
   clear_line(y)
 
-def create_work():
-  word_len = 4
-  word = ""
-  for ch_num in range(word_len):
-    ch = chr(randint(ord('a'), ord('z')))
-    word += ch
-  x = randint(0, SCR_X_MAX)
-  y_x_word = [ 0, x, word ]
-  #debug("new word: "+str(y_x_word), 2)
-  return y_x_word
 
-
-def create_word(screen, word):
-  while 1:
-    #screen.border(0)
-    global test_val
-    global ent
-
-    if word:
-      screen.addstr(12, 12, 'testval:'+str(test_val))
-      screen.refresh()
-
-      if ent == word[2]:
-        global curses
-        curses.beep()
-        word = None
-        word = create_work()
-    time.sleep(0.5)
-
-stdscr = curses.initscr()
-curses.noecho()
-curses.curs_set(0)
-stdscr.clear()
-
-stdscr.border(0)
-stdscr.refresh()
-                                                    # Initializing values
-new_word = create_work()
+class_test = Word.create_word                                                 # Initializing values
+new_word = class_test(STDSCR,ENG_WORDS[randint(0,len(ENG_WORDS)-1)])
 
 saved =""
 
 def GamePlay():
 
   while True:
+    stdscr = STDSCR
     STDSCR.clear()
     STDSCR.refresh()
 
@@ -245,6 +246,20 @@ def main(stdscr):
   stdscr.refresh()
   curses.noecho()
 
-curses.endwin()
-curses.wrapper(main)
+#curses.endwin()
 
+
+def printError(msg):
+  errMsg_x = 3
+  errMsg_y = 1
+  STDSCR.addstr(errMsg_y, errMsg_x, "ERROR:" + msg)
+  STDSCR.refresh()
+  STDSCR.getch()
+  curses.endwin()
+  sys.exit()
+
+
+###############################################################################
+# START
+###############################################################################
+curses.wrapper(main)
