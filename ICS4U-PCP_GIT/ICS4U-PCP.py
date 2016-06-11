@@ -1,3 +1,5 @@
+
+
 # SNAKES GAME
 # Use ARROW KEYS to play, SPACE BAR for pausing/resuming and Esc Key for exiting
 # https://gist.githubusercontent.com/sanchitgangwar/2158089/raw/5f3d0003801acfe1a29c4b24f2c8975efacf6f66/snake.py
@@ -13,6 +15,7 @@ import sys
 # -------------------------------------------------------
 # Global Varibles
 # -------------------------------------------------------
+IS_DEBUG = False
 
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
@@ -56,7 +59,6 @@ class Word(object):
    screen.addstr(word[0], word[1], empty)
    word[0] += 1
    screen.addstr(word[0], word[1], word[2])
-
 
   def create_word(screen, word):
     while 1:
@@ -131,8 +133,8 @@ def debug(msg, level):
   clear_line(y)
 
 
-class_test = Word.create_word                                                 # Initializing values
-new_word = class_test(STDSCR,ENG_WORDS[randint(0,len(ENG_WORDS)-1)])
+                                               # Initializing values
+
 
 saved =""
 
@@ -204,77 +206,191 @@ def GamePlay():
     if EXIT_GAME:
       break
 
-def mainScreen():
+
+#------------------------------------------------------------------------------
+# main
+#------------------------------------------------------------------------------
+def main(stdscr):
+  #colors
+  curses.init_pair(1,curses.COLOR_RED,curses.COLOR_BLACK)
+  curses.init_pair(2,curses.COLOR_GREEN,curses.COLOR_BLACK)
+  curses.init_pair(3,curses.COLOR_YELLOW,curses.COLOR_BLACK)
+  curses.init_pair(4,curses.COLOR_WHITE,curses.COLOR_BLACK)
+  curses.init_pair(5,curses.COLOR_MAGENTA,curses.COLOR_BLACK)
+  curses.init_pair(6,curses.COLOR_CYAN,curses.COLOR_BLACK)
+  curses.init_pair(7,curses.COLOR_BLUE,curses.COLOR_BLACK)
+
+  global EXIT_GAME
+
+  # Set up for debug
+  global STDSCR
+  STDSCR = stdscr
+
+  # Check the required window size
+  checkReq()
+
+  # clear and draw coordinates
+  if IS_DEBUG:
+    drawCoor()
+
+  #define this after the window's created.
+  #horizontal line decides whether user missed or not.
+  global MISS_Y
+  MISS_Y = MAX_Y - 3
+
+  while 1:
+    # re-initialize
+    EXIT_GAME = False
+
+    # main game screen
+    rc = mainGameScreen()
+
+    # reset
+    if rc == 4:
+      STDSCR.clear(); STDSCR.refresh()
+
+    # exit
+    if rc == 0:
+      break
+
+  curses.endwin()
+
+###############################################################################
+#
+# Screens
+#
+###############################################################################
+
+def mainGameScreen():
+  """
+  makes the main screen of the game
+  :return: int - assigned number of the each screen
+  """
   STDSCR.clear()
   STDSCR.refresh()
-  drawCoor()
+  # debug
+  if IS_DEBUG:
+    drawCoor()
 
-  #Draw menu
+  # Draw menu
   menu1 = "[P] PLAY"
-  menu2 = "[S] USER STATS"
+  menu2 = "[S] Statistics"
   menu3 = "[X] EXIT"
-  menu_win = curses.newwin(11, 30  , 30, 78)
-  menu_win.addstr(1, 1, menu1)
-  menu_win.addstr(3, 1, menu2)
-  menu_win.addstr(5, 1, menu3)
-  menu_win.box()
-
+  menu_win = curses.newwin(11, len(menu2) + 4 , 30, 78)  # h, l, y, x
+  menu_win.addstr(1, 1, menu1,curses.A_BOLD)
+  menu_win.addstr(2+3, 1, menu2,curses.A_BOLD)
+  menu_win.addstr(3+6, 1, menu3,curses.A_BOLD)
   menu_panel = curses.panel.new_panel(menu_win)
   menu_panel.top();curses.panel.update_panels()
   menu_win.noutrefresh(); curses.doupdate()
-  menu_pan = curses.panel.new_panel(menu_win)
-  menu_pan.top()
-  curses.panel.update_panels()
-  menu_win.noutrefresh()
-  curses.doupdate()
 
   #initialize
-  main_screen_num = 0
+  main_rc = 0
 
-  while True:
+  while 1:
+    # Get an input from a user
     event = STDSCR.getch()
-    #event_low = event.lowwer()
-
     if event == 263:
       continue
-
-    if chr(event) == "e":
-      main_screen_num = 0
+    #exit
+    if chr(event) == 'x':
+      main_rc = 0
       break
 
+    #stats screen
+    elif chr(event) == 's':
+      #title_panel.hide()
+      menu_panel.hide()
+      main_rc = 1
 
-def main(stdscr):
-  stdscr.border(0)
-  stdscr.refresh()
+    #Play
+    elif chr(event) == 'p':
+      play1 = "[P] Practice - English words"
+      play2 = "[C] Coding - Python related words"
+      play_win = curses.newwin(6, len(play2) + 4, 32, 83) #h,l,y,x
+      play_win.box()
+      play_win.addstr(1+1, 1, play1,curses.A_BOLD)
+      play_win.addstr(2+1, 1, play2,curses.A_BOLD)
+      play1_panel = curses.panel.new_panel(play_win)
+      play1_panel.top()
+      curses.panel.update_panels()
+      STDSCR.noutrefresh()
+      curses.doupdate()
 
-  global STDSCR
-  STDSCR = stdscr
-  drawCoor()
-  #mainGameScreen()
-  mainScreen()
-  GamePlay()
-  pad = curses.newpad(20, 20)
-  pad2 = curses.newpad(20, 20)
-  # These loops fill the pad with letters; addch() is
-  # explained in the next section
-  for y in range(0, 19):
-    for x in range(0, 19):
-      pad.addch(y,x, ord('a') + (x*x+y*y) % 26)
+      event = STDSCR.getch()
 
-  for y in range(0, 19):
-    for x in range(0, 19):
-      pad2.addch(y,x, ord('-'))
+      while event == 263:
+        event = STDSCR.getch()
 
-  pad.border(0)
-  pad2.border(0)
+      event_lower = chr(event).lower()
 
-  pad2.refresh(0,0, 15,5, 25,10)
-  pad.refresh(0,0, 5,5, 10,10)
+      while event_lower != "p" and event_lower != "c":
+        event = STDSCR.getch()
+        event_lower = chr(event).lower()
 
-  stdscr.refresh()
-  curses.noecho()
+      ptype = ""
+      if event_lower == "p":
+        ptype = "prac"
+      else:
+        ptype = "coding"
 
-#curses.endwin()
+      while 1:
+        if ptype == "prac":
+          play1 = "[E] Easy - words length of 3 - 4"
+          play2 = "[M] Medium - words length of 5 and more"
+          play3 = "[H] Hard - random char and symbols"
+          play4 = "[R] reset"
+        else:
+          play1 = "[E] Easy - words length of 3 - 5"
+          play2 = "[M] Medium - words lenght of 5 - 10"
+          play3 = "[H] Hard - words length of 5 and more"
+          play4 = "[R] reset"
+
+        play2_win = curses.newwin(9, len(play2) + 4, 34, 90)
+        play2_win.box()
+        play2_win.addstr(1 + 1, 1, play1,curses.A_BOLD)
+        play2_win.addstr(2 + 1, 1, play2,curses.A_BOLD)
+        play2_win.addstr(3 + 1, 1, play3,curses.A_BOLD)
+        play2_win.addstr(4 + 1, 1, play4,curses.A_BOLD)
+        play2_panel = curses.panel.new_panel(play2_win)
+        play2_panel.top()
+        curses.panel.update_panels()
+        STDSCR.noutrefresh(); curses.doupdate()
+
+        event = STDSCR.getch()
+        while event == 263:
+          event = STDSCR.getch()
+        event_lower = chr(event).lower()
+
+        if event_lower == 'e' or event_lower == 'm' or event_lower == 'h':
+
+          #title_panel.hide()
+          menu_panel.hide()
+          play1_panel.hide()
+          play2_panel.hide()
+
+          # Start the game
+          if event_lower == 'e':
+              diffc = "easy"
+          elif event_lower == 'm':
+              diffc = "medium"
+          elif event_lower == 'h':
+              diffc = "hard"
+
+          main_rc = 1
+          break
+
+        # reset
+        elif event_lower.lower() == 'r':
+          main_rc = 4
+          break
+
+    #  stat/startGame(1) or reset(4) -> go to main screen
+    if main_rc == 1 or main_rc == 4:
+      break
+
+  return main_rc
+
 
 def userstats():
   stat_win = curses.newwin(30, 10, 10, 15)
@@ -286,15 +402,36 @@ def userstats():
   stat_win.addstr(7,6,"level#: ")
   stat_win.addstr(8,6,"score#: ")
 
+def checkReq():
+  """
+  checks whether the game screen fits the user screen size
+  If user screen is smaller than required size, print error message until they
+  meet the requirments
+  :return: None
+  """
+  global MAX_Y, MAX_X
+  MAX_Y = curses.LINES - 1
+  MAX_X = curses.COLS - 1
+  if MAX_Y < REQ_Y:
+    printError("Resize your window. " +
+               "Current: " + str(MAX_X) + " X " + str(MAX_Y) + ". "
+               "Required: " + str(REQ_X) + " X " + str(REQ_Y) )
 
 
 def printError(msg):
+  """
+  prints the given error message
+  on the user screen
+  :param msg: str - The error message that is given to the function
+  :return: None
+  """
   errMsg_x = 3
   errMsg_y = 1
-  STDSCR.addstr(errMsg_y, errMsg_x, "ERROR:" + msg)
+  STDSCR.addstr(errMsg_y, errMsg_x, "ERROR:" + msg + "\n\n...Terminating...press Enter...")
   STDSCR.refresh()
   STDSCR.getch()
   curses.endwin()
+  #exit program
   sys.exit()
 
 
