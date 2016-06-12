@@ -45,7 +45,7 @@ void cubePushandStack()
 
 void checkCubeColor()
 {
-	bool color; 
+	bool color;
 	while (color)
 	{
 		if (getColorName(colour) == colorGreen)
@@ -66,7 +66,7 @@ task main()
 	while (i != 3)
 	{
 		displayTextLine(1, "hello world");
-		setMultipleMotors(50, left, right);	
+		setMultipleMotors(50, left, right);
 		while (i == 0)
 		{
 			checkCubeColor();
@@ -84,6 +84,6 @@ task main()
 			cubePushandStack();
 			checkCubeColor();
 			i++;
-		}	
+		}
 	}
 }
