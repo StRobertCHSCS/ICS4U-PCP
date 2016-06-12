@@ -136,10 +136,6 @@ class Game(Widget):
         self.background.size = value
         self.background.update_position()
 
-    def endgame(self):
-        parent = self.parent
-        self.remove_widget(self)
-        parent.add_widget(Menu())
 
 
     def update(self, dt):
@@ -156,11 +152,10 @@ class Game(Widget):
 
         # collision with pillars; the shape of the widgets needs to change to accurately reflect the collision
         if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(self.obstacle2top):
-            print "hit"
-            self.endgame()
-            return
-        else:
-            print "no"
+            if self.parent:
+                self.parent.parent.add_widget(Menu())
+                self.parent.remove_widget(self)
+
 
         # update calls
         self.background.update()
@@ -219,9 +214,12 @@ class Menu(Widget):
         self.add_widget(Label(center=self.center, text="tap to start"))
 
     def on_touch_down(self, *ignore):
-        parent = self.parent
-        parent.remove_widget(self)
-        parent.add_widget(Game())
+        if self.parent:
+            self.parent.add_widget(Game())
+            self.parent.remove_widget(self)
+
+
+
 
 
 class NameApp(App):
