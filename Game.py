@@ -52,16 +52,16 @@ class PlayerObj(Image):
 
         self.anim_delay = 0.25
         self.velocity_y = 0
-        self.gravity = 0.06
+        self.gravity = 0.1
 
     def update(self):
 
-        if self.velocity_y >= -3:
+        if self.velocity_y >= -4:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
 
     def on_touch_down(self, *ignore):
-        self.velocity_y = 4
+        self.velocity_y = 4.5
 
 
 class PlayerHB(Widget):
@@ -80,7 +80,7 @@ class Obstacle(Image):
 
         super(Obstacle, self).__init__(pos=pos)
 
-        self.velocity_x = -1.5
+        self.velocity_x = -2.1
 
     def update(self):
         self.x += self.velocity_x
@@ -93,7 +93,7 @@ class Game(Widget):
 
         super(Game, self).__init__(**kwargs)
         self.background.anim_delay = 0.05
-        self.background.velocity = [-0.25, 0]
+        self.background.velocity = [-0.5, 0]
         self.bind(size=self.size_callback)
         self.size = Background().size
 
@@ -217,6 +217,7 @@ class Menu(Widget):
         if self.parent:
             self.parent.add_widget(Game())
             self.parent.remove_widget(self)
+
 
 
 
