@@ -9,6 +9,8 @@ import time
 import curses.panel
 #import threading
 import sys
+import threading
+
 
 # -------------------------------------------------------
 # Global Varibles
@@ -17,6 +19,7 @@ IS_DEBUG = True
 WORD_START_PAUSE = 0.2   # Initial word speed. Lower is Faster
 ENTER_Y_OFFSET = 5
 GO_NEXT = False
+is_word_down_thread_stop = False
 
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
@@ -30,6 +33,7 @@ STDSCR = ""
 MIN_WORD_LEN = 0
 MAX_WORD_LEN = 0
 WORD = ""
+word_down_thread = ""
 
 class Word(object):
   """
@@ -104,6 +108,16 @@ class Word(object):
 
   def __str__(self):
     return self.word
+
+  def delWord(self):
+    self.panel.hide()
+    # curses.panel.update_panels(); self.win.refresh() not working
+    curses.panel.update_panels(); STDSCR.refresh()
+
+  # Debug
+  def display(self):
+    # y, x
+    curses.panel.update_panels(); STDSCR.refresh()
 
 ent = ""
 test_val = 1
@@ -207,8 +221,6 @@ def GamePlay():
 
     if EXIT_GAME:
       break
-
-
 #------------------------------------------------------------------------------
 # main
 #------------------------------------------------------------------------------
@@ -314,6 +326,8 @@ def mainGameScreen():
   menu_panel = curses.panel.new_panel(menu_win)
   menu_panel.top();curses.panel.update_panels()
   menu_win.noutrefresh(); curses.doupdate()
+
+
 
   #initialize
   main_rc = 0
@@ -558,6 +572,46 @@ def printError(msg):
   curses.endwin()
   #exit program
   sys.exit()
+
+
+###############################################################################
+#
+# Draws
+#
+###############################################################################
+def drawLife(lose):
+  global EXIT_NOW
+
+  life_win = curses.newwin(MAX_Y-3 ,3, 3, 3)
+
+  if 1 * lose > MAX_Y-3:
+    EXIT_NOW =True
+  for y in range(1 * lose, MAX_Y-3):
+    life_win.addch(y, 1, ord('='))
+  life_win.box()
+
+  life_pan = curses.panel.new_panel(life_win)
+  life_pan.top();
+  curses.panel.update_panels();
+  life_win.noutrefresh();curses.doupdate()
+
+  return life_pan
+
+def drawCombo(combo = 0, score = 0):
+  # Create a combo window/panel
+  l = 3
+  w = 40
+  #if LAST_COMBO != "":
+  #  LAST_COMBO.hide()
+  combo_win = curses.newwin(l, w,3,60)
+  combo_win.addstr(1,2, "COMBO: " + str(combo) + " ( +"+ str(score) + ")")
+  combo_win.box()
+  combo_pan = curses.panel.new_panel(combo_win)
+  combo_pan.top()
+  curses.panel.update_panels();
+  combo_win.noutrefresh();curses.doupdate()
+  return combo_pan
+
 
 
 
