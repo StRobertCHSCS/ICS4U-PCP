@@ -41,7 +41,6 @@ class Background(Widget):
 
 class PlayerObj(Image):
     def __init__(self, pos):
-
         # image properties
         self.allow_stretch = True
 
@@ -55,7 +54,6 @@ class PlayerObj(Image):
         self.gravity = 0.1
 
     def update(self):
-
         if self.velocity_y >= -4:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
@@ -66,7 +64,6 @@ class PlayerObj(Image):
 
 class PlayerHB(Widget):
     def __init__(self, pos):
-
         super(PlayerHB, self).__init__(pos=pos)
         self.size = (10, 10)
 
@@ -76,7 +73,6 @@ class Obstacle(Image):
         self.allow_stretch = False
         self.source = "images/one_pillar.png"
         self.size = (70, 700)
-
 
         super(Obstacle, self).__init__(pos=pos)
 
@@ -104,7 +100,7 @@ class Game(Widget):
         self.player = PlayerObj(pos=(self.width / 4, self.height / 2))
         self.add_widget(self.player)
 
-        self.playerhb = PlayerHB(pos=(self.player.center_x-0.5*35, self.player.center_y))
+        self.playerhb = PlayerHB(pos=(self.player.center_x - 0.5 * 35, self.player.center_y))
         self.add_widget(self.playerhb)
 
 
@@ -116,27 +112,23 @@ class Game(Widget):
         self.add_widget(self.obstacle1)
         self.add_widget(self.obstacle2)
 
-        self.obstacle1top = Obstacle(pos=(900, 900-x1))
-        self.obstacle2top = Obstacle(pos=(1400, 900-x2))
+        self.obstacle1top = Obstacle(pos=(900, 900 - x1))
+        self.obstacle2top = Obstacle(pos=(1400, 900 - x2))
         self.add_widget(self.obstacle1top)
         self.add_widget(self.obstacle2top)
 
         # score
         self.score = 0
         self.score_bool = False
-        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2), text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
+        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2),
+                                text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
         self.add_widget(self.scorelabel)
 
         Clock.schedule_interval(self.update, 1.0 / 60.0)
 
-
-
-
     def size_callback(self, instance, value):
         self.background.size = value
         self.background.update_position()
-
-
 
     def update(self, dt):
         # collision stuff - window boundaries
@@ -151,7 +143,9 @@ class Game(Widget):
         self.playerhb.center_y = self.player.center_y
 
         # collision with pillars; the shape of the widgets needs to change to accurately reflect the collision
-        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(self.obstacle2top):
+        if self.playerhb.collide_widget(self.obstacle1) or self.playerhb.collide_widget(
+                self.obstacle2) or self.playerhb.collide_widget(self.obstacle1top) or self.playerhb.collide_widget(
+                self.obstacle2top):
             if self.parent:
                 self.parent.parent.add_widget(Menu())
                 self.parent.remove_widget(self)
@@ -175,7 +169,7 @@ class Game(Widget):
             self.add_widget(self.obstacle1)
 
             self.remove_widget(self.obstacle1top)
-            self.obstacle1top = Obstacle(pos=(900, 900-x))
+            self.obstacle1top = Obstacle(pos=(900, 900 - x))
             self.add_widget(self.obstacle1top)
 
             self.score_bool = False
@@ -187,7 +181,7 @@ class Game(Widget):
             self.add_widget(self.obstacle2)
 
             self.remove_widget(self.obstacle2top)
-            self.obstacle2top = Obstacle(pos=(900, 900-x))
+            self.obstacle2top = Obstacle(pos=(900, 900 - x))
             self.add_widget(self.obstacle2top)
             self.score_bool = False
 
@@ -204,23 +198,16 @@ class Game(Widget):
         self.scorelabel.text = "[size=40][color=0266C9]{0}[/color][/size]".format(str(self.score))
 
 
-
-
-
 class Menu(Widget):
     def __init__(self):
         super(Menu, self).__init__()
-        self.size = (800,600)
+        self.size = (800, 600)
         self.add_widget(Label(center=self.center, text="tap to start"))
 
     def on_touch_down(self, *ignore):
         if self.parent:
             self.parent.add_widget(Game())
             self.parent.remove_widget(self)
-
-
-
-
 
 
 class NameApp(App):
