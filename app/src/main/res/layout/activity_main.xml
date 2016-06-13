@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/background3"
+    android:background="@drawable/beach6"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
@@ -10,12 +10,11 @@
         android:text="@string/days_left"
         android:typeface="monospace"
         android:textSize="20sp"
-        android:textColor="#ffffff"
+        android:textColor="#000000"
         android:textStyle="bold|italic"
         android:id="@+id/days_left"
-        android:layout_above="@+id/relativeLayout"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="25dp" />
+        android:layout_above="@+id/top_line"
+        android:layout_centerHorizontal="true" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,8 +48,8 @@
                 android:orientation="vertical" >
                 <TextView
                     android:id="@+id/txtTimerDay"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="95dp"
+                    android:layout_height="110dp"
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="#000000"
@@ -67,8 +66,8 @@
                 android:orientation="vertical" >
                 <TextView
                     android:id="@+id/txtTimerHour"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="95dp"
+                    android:layout_height="110dp"
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="#000000"
@@ -85,8 +84,8 @@
                 android:orientation="vertical" >
                 <TextView
                     android:id="@+id/txtTimerMinute"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="95dp"
+                    android:layout_height="105dp"
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="#000000"
@@ -103,8 +102,8 @@
                 android:orientation="vertical" >
                 <TextView
                     android:id="@+id/txtTimerSecond"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="95dp"
+                    android:layout_height="105dp"
                     android:gravity="center"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="#000000"
