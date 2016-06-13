@@ -54,12 +54,13 @@ class Word(object):
           if len(ENG_WORDS[idx]) > MIN_WORD_LEN and len(ENG_WORDS[idx]) <= MAX_WORD_LEN:
             Word = ENG_WORDS[idx]
 
-  def move_down(screen, word):
-   word = WORD
-   empty = " " * len(word[2])
-   screen.addstr(word[0], word[1], empty)
-   word[0] += 1
-   screen.addstr(word[0], word[1], word[2])
+  def move_down(self,screen, word):
+   self.panel.move(self.y, self.x)
+   curses.panel.update_panels();
+   self.win.noutrefresh(); curses.doupdate()
+   self.y += 1
+
+
 
   def create_word(screen, word):
     while 1:
@@ -94,6 +95,16 @@ class Word(object):
   def getY(self):
 
     return self.y
+
+  def getPanel(self):
+    return self.panel
+
+  def _eq__(self,other):
+    return self.word == other.word
+
+  def __str__(self):
+    return self.word
+
 ent = ""
 test_val = 1
 SCR_Y_MAX = 40
@@ -547,6 +558,8 @@ def printError(msg):
   curses.endwin()
   #exit program
   sys.exit()
+
+
 
 
 ###############################################################################
