@@ -1,16 +1,9 @@
-# SNAKES GAME
-# Use ARROW KEYS to play, SPACE BAR for pausing/resuming and Esc Key for exiting
-# https://gist.githubusercontent.com/sanchitgangwar/2158089/raw/5f3d0003801acfe1a29c4b24f2c8975efacf6f66/snake.py
-
-#below code needs to be fixed
-#from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
 from random import randint
-import time
 import curses.panel
-#import threading
+import time
+
 import sys
 import threading
-
 
 # -------------------------------------------------------
 # Global Varibles
@@ -20,11 +13,15 @@ WORD_START_PAUSE = 0.2   # Initial word speed. Lower is Faster
 ENTER_Y_OFFSET = 5
 GO_NEXT = False
 is_word_down_thread_stop = False
+ENG_FILE = "words.dat"
+PY_FILE = "python.dat"
 
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
-REQ_Y = 0            # required screen size Y
-REQ_X = 0            # required screen size X
+REQ_Y = 55/2            # required screen size Y
+REQ_X = 200/2            # required screen size X
+DEBUG_CURR_Y = 50
+DEBUG_CURR_X = 3
 ENG_WORDS = ["apple","hi","hello","aaron",""]
 ENG_WORDS_LEN = 0
 PY_WORDS = []
@@ -34,6 +31,7 @@ MIN_WORD_LEN = 0
 MAX_WORD_LEN = 0
 WORD = ""
 word_down_thread = ""
+is_demo = False
 
 class Word(object):
   """
@@ -64,9 +62,7 @@ class Word(object):
    self.win.noutrefresh(); curses.doupdate()
    self.y += 1
 
-
-
-  def create_word(screen, word):
+   def create_word(screen, word):
     while 1:
       word_len = 4
       word = ""
@@ -93,11 +89,9 @@ class Word(object):
       time.sleep(0.5)
 
   def getX(self):
-
     return self.x
 
   def getY(self):
-
     return self.y
 
   def getPanel(self):
@@ -111,7 +105,6 @@ class Word(object):
 
   def delWord(self):
     self.panel.hide()
-    # curses.panel.update_panels(); self.win.refresh() not working
     curses.panel.update_panels(); STDSCR.refresh()
 
   # Debug
@@ -125,7 +118,6 @@ SCR_Y_MAX = 40
 SCR_X_MAX = 60
 
 def drawCoor():
-
   STDSCR.clear()
   STDSCR.border(0)
   STDSCR.refresh()
@@ -153,16 +145,22 @@ def clear_line(y):
   STDSCR.addstr(y, 1, empty)
 
 def debug(msg, level):
-  """
-  """
   y = SCR_Y_MAX - 10 + level
   clear_line(y)
                                                  # Initializing value
 saved =""
 
+def my_raw_input(r, c, prompt_string):
+    curses.echo()
+    STDSCR.addstr(r, c, prompt_string)
+    STDSCR.refresh()
+    input = STDSCR.getstr(r + 1, c, 20)
+    return input  #
+
 def GamePlay():
 
   while True:
+    my_raw_input(3,10,"test")
     stdscr = STDSCR
     STDSCR.clear()
     STDSCR.refresh()
@@ -291,17 +289,22 @@ def mainGameScreen():
   """
   STDSCR.clear()
   STDSCR.refresh()
+
+  global word_down_thread, is_word_down_thread_stop
+  global EXIT_NOW
+  is_word_down_thread_stop = False
+  word_down_thread = threading.Thread(target=start_fall_word, args=[False])
   # debug
   if IS_DEBUG:
     drawCoor()
 
   # Draw Title
-  title1 = r'TTTTT\ EEEEE\ X   X\ TTTTT\      BBBB\  L\       A    SSSSS\ TTTTT\ EEEEE\ RRRR   '
-  title2 = r'\\T\\\ E\\\\\  X X\  \\T\\\      B\\\B\ L\      A\A   S\\\\\ \\T\\\ E\\\\\ R\\\R\ '
-  title3 = r'  T\   EEEEE\   X\     T\        BBBB\\ L\     AAAAA  SSSSS\   T\   EEEEE\ RRRR\\ '
-  title4 = r'  T\   E\\\\\  X\X     T\        B\\\B\ L\     A\  A\ \\\\S\   T\   E\\\\\ R\ R\  '
-  title5 = r'  T\   EEEEE\ X\  X\   T\        BBBB\\ LLLLL\ A\  A\ SSSSS\   T\   EEEEE\ R\  R\ '
-  title6 = r'  \\   \\\\\\ \\  \\   \\        \\\\\  \\\\\\ \\  \\ \\\\\\   \\   \\\\\\ \\  \\ '
+  title1 = r'TTTTTT\ EEEEE\  X   X\ TTTTT\      BBBB\  L\       A    SSSSS\ TTTTT\ EEEEE\ RRRR   '
+  title2 = r'\\T\\\  E\\\\\   X X\  \\T\\\      B\\\B\ L\      A\A   S\\\\\ \\T\\\ E\\\\\ R\\\R\ '
+  title3 = r'  T\    EEEEE\    X\     T\        BBBB\\ L\     AAAAA  SSSSS\   T\   EEEEE\ RRRR\\ '
+  title4 = r'  T\    E\\\\\   X\X     T\        B\\\B\ L\     A\  A\ \\\\S\   T\   E\\\\\ R\ R\  '
+  title5 = r'  T\    EEEEE\  X\  X\   T\        BBBB\\ LLLLL\ A\  A\ SSSSS\   T\   EEEEE\ R\  R\ '
+  title6 = r'  \\    \\\\\\  \\  \\   \\        \\\\\  \\\\\\ \\  \\ \\\\\\   \\   \\\\\\ \\  \\ '
 
   #                         h      l           y             x
   title_win = curses.newwin(9, len(title1)+4, 5, int(MAX_X/2 - len(title1)/2))
@@ -326,8 +329,6 @@ def mainGameScreen():
   menu_panel = curses.panel.new_panel(menu_win)
   menu_panel.top();curses.panel.update_panels()
   menu_win.noutrefresh(); curses.doupdate()
-
-
 
   #initialize
   main_rc = 0
@@ -385,6 +386,7 @@ def mainGameScreen():
           play2 = "[M] Medium - words length of 5 and more"
           play3 = "[H] Hard - random char and symbols"
           play4 = "[R] reset"
+
         else:
           play1 = "[E] Easy - words length of 3 - 5"
           play2 = "[M] Medium - words lenght of 5 - 10"
@@ -522,8 +524,6 @@ def gameScreen(pauseSec, diffc, ptype):
     if EXIT_GAME:
       break
 
-
-
 def userstats():
   stat_win = curses.newwin(30, 10, 10, 15)
   stat_win.addstr(5,6,"This is userstats window")
@@ -534,6 +534,78 @@ def userstats():
   stat_win.addstr(7,6,"level#: ")
   stat_win.addstr(8,6,"score#: ")
 
+
+def start_fall_word(is_demo):
+  count_worddown = 0
+  word_wordObj = {}
+
+  comboTimerCount = 1
+  showCombo = False
+
+  # Create a combo window/panel
+  combo_win = curses.newwin(10,10,5,5)
+  combo_pan = curses.panel.new_panel(combo_win)
+  combo_pan.hide()
+
+  #
+  new_word_interval = 0
+  combo_count = 0
+  lastSaved = ""
+  lose_count = 0
+  score_count = 0
+
+  dummyCombo = ""
+  # Score
+  if not is_demo:
+    dummyScore = 0
+    dummy = drawLife(lose_count)
+
+  while not is_word_down_thread_stop:
+    #
+    # Words falling down
+    if new_word_interval % NEW_WORD_FREQ  == 0:
+      wordObj = Word()
+      word_wordObj[wordObj.word] = wordObj
+      new_word_interval = 0
+
+    # move down each words
+    words = word_wordObj.copy()
+    for word in words:
+      wordObj = word_wordObj[word]
+
+    # Y boundary
+    if wordObj.getY() >= MAX_Y-3:
+     del word_wordObj[word]
+    wordObj.delWord()
+    lose_count += 1
+    if not is_demo:
+      dummy = drawLife(lose_count)
+
+    else:
+      wordObj.moveDown()
+      new_word_interval += 1
+      count_worddown = 0
+
+    if not is_demo:
+      # Check what a user types
+      if lastSaved != ent:
+        if word_wordObj.get(ent):
+          combo_count += 1
+          score_count += 10
+          word_wordObj[ent].remove_same(ent)
+          del word_wordObj[ent]
+
+          # show combo and score
+          each_score = 300
+          bonus = 13 * (combo_count)
+          cu_score = 300 * score_count  + bonus
+
+          showCombo = True
+        # Miss!
+        else:
+          combo_count = 0
+
+        lastSaved = ent
 
 # ------------------------------------------------------------------------------
 # Check requirements
@@ -553,7 +625,6 @@ def checkReq():
                "Current: " + str(MAX_X) + " X " + str(MAX_Y) + ". "
                "Required: " + str(REQ_X) + " X " + str(REQ_Y) )
 
-
 # ------------------------------------------------------------------------------
 # Print error message
 # ------------------------------------------------------------------------------
@@ -572,7 +643,6 @@ def printError(msg):
   curses.endwin()
   #exit program
   sys.exit()
-
 
 ###############################################################################
 #
@@ -594,7 +664,6 @@ def drawLife(lose):
   life_pan.top();
   curses.panel.update_panels();
   life_win.noutrefresh();curses.doupdate()
-
   return life_pan
 
 def drawCombo(combo = 0, score = 0):
@@ -611,10 +680,6 @@ def drawCombo(combo = 0, score = 0):
   curses.panel.update_panels();
   combo_win.noutrefresh();curses.doupdate()
   return combo_pan
-
-
-
-
 
 ###############################################################################
 # START
