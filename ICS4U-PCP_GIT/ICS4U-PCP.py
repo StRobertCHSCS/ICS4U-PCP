@@ -1,5 +1,3 @@
-
-
 # SNAKES GAME
 # Use ARROW KEYS to play, SPACE BAR for pausing/resuming and Esc Key for exiting
 # https://gist.githubusercontent.com/sanchitgangwar/2158089/raw/5f3d0003801acfe1a29c4b24f2c8975efacf6f66/snake.py
@@ -15,7 +13,10 @@ import sys
 # -------------------------------------------------------
 # Global Varibles
 # -------------------------------------------------------
-IS_DEBUG = False
+IS_DEBUG = True
+WORD_START_PAUSE = 0.2   # Initial word speed. Lower is Faster
+ENTER_Y_OFFSET = 5
+GO_NEXT = False
 
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
@@ -131,11 +132,7 @@ def debug(msg, level):
   """
   y = SCR_Y_MAX - 10 + level
   clear_line(y)
-
-
-                                               # Initializing values
-
-
+                                                 # Initializing value
 saved =""
 
 def GamePlay():
@@ -197,12 +194,6 @@ def GamePlay():
           enter_win.noutrefresh()
           curses.doupdate()
 
-        if event == 9: #tab to exit
-          EXIT_GAME = True
-
-        if event == 27: #esc
-          break
-
     if EXIT_GAME:
       break
 
@@ -211,7 +202,11 @@ def GamePlay():
 # main
 #------------------------------------------------------------------------------
 def main(stdscr):
-  #colors
+  """
+  set up for the game to start and runs by calling the main page
+  :param stdscr: window - standard window screen
+  :return: None
+  """
   curses.init_pair(1,curses.COLOR_RED,curses.COLOR_BLACK)
   curses.init_pair(2,curses.COLOR_GREEN,curses.COLOR_BLACK)
   curses.init_pair(3,curses.COLOR_YELLOW,curses.COLOR_BLACK)
@@ -221,6 +216,9 @@ def main(stdscr):
   curses.init_pair(7,curses.COLOR_BLUE,curses.COLOR_BLACK)
 
   global EXIT_GAME
+
+  #mouse cursor
+  curses.curs_set(0)
 
   # Set up for debug
   global STDSCR
@@ -260,7 +258,9 @@ def main(stdscr):
 # Screens
 #
 ###############################################################################
-
+#------------------------------------------------------------------------------
+# main Game screen
+#------------------------------------------------------------------------------
 def mainGameScreen():
   """
   makes the main screen of the game
@@ -271,6 +271,26 @@ def mainGameScreen():
   # debug
   if IS_DEBUG:
     drawCoor()
+
+  # Draw Title
+  title1 = r'TTTTT\ EEEEE\ X   X\ TTTTT\      BBBB\  L\       A    SSSSS\ TTTTT\ EEEEE\ RRRR   '
+  title2 = r'\\T\\\ E\\\\\  X X\  \\T\\\      B\\\B\ L\      A\A   S\\\\\ \\T\\\ E\\\\\ R\\\R\ '
+  title3 = r'  T\   EEEEE\   X\     T\        BBBB\\ L\     AAAAA  SSSSS\   T\   EEEEE\ RRRR\\ '
+  title4 = r'  T\   E\\\\\  X\X     T\        B\\\B\ L\     A\  A\ \\\\S\   T\   E\\\\\ R\ R\  '
+  title5 = r'  T\   EEEEE\ X\  X\   T\        BBBB\\ LLLLL\ A\  A\ SSSSS\   T\   EEEEE\ R\  R\ '
+  title6 = r'  \\   \\\\\\ \\  \\   \\        \\\\\  \\\\\\ \\  \\ \\\\\\   \\   \\\\\\ \\  \\ '
+
+  #                         h      l           y             x
+  title_win = curses.newwin(9, len(title1)+4, 5, int(MAX_X/2 - len(title1)/2))
+  title_win.addstr(0+1, 1+1, title1, curses.color_pair(1)|curses.A_BLINK)
+  title_win.addstr(1+1, 1+1, title2, curses.color_pair(2)|curses.A_BLINK)
+  title_win.addstr(2+1, 1+1, title3, curses.color_pair(3)|curses.A_BLINK)
+  title_win.addstr(3+1, 1+1, title4, curses.color_pair(4)|curses.A_BLINK)
+  title_win.addstr(4+1, 1+1, title5, curses.color_pair(5)|curses.A_BLINK)
+  title_win.addstr(5+1, 1+1, title6, curses.color_pair(6)|curses.A_BLINK)
+
+  title_panel = curses.panel.new_panel(title_win)
+  title_panel.top();curses.panel.update_panels()
 
   # Draw menu
   menu1 = "[P] PLAY"
@@ -299,7 +319,7 @@ def mainGameScreen():
 
     #stats screen
     elif chr(event) == 's':
-      #title_panel.hide()
+      title_panel.hide()
       menu_panel.hide()
       main_rc = 1
 
@@ -364,7 +384,7 @@ def mainGameScreen():
 
         if event_lower == 'e' or event_lower == 'm' or event_lower == 'h':
 
-          #title_panel.hide()
+          title_panel.hide()
           menu_panel.hide()
           play1_panel.hide()
           play2_panel.hide()
@@ -378,6 +398,7 @@ def mainGameScreen():
               diffc = "hard"
 
           main_rc = 1
+          gameScreen(WORD_START_PAUSE, diffc, ptype)
           break
 
         # reset
@@ -391,6 +412,92 @@ def mainGameScreen():
 
   return main_rc
 
+#------------------------------------------------------------------------------
+# game screen
+#------------------------------------------------------------------------------
+def gameScreen(pauseSec, diffc, ptype):
+  """
+  makes game screen on the user screen to run the game
+  :param pauseSec: int - amount of pause seconds
+  :param diffc: str - difficulty of the game
+  :param ptype: str - user selected game type
+  :return: None
+  """
+  while True:
+    # 1 = every 1 sec, words are falling down
+    STDSCR.clear()
+    STDSCR.refresh()
+    if IS_DEBUG:
+      drawCoor()
+
+    global EXIT_GAME
+    #exit whenever i want
+    saved = ""
+
+    y_entered = MAX_Y - ENTER_Y_OFFSET
+    x_entered = 10
+    enter_win = curses.newwin(1, 80, y_entered, x_entered)  # l, w, y, x
+    enter_panel = curses.panel.new_panel(enter_win)
+    enter_panel.top()
+    # Take an input from a user
+    msg = ""
+    while 1:
+      event = STDSCR.getch()
+      if event == -1:
+        # EXIT_GAME is True when the life comes 0
+        if EXIT_GAME or GO_NEXT:
+          STDSCR.timeout(-1)
+          # Go back to main screen
+          break
+
+      else:
+        if event != 10 and event != 263:  # enter and backspace
+          saved += chr(event)
+
+        if event == 263:  # backspace
+          saved = saved[:-1]
+
+        msg = " " * len(msg)
+        enter_win.addstr(0,0,msg)
+
+        msg = "> " + str(saved)
+        enter_win.addstr(0,0,msg)
+        enter_win.noutrefresh()
+        curses.doupdate()
+
+        # enter
+        if event == 10:
+          global USER_ENT
+          USER_ENT = saved
+          saved = ""
+          msg = " " * len(msg)
+          enter_win.addstr(0,0,msg)
+          enter_win.noutrefresh()
+          curses.doupdate()
+
+        if event == 9: #tab to exit
+          STDSCR.timeout(-1)
+          EXIT_GAME = True
+
+        if event == 27: #esc
+          #wait for input
+          STDSCR.timeout(-1)
+          break
+
+    if GO_NEXT:
+      STDSCR.addstr(5,20,"****** Completed ********")
+      pauseSec = pauseSec /2
+
+      #speed
+      global NEW_WORD_FREQ
+      NEW_WORD_FREQ = NEW_WORD_FREQ - 1
+      if NEW_WORD_FREQ < 8:
+        NEW_WORD_FREQ = 8
+
+    if EXIT_GAME:
+      break
+
+
 
 def userstats():
   stat_win = curses.newwin(30, 10, 10, 15)
@@ -402,6 +509,10 @@ def userstats():
   stat_win.addstr(7,6,"level#: ")
   stat_win.addstr(8,6,"score#: ")
 
+
+# ------------------------------------------------------------------------------
+# Check requirements
+# ------------------------------------------------------------------------------
 def checkReq():
   """
   checks whether the game screen fits the user screen size
@@ -418,6 +529,9 @@ def checkReq():
                "Required: " + str(REQ_X) + " X " + str(REQ_Y) )
 
 
+# ------------------------------------------------------------------------------
+# Print error message
+# ------------------------------------------------------------------------------
 def printError(msg):
   """
   prints the given error message
