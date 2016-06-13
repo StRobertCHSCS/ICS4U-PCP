@@ -196,8 +196,8 @@ class Menu(Widget):
     def __init__(self):
         super(Menu, self).__init__()
         self.size = (800, 600)
-        self.add_widget(Label(center=(400, 295), text="Tap to start"))
-        self.player = PlayerObj(pos=(370, 315))
+        self.add_widget(Label(center=(400, 275), text="Tap to start"))
+        self.player = PlayerObj(pos=(370, 295))
         self.add_widget(self.player)
 
     def on_touch_down(self, *ignore):
