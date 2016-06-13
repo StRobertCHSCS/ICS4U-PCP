@@ -44,7 +44,7 @@ class PlayerObj(Image):
         # image properties
         self.allow_stretch = True
 
-        self.source = "images/Water.gif"
+        self.source = "images/Box.gif"
         self.size = (60, 60)
 
         super(PlayerObj, self).__init__(pos=pos)
@@ -196,7 +196,9 @@ class Menu(Widget):
     def __init__(self):
         super(Menu, self).__init__()
         self.size = (800, 600)
-        self.add_widget(Label(center=self.center, text="tap to start"))
+        self.add_widget(Label(center=(400, 295), text="Tap to start"))
+        self.player = PlayerObj(pos=(370, 315))
+        self.add_widget(self.player)
 
     def on_touch_down(self, *ignore):
         if self.parent:
