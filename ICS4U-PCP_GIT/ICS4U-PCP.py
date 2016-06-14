@@ -1,13 +1,14 @@
 from random import randint
 import curses.panel
 import time
-
+from time import sleep
 import sys
-import threading
+#import threading
 
 # -------------------------------------------------------
 # Global Varibles
 # -------------------------------------------------------
+
 IS_DEBUG = True
 WORD_START_PAUSE = 0.2   # Initial word speed. Lower is Faster
 ENTER_Y_OFFSET = 5
@@ -18,10 +19,9 @@ PY_FILE = "python.dat"
 
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
-REQ_Y = 55/2            # required screen size Y
-REQ_X = 200/2            # required screen size X
-DEBUG_CURR_Y = 50
-DEBUG_CURR_X = 3
+REQ_Y = 55/2         # required screen size Y
+REQ_X = 200/2        # required screen size X
+
 ENG_WORDS = ["apple","hi","hello","aaron",""]
 ENG_WORDS_LEN = 0
 PY_WORDS = []
@@ -150,13 +150,6 @@ def debug(msg, level):
                                                  # Initializing value
 saved =""
 
-def my_raw_input(r, c, prompt_string):
-    curses.echo()
-    STDSCR.addstr(r, c, prompt_string)
-    STDSCR.refresh()
-    input = STDSCR.getstr(r + 1, c, 20)
-    return input  #
-
 def GamePlay():
 
   while True:
@@ -219,15 +212,18 @@ def GamePlay():
 
     if EXIT_GAME:
       break
+
 #------------------------------------------------------------------------------
 # main
 #------------------------------------------------------------------------------
+
 def main(stdscr):
   """
   set up for the game to start and runs by calling the main page
   :param stdscr: window - standard window screen
   :return: None
   """
+  # make colors
   curses.init_pair(1,curses.COLOR_RED,curses.COLOR_BLACK)
   curses.init_pair(2,curses.COLOR_GREEN,curses.COLOR_BLACK)
   curses.init_pair(3,curses.COLOR_YELLOW,curses.COLOR_BLACK)
@@ -237,8 +233,9 @@ def main(stdscr):
   curses.init_pair(7,curses.COLOR_BLUE,curses.COLOR_BLACK)
 
   global EXIT_GAME
+  global is_word_down_thread_stop
 
-  #mouse cursor
+  # mouse cursor set - none
   curses.curs_set(0)
 
   # Set up for debug
@@ -260,10 +257,9 @@ def main(stdscr):
   while 1:
     # re-initialize
     EXIT_GAME = False
-
     # main game screen
-    rc = mainGameScreen()
 
+    rc = mainGameScreen()
     # reset
     if rc == 4:
       STDSCR.clear(); STDSCR.refresh()
@@ -293,7 +289,6 @@ def mainGameScreen():
   global word_down_thread, is_word_down_thread_stop
   global EXIT_NOW
   is_word_down_thread_stop = False
-  word_down_thread = threading.Thread(target=start_fall_word, args=[False])
   # debug
   if IS_DEBUG:
     drawCoor()
@@ -322,6 +317,7 @@ def mainGameScreen():
   menu1 = "[P] PLAY"
   menu2 = "[S] Statistics"
   menu3 = "[X] EXIT"
+
   menu_win = curses.newwin(11, len(menu2) + 4 , 30, 78)  # h, l, y, x
   menu_win.addstr(1, 1, menu1,curses.A_BOLD)
   menu_win.addstr(2+3, 1, menu2,curses.A_BOLD)
@@ -458,7 +454,6 @@ def gameScreen(pauseSec, diffc, ptype):
       drawCoor()
 
     global EXIT_GAME
-    #exit whenever i want
     saved = ""
 
     y_entered = MAX_Y - ENTER_Y_OFFSET
@@ -469,6 +464,7 @@ def gameScreen(pauseSec, diffc, ptype):
     # Take an input from a user
     msg = ""
     while 1:
+      STDSCR.timeout(100)
       event = STDSCR.getch()
       if event == -1:
         # EXIT_GAME is True when the life comes 0
@@ -606,6 +602,19 @@ def start_fall_word(is_demo):
           combo_count = 0
 
         lastSaved = ent
+
+
+def eng_word():
+  global ENG_WORDS
+                     # OPEN FILE
+  eng_file  = open(ENG_FILE,"r")
+  ENG_WORDS = eng_file.readlines()
+
+
+def py_word():
+  global PY_WORDS
+  py_file = open(PY_FILE,"r")
+  PY_WORDS = py_file.readlines()
 
 # ------------------------------------------------------------------------------
 # Check requirements
