@@ -12,7 +12,7 @@ import java.util.Locale;
 
 @SuppressWarnings("ConstantConditions")
 public class MainActivity extends AppCompatActivity {
-    private TextView txtTimerDay, txtTimerHour, txtTimerMinute, txtTimerSecond;
+    private TextView show_days, show_hours, show_minutes, show_seconds;
     private TextView event_here;
     private Handler handler;
     protected Runnable runnable;
@@ -21,10 +21,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        txtTimerDay = (TextView) findViewById(R.id.txtTimerDay);
-        txtTimerHour = (TextView) findViewById(R.id.txtTimerHour);
-        txtTimerMinute = (TextView) findViewById(R.id.txtTimerMinute);
-        txtTimerSecond = (TextView) findViewById(R.id.txtTimerSecond);
+        show_days = (TextView) findViewById(R.id.show_days);
+        show_hours = (TextView) findViewById(R.id.show_hours);
+        show_minutes = (TextView) findViewById(R.id.show_minutes);
+        show_seconds = (TextView) findViewById(R.id.show_seconds);
         event_here = (TextView) findViewById(R.id.event_here);
         countDownStart();
     }
@@ -51,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
                         long minutes = diff / (60 * 1000);
                         diff -= minutes * (60 * 1000);
                         long seconds = diff / 1000;
-                        txtTimerDay.setText("" + String.format("%02d", days));
-                        txtTimerHour.setText("" + String.format("%02d", hours));
-                        txtTimerMinute.setText("" + String.format("%02d", minutes));
-                        txtTimerSecond.setText("" + String.format("%02d", seconds));
+                        show_days.setText(String.valueOf(days));
+                        show_hours.setText(String.valueOf(hours));
+                        show_minutes.setText(String.valueOf(minutes));
+                        show_seconds.setText(String.valueOf(seconds));
                     } else {
                         event_here.setVisibility(View.VISIBLE);
                         event_here.setText(R.string.yourevent);
