@@ -29,7 +29,7 @@ PY_WORDS = []
 PY_WORDS_LEN = 0
 STDSCR = ""
 MIN_WORD_LEN = 0
-MAX_WORD_LEN = 0
+MAX_WORD_LEN = 5
 WORD = ""
 word_down_thread = ""
 is_demo = False
@@ -44,7 +44,7 @@ class Word(object):
   """
   Representation of words
   """
-  def __init__(self, diff,  ptype):
+  def __init__(self, diffc,  ptype):
     """
     selects a word according to user difficulty
     :param diffc: str - difficulty selected by user
@@ -55,22 +55,42 @@ class Word(object):
 
     #add more difficulties
     if ptype == "prac":
-      if diff == "easy" or diff == "medium":
-        global MIN_WORD_LEN,MAX_WORD_LEN,WORD
-        MIN_WORD_LEN = 0
-        MAX_WORD_LEN = 3
-        for idx in range(len(ENG_WORDS)):
-          if len(ENG_WORDS[idx]) > MIN_WORD_LEN and len(ENG_WORDS[idx]) <= MAX_WORD_LEN:
-            Word = ENG_WORDS[idx]
+      # Easy or medium
+      if diffc == "easy" or diffc == "medium":
+        max_word_len = 0
+        if diffc == "easy":
+          min_word_len = 3
+          max_word_len = 4
+        elif diffc == "medium":
+          min_word_len = 5
+          max_word_len = 20
 
-    y = 6
+        # Create a word
+        word = ENG_WORDS[randint(0, ENG_WORDS_LEN - 1)].strip()
+        while len(word) > max_word_len or len(word) < min_word_len :
+          word = ENG_WORDS[randint(0, ENG_WORDS_LEN-1)].strip()
+      # Hard
+      else:
+        max_word_len = 7
+        for dummy in range(max_word_len):
+          ch = chr(randint(ord('!'), ord('~')))
+          word += ch
+
+    y = 4
     x_offset_left = 10
     x = randint(x_offset_left, MAX_X - len(word)- 5)
+
+    win = curses.newwin(2, len(word), y, x)
+    win.addstr(0, 0, word, curses.color_pair(randint(1, 6)))
+
     self.word = word
     self.x = x
     self.y = y
+    self.win = win
+    self.panel = curses.panel.new_panel(win)
+    self.panel.bottom()
 
-  def move_down(self,screen, word):
+  def moveDown(self):
    self.panel.move(self.y, self.x)
    curses.panel.update_panels();
    self.win.noutrefresh(); curses.doupdate()
@@ -200,6 +220,9 @@ def main(stdscr):
   # clear and draw coordinates
   if IS_DEBUG:
     drawCoor()
+
+  # read word files
+  readEngWord()
 
   #define this after the window's created.
   #horizontal line decides whether user missed or not.
@@ -491,80 +514,96 @@ def start_fall_word(is_demo):
   count_worddown = 0
   word_wordObj = {}
 
-  comboTimerCount = 1
-  showCombo = False
+  #comboTimerCount = 1
+  #showCombo = False
 
-  # Create a combo window/panel
-  combo_win = curses.newwin(10,10,5,5)
-  combo_pan = curses.panel.new_panel(combo_win)
-  combo_pan.hide()
+  ## Create a combo window/panel
+  #combo_win = curses.newwin(10,10,5,5)
+  #combo_pan = curses.panel.new_panel(combo_win)
+  #combo_pan.hide()
 
-  #
+  ##
   new_word_interval = 0
-  combo_count = 0
-  lastSaved = ""
+  #combo_count = 0
+  #lastSaved = ""
   lose_count = 0
-  score_count = 0
+  #score_count = 0
 
-  dummyCombo = ""
+  #dummyCombo = ""
+  #dummy = drawLife(lose_count)
   # Score
-  if not is_demo:
-    dummyScore = 0
-    dummy = drawLife(lose_count)
 
+  #wordObj = Word("easy", "prac")
+  #curses.panel.update_panels()
+  #STDSCR.noutrefresh()
+  #curses.doupdate()
+  #if not is_demo:
+  #  dummyScore = 0
+  #  dummy = drawLife(lose_count)
+  #curses.doupdate()
+  #curses.panel.update_panels()
+  #STDSCR.refresh()
+  #print("word.x" + str(wordObj.x),"word.y"+str(wordObj.y))
+  #print("HELLO" + str(is_word_down_thread_stop))
+  #print("is_demo:" + str(is_demo))
+  #STDSCR.getch()
   while not is_word_down_thread_stop:
     #
     # Words falling down
-    if new_word_interval % NEW_WORD_FREQ  == 0:
-      wordObj = Word("easy", "prac")
-      word_wordObj[wordObj.word] = wordObj
-      new_word_interval = 0
+    if getPauseSec(count_worddown, 0.1):
+      if new_word_interval % NEW_WORD_FREQ  == 0:
+        wordObj = Word("easy", "prac")
+        word_wordObj[wordObj.word] = wordObj
+        new_word_interval = 0
 
-    # move down each words
-    words = word_wordObj.copy()
-    for word in words:
-      wordObj = word_wordObj[word]
+      # move down each words
+      words = word_wordObj.copy()
+      for word in words:
+        wordObj = word_wordObj[word]
 
-    # Y boundary
-    if wordObj.getY() >= MAX_Y-3:
-     del word_wordObj[word]
-    wordObj.delWord("easy","prac")
-    lose_count += 1
-    if not is_demo:
-      dummy = drawLife(lose_count)
+        # Y boundary
+        if wordObj.getY() >= MAX_Y-3:
+          del word_wordObj[word]
+          wordObj.delWord()
+          lose_count += 1
 
-    else:
-      wordObj.moveDown()
-      new_word_interval += 1
-      count_worddown = 0
+          if not is_demo:
+            dummy = drawLife(lose_count)
 
-    if not is_demo:
-      # Check what a user types
-      if lastSaved != ent:
-        if word_wordObj.get(ent):
-          combo_count += 1
-          score_count += 10
-          word_wordObj[ent].remove_same(ent)
-          del word_wordObj[ent]
-
-          # show combo and score
-          each_score = 300
-          bonus = 13 * (combo_count)
-          cu_score = 300 * score_count  + bonus
-
-          showCombo = True
-        # Miss!
         else:
-          combo_count = 0
+          wordObj.moveDown()
+    new_word_interval += 1
+    count_worddown += 1
 
-        lastSaved = ent
+    #if not is_demo:
+    #  # Check what a user types
+    #  if lastSaved != ent:
+    #    if word_wordObj.get(ent):
+    #      combo_count += 1
+    #      score_count += 10
+    #      word_wordObj[ent].remove_same(ent)
+    #      del word_wordObj[ent]
+
+    #      # show combo and score
+    #      each_score = 300
+    #      bonus = 13 * (combo_count)
+    #      cu_score = 300 * score_count  + bonus
+
+    #      showCombo = True
+    #    # Miss!
+    #    else:
+    #      combo_count = 0
+
+    #    lastSaved = ent
 
 
-def eng_word():
+def readEngWord():
   global ENG_WORDS
+  global ENG_WORDS_LEN
                      # OPEN FILE
   eng_file  = open(ENG_FILE,"r")
   ENG_WORDS = eng_file.readlines()
+  ENG_WORDS_LEN = len(ENG_WORDS)
 
 
 def py_word():
@@ -614,6 +653,24 @@ def printError(msg):
 # Draws
 #
 ###############################################################################
+#------------------------------------------------------------------------------
+# get pause sec
+#------------------------------------------------------------------------------
+def getPauseSec(count, sec):
+  """
+  divide count by sec and check if the remainder is 0
+  :param count: int - count
+  :param sec: int - sec
+  :return: boolean - remainder is 0
+  """
+
+  if count < 1:
+    count = 1
+
+  weight = 5000000
+  msum = count % (weight * sec)
+  return msum == 0
+
 
 # ------------------------------------------------------------------------------
 # Draw life bar
@@ -626,6 +683,7 @@ def drawLife(lose):
   if 1 * lose > MAX_Y-3:
     EXIT_NOW =True
   for y in range(1 * lose, MAX_Y-3):
+    #print("drawLife")
     life_win.addch(y, 1, ord('='))
   life_win.box()
 
