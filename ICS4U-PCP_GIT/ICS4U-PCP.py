@@ -3,7 +3,7 @@ import curses.panel
 import time
 from time import sleep
 import sys
-#import threading
+import threading
 
 # -------------------------------------------------------
 # Global Varibles
@@ -20,8 +20,7 @@ ent = ""
 test_val = 1
 SCR_Y_MAX = 40
 SCR_X_MAX = 60
-
-
+EXIT_GAME = False
 
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
@@ -37,14 +36,15 @@ STDSCR = ""
 MIN_WORD_LEN = 0
 MAX_WORD_LEN = 5
 WORD = ""
-word_down_thread = ""
+THREAD_OBJ = ""
+is_word_down_thread_stop = False    # True: Stop falling words.
+                                    # False: Start falling words
 is_demo = False
 
 # ------------------------------------------------------------------------------
 # class Word
 # ------------------------------------------------------------------------------
 # Create a word object placed in a panel
-
 
 class Word(object):
   """
@@ -178,8 +178,6 @@ def debug(msg, level):
   clear_line(y)
                                                  # Initializing value
 saved =""
-
-
 #------------------------------------------------------------------------------
 # main
 #------------------------------------------------------------------------------
@@ -199,11 +197,8 @@ def main(stdscr):
   curses.init_pair(6,curses.COLOR_CYAN,curses.COLOR_BLACK)
   curses.init_pair(7,curses.COLOR_BLUE,curses.COLOR_BLACK)
 
-  global EXIT_GAME
-  global is_word_down_thread_stop
-
   # mouse cursor set - none
-  curses.curs_set(0)
+  curses.curs_set(1)
 
   # Set up for debug
   global STDSCR
@@ -258,9 +253,6 @@ def mainGameScreen():
   STDSCR.clear()
   STDSCR.refresh()
 
-  global word_down_thread, is_word_down_thread_stop
-  global EXIT_NOW
-  is_word_down_thread_stop = False
   # debug
   if IS_DEBUG:
     drawCoor()
@@ -296,6 +288,15 @@ def mainGameScreen():
   menu_panel = curses.panel.new_panel(menu_win)
   menu_panel.top();curses.panel.update_panels()
   menu_win.noutrefresh(); curses.doupdate()
+
+  # word falling down in the background
+  global THREAD_OBJ
+  global is_word_down_thread_stop
+
+  is_word_down_thread_stop = False
+  THREAD_OBJ = threading.Thread(target=start_fall_word, args=[0.06, True, "hard", "coding"])
+  THREAD_OBJ.daemon = True
+  THREAD_OBJ.start()
 
   #initialize
   main_rc = 0
@@ -377,6 +378,7 @@ def mainGameScreen():
 
         if event_lower == 'e' or event_lower == 'm' or event_lower == 'h':
 
+          stop_thread()
           title_panel.hide()
           menu_panel.hide()
           play1_panel.hide()
@@ -389,7 +391,6 @@ def mainGameScreen():
               diffc = "medium"
           elif event_lower == 'h':
               diffc = "hard"
-          start_fall_word(0.5, False, diffc, ptype)
 
           main_rc = 1
           gameScreen(WORD_START_PAUSE, diffc, ptype)
@@ -397,6 +398,7 @@ def mainGameScreen():
 
         # reset
         elif event_lower.lower() == 'r':
+          stop_thread()
           main_rc = 4
           break
 
@@ -424,7 +426,15 @@ def gameScreen(pauseSec, diffc, ptype):
     if IS_DEBUG:
       drawCoor()
 
+    global THREAD_OBJ, is_word_down_thread_stop
     global EXIT_GAME
+    is_word_down_thread_stop = False
+    #make another thread
+    THREAD_OBJ = threading.Thread(target=start_fall_word, args=[pauseSec, False, diffc, ptype])
+    #exit whenever i want
+    THREAD_OBJ.daemon = True
+    THREAD_OBJ.start()
+
     saved = ""
 
     y_entered = MAX_Y - ENTER_Y_OFFSET
@@ -441,6 +451,7 @@ def gameScreen(pauseSec, diffc, ptype):
         # EXIT_GAME is True when the life comes 0
         if EXIT_GAME or GO_NEXT:
           STDSCR.timeout(-1)
+          stop_thread()
           # Go back to main screen
           break
 
@@ -471,11 +482,13 @@ def gameScreen(pauseSec, diffc, ptype):
 
         if event == 9: #tab to exit
           STDSCR.timeout(-1)
+          stop_thread()
           EXIT_GAME = True
 
         if event == 27: #esc
           #wait for input
           STDSCR.timeout(-1)
+          stop_thread()
           break
 
     if GO_NEXT:
@@ -500,6 +513,7 @@ def userstats():
   stat_win.box()
   score_formatline = []
 
+  stop_thread()
   stat_win.addstr(6,6,"user name: ")
   stat_win.addstr(7,6,"level#: ")
   stat_win.addstr(8,6,"score#: ")
@@ -513,10 +527,13 @@ def start_fall_word(pauseSec, is_demo, diffc, ptype):
   #showCombo = False
 
   ## Create a combo window/panel
-  #combo_win = curses.newwin(10,10,5,5)
-  #combo_pan = curses.panel.new_panel(combo_win)
-  #combo_pan.hide()
+  combo_win = curses.newwin(10,10,5,5)
+  combo_pan = curses.panel.new_panel(combo_win)
+  combo_pan.hide()
 
+  # init
+  global EXIT_GAME
+  global GO_NEXT
   ##
   new_word_interval = 0
   #combo_count = 0
@@ -528,20 +545,10 @@ def start_fall_word(pauseSec, is_demo, diffc, ptype):
   #dummy = drawLife(lose_count)
   # Score
 
-  #wordObj = Word("easy", "prac")
-  #curses.panel.update_panels()
-  #STDSCR.noutrefresh()
-  #curses.doupdate()
-  #if not is_demo:
-  #  dummyScore = 0
-  #  dummy = drawLife(lose_count)
-  #curses.doupdate()
-  #curses.panel.update_panels()
-  #STDSCR.refresh()
-  #print("word.x" + str(wordObj.x),"word.y"+str(wordObj.y))
-  #print("HELLO" + str(is_word_down_thread_stop))
-  #print("is_demo:" + str(is_demo))
-  #STDSCR.getch()
+  if not is_demo:
+    dummyScore = 0
+    dummy = drawLife(lose_count)
+
   while not is_word_down_thread_stop:
     #
     # Words falling down
@@ -651,24 +658,6 @@ def printError(msg):
 # Draws
 #
 ###############################################################################
-#------------------------------------------------------------------------------
-# get pause sec
-#------------------------------------------------------------------------------
-def getPauseSec(count, sec):
-  """
-  divide count by sec and check if the remainder is 0
-  :param count: int - count
-  :param sec: int - sec
-  :return: boolean - remainder is 0
-  """
-
-  if count < 1:
-    count = 1
-
-  weight = 5000000
-  msum = count % (weight * sec)
-  return msum == 0
-
 
 # ------------------------------------------------------------------------------
 # Draw life bar
@@ -708,6 +697,28 @@ def drawCombo(combo = 0, score = 0):
   curses.panel.update_panels();
   combo_win.noutrefresh();curses.doupdate()
   return combo_pan
+
+#------------------------------------------------------------------------------
+# stop thread
+#------------------------------------------------------------------------------
+def stop_thread():
+  global is_word_down_thread_stop
+  is_word_down_thread_stop = True
+  # wait untill THREAD_OBJ stops
+  while THREAD_OBJ.isAlive():
+    pass
+  is_word_down_thread_stop = False
+
+#------------------------------------------------------------------------------
+# get pause sec
+#------------------------------------------------------------------------------
+def getPauseSec(count, sec):
+  if count < 1:
+    count = 1
+
+  weight = 5000000
+  msum = count % (weight * sec)
+  return msum == 0
 
 ###############################################################################
 # START
