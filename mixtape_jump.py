@@ -9,3 +9,7 @@ from kivy.properties import NumericProperty
 from kivy.clock import Clock
 from kivy.graphics import Rectangle, Color, Canvas
 from random import *
+
+"I HOPE THIS WORKS I WANT IT TO WORk"
+"Imma send you some text"
+#John is a goon
