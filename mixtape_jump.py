@@ -28,6 +28,11 @@ class GUI(Widget):
         self.mixtape.x = Window.width/4
         self.mixtape.y = Window.height/2
         self.add_widget(self.mixtape)
+    def check_score(self,obj):
+            self.score.text = str(self.rapperScore)
+
+        self.bind(rapperScore = check_score)
+        self.add_widget(self.score)
 
 
 
