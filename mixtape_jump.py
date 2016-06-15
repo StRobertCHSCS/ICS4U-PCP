@@ -28,3 +28,6 @@ class GUI(Widget):
         self.mixtape.x = Window.width/4
         self.mixtape.y = Window.height/2
         self.add_widget(self.mixtape)
+
+
+
