@@ -28,13 +28,20 @@ class GUI(Widget):
         self.mixtape.x = Window.width/4
         self.mixtape.y = Window.height/2
         self.add_widget(self.mixtape)
+
         def check_score(self,obj):
             self.score.text = str(self.rapperScore)
         self.bind(rapperScore = check_score)
         self.add_widget(self.score)
+
     def addrapper(self):
+        """
+        Program to initialize the opposing objects and the multiple rapper heads which includes its randomized placement
+        and the velocity which it moves at
+        :return:
+        """
         #add an rapper to the screen
-        #self.rapper
+        #initialize its image
         imageNumber = randint(1,7)
         imageStr = ('C:\Users\Koven\desktop\photoshopped\image'+str(imageNumber)+'.png')
         tmprapper = rapper(imageStr)
@@ -42,12 +49,15 @@ class GUI(Widget):
         #randomize y position
         ypos = randint(2,25)
         ypos = ypos*Window.height*.0625
+        #moves only on the x-axis
         tmprapper.y = ypos
         tmprapper.velocity_y = 0
         vel = 10
         tmprapper.velocity_x = -0.1*vel
+        #adds list to another rapper list which helps append score
         self.rapperList.append(tmprapper)
         self.add_widget(tmprapper)
+
 
 
 
