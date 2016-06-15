@@ -36,3 +36,4 @@ class WidgetDrawer(Widget):
     def setPos(self,xpos,ypos):
         self.x = xpos
         self.y = ypos
+
