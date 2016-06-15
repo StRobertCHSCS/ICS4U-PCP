@@ -51,15 +51,15 @@ class PlayerObj(Image):
 
         self.anim_delay = 0.25
         self.velocity_y = 0
-        self.gravity = 0.1
+        self.gravity = 0.2
 
     def update(self):
-        if self.velocity_y >= -4:
+        if self.velocity_y >= -6:
             self.velocity_y -= self.gravity
         self.y += self.velocity_y
 
     def on_touch_down(self, *ignore):
-        self.velocity_y = 4.5
+        self.velocity_y = 6
 
 
 class PlayerHB(Widget):
@@ -76,7 +76,7 @@ class Obstacle(Image):
 
         super(Obstacle, self).__init__(pos=pos)
 
-        self.velocity_x = -2.1
+        self.velocity_x = -4
 
     def update(self):
         self.x += self.velocity_x
@@ -108,15 +108,15 @@ class Game(Widget):
         self.add_widget(self.obstacle1)
         self.add_widget(self.obstacle2)
 
-        self.obstacle1top = Obstacle(pos=(900, 900 - x1))
-        self.obstacle2top = Obstacle(pos=(1400, 900 - x2))
+        self.obstacle1top = Obstacle(pos=(900, 820 - x1))
+        self.obstacle2top = Obstacle(pos=(1400, 820 - x2))
         self.add_widget(self.obstacle1top)
         self.add_widget(self.obstacle2top)
 
         # score
         self.score = 0
         self.score_bool = False
-        self.scorelabel = Label(pos=(self.width * 2.2 / 3, self.height / 4 * 3.2),
+        self.scorelabel = Label(pos=(350, 460),
                                 text="[size=40][color=ff3333]{0}[/color][/size]".format(str(self.score)), markup=True, )
         self.add_widget(self.scorelabel)
 
@@ -128,7 +128,6 @@ class Game(Widget):
 
     def update(self, dt):
         # collision stuff - window boundaries
-
         if self.player.y <= 0:
             self.player.y = 0
         elif self.player.y >= self.height - self.player.height:
@@ -164,7 +163,7 @@ class Game(Widget):
             self.add_widget(self.obstacle1)
 
             self.remove_widget(self.obstacle1top)
-            self.obstacle1top = Obstacle(pos=(900, 900 - x))
+            self.obstacle1top = Obstacle(pos=(900, 820 - x))
             self.add_widget(self.obstacle1top)
 
             self.score_bool = False
@@ -176,7 +175,7 @@ class Game(Widget):
             self.add_widget(self.obstacle2)
 
             self.remove_widget(self.obstacle2top)
-            self.obstacle2top = Obstacle(pos=(900, 900 - x))
+            self.obstacle2top = Obstacle(pos=(900, 820 - x))
             self.add_widget(self.obstacle2top)
             self.score_bool = False
 
