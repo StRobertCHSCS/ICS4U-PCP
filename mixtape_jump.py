@@ -30,9 +30,8 @@ class GUI(Widget):
         self.add_widget(self.mixtape)
     def check_score(self,obj):
             self.score.text = str(self.rapperScore)
-
-        self.bind(rapperScore = check_score)
-        self.add_widget(self.score)
+    self.bind(rapperScore = check_score)
+    self.add_widget(self.score)
 
 
 
