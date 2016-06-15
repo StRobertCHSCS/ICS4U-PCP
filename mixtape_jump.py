@@ -57,6 +57,17 @@ class GUI(Widget):
         #adds list to another rapper list which helps append score
         self.rapperList.append(tmprapper)
         self.add_widget(tmprapper)
+    #handle input events
+    def on_touch_down(self, touch):
+        """
+        Program to move the mixtape up according to when the screen is pressed
+        :param touch: none (when it is pressed down (responsive to touch events))
+        :return:
+        """
+        #moves the mixtape up
+        self.mixtape.impulse = 3
+        #Gravitational velocity to help move down
+        self.mixtape.grav = -0.1
 
 
 
