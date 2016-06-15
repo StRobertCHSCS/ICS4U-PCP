@@ -179,6 +179,33 @@ class GUI(Widget):
             k.update()
 
 
+class ClientApp(App):
+    """
+    An Client App Object
+    """
+    def build(self):
+        """
+        Program to initialize the buttons and start the game and game clock
+        :return: none (return the GUI Class)
+        """
+        #widget initializations and insertion
+        #used to initialize buttons
+        parent = Widget()
+        app = GUI()
+        #Start the game clock (runs update function once every (1/60) seconds)
+        Clock.schedule_interval(app.update, 1.0/60.0)
+        parent.add_widget(app)
+        return parent
+
+if __name__ == '__main__' :
+    ClientApp().run()
+
+
+
+
+
+
+
 
 
 
