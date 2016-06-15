@@ -33,6 +33,12 @@ WORD = ""
 word_down_thread = ""
 is_demo = False
 
+# ------------------------------------------------------------------------------
+# class Word
+# ------------------------------------------------------------------------------
+# Create a word object placed in a panel
+
+
 class Word(object):
   """
   Representation of words
@@ -74,7 +80,7 @@ class Word(object):
         #debug("new word: "+str(y_x_word), 2)
         return y_x_word
         #screen.border(0)
-        global test_val
+        #global test_val
         global ent
 
       if word:
@@ -150,68 +156,6 @@ def debug(msg, level):
                                                  # Initializing value
 saved =""
 
-def GamePlay():
-
-  while True:
-    my_raw_input(3,10,"test")
-    stdscr = STDSCR
-    STDSCR.clear()
-    STDSCR.refresh()
-
-    saved =""
-    y_entered = MAX_Y
-    x_entered = 10
-
-    enter_win = curses.newwin(1, 70, y_entered, x_entered)  # l, w, y, x
-    enter_panel = curses.panel.new_panel(enter_win)
-    enter_panel.top()
-    while True:
-
-      event = STDSCR.getch()
-
-      global test_val
-      test_val += 1
-      event = stdscr.getch()
-      if event != 10:
-        saved += chr(event)
-      if event == 8:
-        stdscr.addstr(15,10, 'backspace')
-        saved = saved[:-2]
-      stdscr.addstr(10,10, '                                                          ')
-      stdscr.addstr(10,10, 'saved:['+str(saved) + '] event: ' +str(event))
-      if event == 10:
-        global ent
-        ent = saved
-        saved = ""
-        stdscr.addstr(10,10, 'saved:['+str(saved) + '] event: ' +str(event))
-
-      if event == 27:
-        break
-
-      #stats screen
-      if chr(event) == 's' or 'S':
-        enter_panel.hide()
-        userstats()
-
-      if event != 10 and event !=263:  # enter and backspace
-        # saved += chr(event)
-        if event == 263:  # backspace
-          saved = saved[:-1]
-          enter_win.noutrefresh()
-        curses.doupdate()
-
-        # enter
-        if event == 10:
-          global USER_ENT
-          USER_ENT = saved
-          saved = ""
-
-          enter_win.addstr(0,0,saved)
-          enter_win.noutrefresh()
-          curses.doupdate()
-
-    if EXIT_GAME:
-      break
 
 #------------------------------------------------------------------------------
 # main
@@ -520,6 +464,9 @@ def gameScreen(pauseSec, diffc, ptype):
     if EXIT_GAME:
       break
 
+# ------------------------------------------------------------------------------
+# Stat Screen
+# ------------------------------------------------------------------------------
 def userstats():
   stat_win = curses.newwin(30, 10, 10, 15)
   stat_win.addstr(5,6,"This is userstats window")
@@ -658,6 +605,10 @@ def printError(msg):
 # Draws
 #
 ###############################################################################
+
+# ------------------------------------------------------------------------------
+# Draw life bar
+# ------------------------------------------------------------------------------
 def drawLife(lose):
   global EXIT_NOW
 
@@ -675,6 +626,9 @@ def drawLife(lose):
   life_win.noutrefresh();curses.doupdate()
   return life_pan
 
+#------------------------------------------------------------------------------
+# Draw combos
+#------------------------------------------------------------------------------
 def drawCombo(combo = 0, score = 0):
   # Create a combo window/panel
   l = 3
