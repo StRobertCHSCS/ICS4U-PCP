@@ -203,6 +203,47 @@ if __name__ == '__main__' :
 
 
 
+    def update(self,dt):
+        """
+        Program to update when the add to score as well as when to spawn a rapper, end the game
+        :param dt: none (clock object (time elapsed))
+        :return:
+        """
+        #This update function is the main update function for the game
+        #events are setup here as well
+        #update game objects
+        #update mixtape
+        self.mixtape.update()
+        #update rappers
+        #randomly add an rapper
+        tmpCount = randint(1,1800)
+        print self.minProb
+        #overtime difficulty increase
+        if tmpCount > self.minProb:
+            self.addrapper()
+            self.minProb = self.minProb - 0.10
+        #peak difficulty
+        if self.minProb <= 1750:
+            self.minProb = self.minProb + 0.1
+        if self.mixtape.y < Window.height * 0.001:
+            self.mixtape.impulse = 10
+        for k in self.rapperList:
+            #check for collision with mixtape
+            if k.collide_widget(self.mixtape):
+                print 'death'
+                #game over routine
+                self.gameOver()
+                Clock.unschedule(self.update)
+                self.rapperScore = 0
+            #when rappers past the left screen
+            if k.x < -100:
+                self.remove_widget(k)
+                self.rapperScore += 1
+                tmpRapperList = self.rapperList
+                tmpRapperList[:] = [x for x in tmpRapperList if (x.x > - 100)]
+                self.RapperList = tmpRapperList
+            k.update()
+
 
 
 
