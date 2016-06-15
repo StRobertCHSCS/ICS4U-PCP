@@ -28,6 +28,7 @@ class mixtape(WidgetDrawer):
         """
         This function initializes the mixtapes gravity and impulse attributes
         :param imageStr: calls on an image file
+        :return:none
         """
         WidgetDrawer.__init__(self, imageStr)
         self.impulse = 3
