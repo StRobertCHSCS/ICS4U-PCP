@@ -24,6 +24,7 @@ REQ_X = 200/2        # required screen size X
 
 ENG_WORDS = ["apple","hi","hello","aaron",""]
 ENG_WORDS_LEN = 0
+NEW_WORD_FREQ = 10  # lower, sooner
 PY_WORDS = []
 PY_WORDS_LEN = 0
 STDSCR = ""
@@ -61,6 +62,13 @@ class Word(object):
         for idx in range(len(ENG_WORDS)):
           if len(ENG_WORDS[idx]) > MIN_WORD_LEN and len(ENG_WORDS[idx]) <= MAX_WORD_LEN:
             Word = ENG_WORDS[idx]
+
+    y = 6
+    x_offset_left = 10
+    x = randint(x_offset_left, MAX_X - len(word)- 5)
+    self.word = word
+    self.x = x
+    self.y = y
 
   def move_down(self,screen, word):
    self.panel.move(self.y, self.x)
@@ -359,6 +367,7 @@ def mainGameScreen():
           # Start the game
           if event_lower == 'e':
               diffc = "easy"
+              start_fall_word(False)
           elif event_lower == 'm':
               diffc = "medium"
           elif event_lower == 'h':
@@ -507,7 +516,7 @@ def start_fall_word(is_demo):
     #
     # Words falling down
     if new_word_interval % NEW_WORD_FREQ  == 0:
-      wordObj = Word()
+      wordObj = Word("easy", "prac")
       word_wordObj[wordObj.word] = wordObj
       new_word_interval = 0
 
@@ -519,7 +528,7 @@ def start_fall_word(is_demo):
     # Y boundary
     if wordObj.getY() >= MAX_Y-3:
      del word_wordObj[word]
-    wordObj.delWord()
+    wordObj.delWord("easy","prac")
     lose_count += 1
     if not is_demo:
       dummy = drawLife(lose_count)
