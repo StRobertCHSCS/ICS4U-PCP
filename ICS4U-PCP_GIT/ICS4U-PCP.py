@@ -16,13 +16,19 @@ GO_NEXT = False
 is_word_down_thread_stop = False
 ENG_FILE = "words.dat"
 PY_FILE = "python.dat"
+ent = ""
+test_val = 1
+SCR_Y_MAX = 40
+SCR_X_MAX = 60
+
+
 
 MAX_Y = 0            # current screen Y
 MAX_X = 0            # current screen X
 REQ_Y = 55/2         # required screen size Y
 REQ_X = 200/2        # required screen size X
 
-ENG_WORDS = ["apple","hi","hello","aaron",""]
+ENG_WORDS = []
 ENG_WORDS_LEN = 0
 NEW_WORD_FREQ = 10  # lower, sooner
 PY_WORDS = []
@@ -49,11 +55,11 @@ class Word(object):
     selects a word according to user difficulty
     :param diffc: str - difficulty selected by user
     :param ptype: str - game type selected by user
-    :return: str -
+    :return: None
     """
     word = ""
 
-    #add more difficulties
+    # Practice
     if ptype == "prac":
       # Easy or medium
       if diffc == "easy" or diffc == "medium":
@@ -75,11 +81,30 @@ class Word(object):
         for dummy in range(max_word_len):
           ch = chr(randint(ord('!'), ord('~')))
           word += ch
+    # Coding
+    else:
+      max_word_len = 0
+      # Easy or medium
+      if diffc == "easy":
+        min_word_len = 3
+        max_word_len = 5
+      elif diffc == "medium":
+        min_word_len = 5
+        max_word_len = 10
+      # Hard
+      else:
+        min_word_len = 5
+        max_word_len = 30
 
-    y = 4
+      # Create a word
+      word = PY_WORDS[randint(0, PY_WORDS_LEN-1)].strip()
+      while len(word) > max_word_len  or  len(word) < min_word_len :
+        word = PY_WORDS[randint(0, PY_WORDS_LEN-1)].strip()
+
     x_offset_left = 10
     x = randint(x_offset_left, MAX_X - len(word)- 5)
-
+    y = 6
+                      # H  L   Y, X
     win = curses.newwin(2, len(word), y, x)
     win.addstr(0, 0, word, curses.color_pair(randint(1, 6)))
 
@@ -90,43 +115,18 @@ class Word(object):
     self.panel = curses.panel.new_panel(win)
     self.panel.bottom()
 
-  def moveDown(self):
-   self.panel.move(self.y, self.x)
-   curses.panel.update_panels();
-   self.win.noutrefresh(); curses.doupdate()
-   self.y += 1
-
-   def create_word(screen, word):
-    while 1:
-      word_len = 4
-      word = ""
-      for ch_num in range(word_len):
-        ch = chr(randint(ord('a'), ord('z')))
-        word += ch
-        x = randint(0, SCR_X_MAX)
-        y_x_word = [ 0, x, word ]
-        #debug("new word: "+str(y_x_word), 2)
-        return y_x_word
-        #screen.border(0)
-        #global test_val
-        global ent
-
-      if word:
-        screen.addstr(12, 12, 'testval:'+str(test_val))
-        screen.refresh()
-
-        if ent == word[2]:
-          global curses
-          curses.beep()
-          word = None
-
-      time.sleep(0.5)
 
   def getX(self):
     return self.x
 
   def getY(self):
     return self.y
+
+  def moveDown(self):
+    self.panel.move(self.y, self.x)
+    curses.panel.update_panels()
+    self.win.noutrefresh(); curses.doupdate()
+    self.y += 1
 
   def getPanel(self):
     return self.panel
@@ -145,11 +145,6 @@ class Word(object):
   def display(self):
     # y, x
     curses.panel.update_panels(); STDSCR.refresh()
-
-ent = ""
-test_val = 1
-SCR_Y_MAX = 40
-SCR_X_MAX = 60
 
 def drawCoor():
   STDSCR.clear()
@@ -188,14 +183,14 @@ saved =""
 #------------------------------------------------------------------------------
 # main
 #------------------------------------------------------------------------------
-
 def main(stdscr):
   """
   set up for the game to start and runs by calling the main page
   :param stdscr: window - standard window screen
   :return: None
   """
-  # make colors
+
+  # make colours
   curses.init_pair(1,curses.COLOR_RED,curses.COLOR_BLACK)
   curses.init_pair(2,curses.COLOR_GREEN,curses.COLOR_BLACK)
   curses.init_pair(3,curses.COLOR_YELLOW,curses.COLOR_BLACK)
@@ -222,6 +217,7 @@ def main(stdscr):
     drawCoor()
 
   # read word files
+  readPhyWord()
   readEngWord()
 
   #define this after the window's created.
@@ -232,9 +228,10 @@ def main(stdscr):
   while 1:
     # re-initialize
     EXIT_GAME = False
-    # main game screen
 
+    # main game screen
     rc = mainGameScreen()
+
     # reset
     if rc == 4:
       STDSCR.clear(); STDSCR.refresh()
@@ -292,7 +289,6 @@ def mainGameScreen():
   menu1 = "[P] PLAY"
   menu2 = "[S] Statistics"
   menu3 = "[X] EXIT"
-
   menu_win = curses.newwin(11, len(menu2) + 4 , 30, 78)  # h, l, y, x
   menu_win.addstr(1, 1, menu1,curses.A_BOLD)
   menu_win.addstr(2+3, 1, menu2,curses.A_BOLD)
@@ -357,7 +353,6 @@ def mainGameScreen():
           play2 = "[M] Medium - words length of 5 and more"
           play3 = "[H] Hard - random char and symbols"
           play4 = "[R] reset"
-
         else:
           play1 = "[E] Easy - words length of 3 - 5"
           play2 = "[M] Medium - words lenght of 5 - 10"
@@ -390,11 +385,11 @@ def mainGameScreen():
           # Start the game
           if event_lower == 'e':
               diffc = "easy"
-              start_fall_word(False)
           elif event_lower == 'm':
               diffc = "medium"
           elif event_lower == 'h':
               diffc = "hard"
+          start_fall_word(0.5, False, diffc, ptype)
 
           main_rc = 1
           gameScreen(WORD_START_PAUSE, diffc, ptype)
@@ -510,7 +505,7 @@ def userstats():
   stat_win.addstr(8,6,"score#: ")
 
 
-def start_fall_word(is_demo):
+def start_fall_word(pauseSec, is_demo, diffc, ptype):
   count_worddown = 0
   word_wordObj = {}
 
@@ -552,7 +547,7 @@ def start_fall_word(is_demo):
     # Words falling down
     if getPauseSec(count_worddown, 0.1):
       if new_word_interval % NEW_WORD_FREQ  == 0:
-        wordObj = Word("easy", "prac")
+        wordObj = Word(diffc, ptype)
         word_wordObj[wordObj.word] = wordObj
         new_word_interval = 0
 
@@ -606,10 +601,13 @@ def readEngWord():
   ENG_WORDS_LEN = len(ENG_WORDS)
 
 
-def py_word():
+def readPhyWord():
   global PY_WORDS
+  global PY_WORDS_LEN
+  #read files
   py_file = open(PY_FILE,"r")
   PY_WORDS = py_file.readlines()
+  PY_WORDS_LEN = len(PY_WORDS)
 
 # ------------------------------------------------------------------------------
 # Check requirements
