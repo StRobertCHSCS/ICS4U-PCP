@@ -1,0 +1,302 @@
+"""
+----------------------------------------------------------------------
+Name: Personal Coding Project 6.py
+
+Purpose:
+Play the game astrocrash.
+
+Author: Yu.C
+
+Created: 15/06/2016
+----------------------------------------------------------------------
+"""
+# astrocrash
+# Get asteroids moving on the screen
+
+import random # import necessary items
+from livewires import games, color
+import math
+IS_ASTEROID = 0 # next three constants designed to manage collision detection
+IS_MISSILE = 1
+IS_SHIP = 2
+total_asteroids = 0 # initialize total number of asteroids
+games.init(screen_width = 730, screen_height = 570, fps = 50) # create game screen
+
+class Asteroid(games.Sprite):
+    # Asteroids that float across the screen.
+    POINTS = 30 # number of points each asteroid is worth, will be modified since smaller asteroids are worth more
+    SPAWN = 2 # number of new asteroids that an asteroid spawns when it's destroyed
+    SPEED = 2 # designate speed of Asteroid
+    SMALL = 1 # next three constants set values for each Asteroid size
+    MEDIUM = 2
+    LARGE = 3
+    # load images for sprites
+    images = {SMALL  : games.load_image("C:\Users\Clemens\Documents\Drawings\\asteroid_small.png"),
+              MEDIUM : games.load_image("C:\Users\Clemens\Documents\Drawings\\asteroid_medium.png"),
+              LARGE  : games.load_image("C:\Users\Clemens\Downloads\\asteroid_large.png")}
+
+    myself = IS_ASTEROID # assign myself to IS_ASTEROID
+    def __init__(self, game, x, y, size):
+        # Initialize asteroid sprite.
+        self.game = game # through game, an Asteroid object can call a method of the Game object like end()
+        super(Asteroid, self).__init__( # set the different speeds of each Asteroid
+            image = Asteroid.images[size],
+            x = x, y = y,
+            dx = random.choice([1, -1]) * Asteroid.SPEED * random.random()/size,
+            dy = random.choice([1, -1]) * Asteroid.SPEED * random.random()/size)
+
+        self.size = size
+
+    def update(self):
+        global total_asteroids
+        # Wrap around screen.
+        if self.top > games.screen.height:
+            self.bottom = 0
+
+        if self.bottom < 0:
+            self.top = games.screen.height
+
+        if self.left > games.screen.width:
+            self.right = 0
+
+        if self.right < 0:
+            self.left = games.screen.width
+
+        if self.overlapping_sprites: # if the Asteroid overlaps with a sprite that isn't another Asteroid, it uses its
+                                       # die() method
+            for sprite in self.overlapping_sprites:
+                if sprite.myself == IS_MISSILE or sprite.myself == IS_SHIP:
+                    sprite.die()
+
+    def die(self):
+        global total_asteroids
+        total_asteroids -= 1
+        # Destroy asteroid
+        # if asteroid isn't small, replace with two smaller asteroids
+        self.game.score.value += int(Asteroid.POINTS / self.size) # give points based on 30 / size (ex LARGE = 30 / 3)
+        self.game.score.right = games.screen.width - 10 # place score counter on top right of screen
+        if self.size != Asteroid.SMALL: # if the Asteroid isn't small, split it into two smaller Asteroids when a
+                                          # Missile hits it
+            for i in range(Asteroid.SPAWN):
+                new_asteroid = Asteroid(game = self.game, x = self.x, y = self.y, size = self.size - 1)
+                total_asteroids += 1
+                games.screen.add(new_asteroid)
+        self.destroy()
+
+class Missile(games.Sprite):
+    # A missile launched by the player's ship
+    image = games.load_image("C:\Users\Clemens\Documents\missile sprite.png") # give the missile a sprite
+    BUFFER = 40 # distance from the ship the missile is created (so it doesn't spawn on top)
+    VELOCITY_FACTOR = 7 # speed of the missile
+    LIFETIME = 90 # how long the missile lasts before disappearing
+    myself = IS_MISSILE
+    def __init__(self, ship_x, ship_y, ship_angle):
+        # Initialize missile sprite.
+        # convert to radians
+        angle = ship_angle * math.pi / 180
+
+        # calculate missile's starting position based on the ship's current angle
+        buffer_x = Missile.BUFFER * math.sin(angle)
+        buffer_y = Missile.BUFFER * -math.cos(angle)
+        x = ship_x + buffer_x
+        y = ship_y + buffer_y
+
+        # calculate missile's velocity components in each direction based on the ships angle
+        dx = Missile.VELOCITY_FACTOR * math.sin(angle)
+        dy = Missile.VELOCITY_FACTOR * -math.cos(angle)
+
+        # create the missile
+        super(Missile, self).__init__(image = Missile.image,
+                                      x = x, y = y,
+                                      dx = dx, dy = dy)
+        self.lifetime = Missile.LIFETIME # give the Missile object a lifetime so it won't be around forever
+
+    def update(self):
+        # Move the missile
+        # if lifetime is up, destroy the missile
+        find_ship_overlapping = 0
+        self.lifetime -= 1 # steadily reduce the missile's lifetime
+        if self.lifetime == 0: # destroy the missile if its lifetime is up
+            self.destroy()
+        # wrap the missile around screen
+        if self.top > games.screen.height:
+            self.bottom = 0
+
+        if self.bottom < 0:
+            self.top = games.screen.height
+
+        if self.left > games.screen.width:
+            self.right = 0
+
+        if self.right < 0:
+            self.left = games.screen.width
+
+        # check if missile overlaps any other object
+        if self.overlapping_sprites: # if the missile hits an Asteroid it dies. If the missile hits the Ship, nothing
+                                       # happens
+            for sprite in self.overlapping_sprites:
+                if sprite.myself == IS_ASTEROID:
+                    sprite.die()
+                elif sprite.myself == IS_SHIP:
+                    find_ship_overlapping = 1
+            if find_ship_overlapping != 1:
+                self.die()
+
+    def die(self): # add Missile's die() method
+        # Destroy the missile
+        self.destroy()
+
+class Ship(games.Sprite):
+    # The player's ship.
+    image = games.load_image("C:\Users\Clemens\Downloads\ship sprite.png") # give the ship a sprite
+    ROTATION_STEP = 3 # how many degrees the ship rotates
+    VELOCITY_CHANGE = .03 # how much the ship speeds up by
+    VELOCITY_MAX = 3 # maximum speed of the ship
+    MISSILE_DELAY = 40 # forcing a delay between each missile fired
+    myself = IS_SHIP
+    def update(self): # the ship's controls
+        global total_asteroids
+        # rotate the ship based on movement
+        if games.keyboard.is_pressed(games.K_LEFT):
+            self.angle -= Ship.ROTATION_STEP
+        if games.keyboard.is_pressed(games.K_RIGHT):
+            self.angle += Ship.ROTATION_STEP
+        if games.keyboard.is_pressed(games.K_UP):
+            angle_in_rad = self.angle * math.pi / 180
+            self.dx += Ship.VELOCITY_CHANGE * math.sin(angle_in_rad)
+            self.dy += Ship.VELOCITY_CHANGE * -math.cos(angle_in_rad)
+
+        # wrap the ship around the screen
+        if self.top > games.screen.height:
+            self.bottom = 0
+
+        if self.bottom < 0:
+            self.top = games.screen.height
+
+        if self.left > games.screen.width:
+            self.right = 0
+
+        if self.right < 0:
+            self.left = games.screen.width
+
+        if total_asteroids == 0: # if the number of asteroids on the screen == 0, the game is finished
+            self.game.finish()
+
+        # fire missile if spacebar pressed and missile wait is over
+        if games.keyboard.is_pressed(games.K_SPACE) and self.missile_wait == 0:
+            new_missile = Missile(self.x, self.y, self.angle)
+            games.screen.add(new_missile)
+            self.missile_wait = Ship.MISSILE_DELAY
+        # if the missile delay isn't 0 yet, steadily decrease it
+        if self.missile_wait > 0:
+            self.missile_wait -= 1
+
+        # cap velocity in each direction
+        self.dx = min(max(self.dx, -Ship.VELOCITY_MAX), Ship.VELOCITY_MAX)
+        self.dy = min(max(self.dy, -Ship.VELOCITY_MAX), Ship.VELOCITY_MAX)
+
+    def die(self):
+        # Destroy ship
+        self.destroy()
+        self.game.end()
+
+    # initialize the ship sprite
+    def __init__(self, game, x, y):
+        self.game = game
+        super(Ship, self).__init__(image = Ship.image, x = x, y = y)
+        self.missile_wait = 0
+
+class Game(object):
+    # The game itself
+    # define a constructor
+    def __init__(self):
+    # create score
+        self.score = games.Text(value = 0, # Initializing score value
+                                size = 30, # size of the number
+                                color = color.white, # color of the number
+                                top = 5, # score distance from the top of the screen
+                                right = games.screen.width - 10, # score distance from the right of the screen
+                                is_collideable = False) # is_collideable makes it so that the ship can't crash into the
+                                                          # score
+        games.screen.add(self.score) # adding the score to the screen
+
+        # create player's ship in the middle of the screen
+        self.ship = Ship(game = self,
+                         x = games.screen.width/2,
+                         y = games.screen.height/2)
+        games.screen.add(self.ship)
+    # play the game
+    def play(self):
+        games.screen.mainloop()
+
+    # the message that displays once all the asteroids have been destroyed
+    def finish(self):
+        win_message = games.Message(value = "Congratulations",
+                                    size = 90,
+                                    color = color.yellow,
+                                    x = games.screen.width/2,
+                                    y = games.screen.height/2,
+                                    lifetime = 5 * games.screen.fps,
+                                    after_death = games.screen.quit,
+                                    is_collideable = False)
+        games.screen.add(win_message)
+
+    # the message that displays if the ship is hit by an asteroid
+    def end(self):
+    # End the game
+    # show "Game Over" for 5 seconds
+        end_message = games.Message(value = "Game Over",
+                                    size = 90,
+                                    color = color.red,
+                                    x = games.screen.width/2,
+                                    y = games.screen.height/2,
+                                    lifetime = 5 * games.screen.fps,
+                                    after_death = games.screen.quit,
+                                    is_collideable = False)
+        games.screen.add(end_message)
+
+    # creating asteroids
+    def create(self):
+        BUFFER = 150 # amount of space to preserve around the ship when creating asteroids, so the asteroids don't spawn
+                       # on top of the ship
+        for i in range(total_asteroids):
+            # minimum distance along x-axis and y-axis
+            x_min = random.randrange(BUFFER)
+            y_min = BUFFER - x_min
+
+            # choose distance along x_axis and y_axis based on minimum distance
+            x_distance = random.randrange(x_min, games.screen.width - x_min)
+            y_distance = random.randrange(y_min, games.screen.height - y_min)
+
+            # calculate location based on distance
+            x = self.ship.x + x_distance
+            y = self.ship.y + y_distance
+
+            # wrap around screen, if necessary
+            x %= games.screen.width
+            y %= games.screen.height
+            # create the asteroid
+            new_asteroid = Asteroid(game = astrocrash,
+                                    x = x, y = y,
+                                    size = Asteroid.LARGE)
+            games.screen.add(new_asteroid)
+
+ # establish background
+background_image = games.load_image("C:\Users\Clemens\Downloads\space background.jpg")
+games.screen.background = background_image
+# deciding how many asteroids to face off against
+total_asteroids = input("Enter the number of asteroids you wish to face off against: ")
+astrocrash = Game()
+
+# create asteroids
+astrocrash.create()
+
+# create the ship
+the_ship = Ship(game = astrocrash, x = games.screen.width/2, y = games.screen.height/2)
+
+games.screen.add(the_ship)
+
+games.screen.mainloop()
+
+# start
+astrocrash.play()
