@@ -10,17 +10,23 @@ Created on:        06/16/2016
 
 # Import necessary library
 import pygame
-#from pygame.locals import *
+from pygame.locals import *
 
-# Initialize the game
+### Initialize the game
+
+# Screen
 pygame.init()
 width, height = 1200, 600
 screen=pygame.display.set_mode((width, height))
 
+# Player movement
+keys = [False, False, False, False]
+player_position = [600,300]
+
 ### Load images
 
 # The character that the player will control
-player = pygame.image.load("image/man.png").convert_alpha()
+player = pygame.image.load("image/hero.png").convert_alpha()
 player = pygame.transform.scale(player, (100, 100))
 
 # The wooden tiles on the bakcground
@@ -51,7 +57,7 @@ while 1:
     screen.blit(objective, (0,510))
 
     # Draw the various objects onto the screen
-    screen.blit(player, (50,50))
+    screen.blit(player, player_position)
 
     # Update the screen
     pygame.display.flip()
@@ -63,3 +69,35 @@ while 1:
         if event.type==pygame.QUIT:
             pygame.quit()
             exit(0)
+
+        # Change the status to true when the keys are pressed
+        elif event.type == pygame.KEYDOWN:
+            if event.key == K_w:
+                keys[0] = True
+            elif event.key == K_a:
+                keys[1] = True
+            elif event.key == K_s:
+                keys[2] = True
+            elif event.key == K_d:
+                keys[3] = True
+
+        # Revert when the keys are lifted
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_w:
+                keys[0] = False
+            elif event.key == pygame.K_a:
+                keys[1] = False
+            elif event.key==pygame.K_s:
+                keys[2] = False
+            elif event.key == pygame.K_d:
+                keys[3] = False
+
+    # While status is true, move the player (direction depends on which key)
+    if keys[0]:
+        player_position[1] -= 5
+    elif keys[2]:
+        player_position[1] += 5
+    elif keys[1]:
+        player_position[0] -= 5
+    elif keys[3]:
+        player_position[0] += 5
