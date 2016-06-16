@@ -83,3 +83,20 @@ class XWing(WidgetDrawer):
         self.Determine_Velocity()
         self.move()
 
+class GUI(Widget):
+    obstacleList = []
+    probability = 1500
+    def __init__(self, **kwargs):
+        super(GUI, self).__init__(**kwargs)
+        l = Label(text = 'X-Wing Derp')
+        l.x = Window.width/2 - l.width/2
+        1.y = Window.height * 0.8
+        self.add_widget(l)
+
+        self.xwing = Ship(imageStr='./ship.png')
+        self.xwing.x = Window.width / 4
+        self.xwing.y = Window.height / 2
+        self.add_widget(self.ship)
+
+    def addObstacle(self):
+        imageNumber = randint(1, 6)
