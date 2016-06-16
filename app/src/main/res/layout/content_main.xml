@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="16dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.hotz.llsif.MainActivity"
+    tools:showIn="@layout/activity_main"
+    android:background="@drawable/bgg_50"
+    >
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Love Live! Bond App"
+        android:layout_alignParentEnd="true"
+        android:textSize="50sp"
+        android:textAlignment="center"
+        android:fontFamily="monospace"
+        android:id="@+id/title"
+        android:layout_alignParentStart="true"
+        android:textColor="#3D3D3D"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose Attribute:"
+        android:textSize="25sp"
+        android:textAlignment="viewStart"
+        android:fontFamily="monospace"
+        android:id="@+id/cattribute"
+        android:textColor="#3D3D3D"
+        android:layout_marginTop="50dp"
+        android:textIsSelectable="false"
+        android:layout_below="@+id/difficulty"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="false" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/attributes"
+        android:layout_below="@+id/cattribute"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp">
+
+        <RadioButton android:id="@+id/cool"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cool"
+            android:onClick="onAttributeButtonClicked"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#3D3D3D"/>
+
+        <RadioButton android:id="@+id/pure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pure"
+            android:onClick="onAttributeButtonClicked"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#3D3D3D"/>
+
+        <RadioButton android:id="@+id/smile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Smile"
+            android:onClick="onAttributeButtonClicked"
+            android:textColor="#3D3D3D"
+            android:layout_marginLeft="5dp" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose Difficulty:"
+        android:textSize="25sp"
+        android:textAlignment="viewStart"
+        android:fontFamily="monospace"
+        android:id="@+id/textView3"
+        android:textColor="#3D3D3D"
+        android:layout_below="@+id/title"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="50dp"
+        android:layout_alignParentStart="true" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="20dp"
+        android:id="@+id/difficulty"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="false"
+        android:baselineAligned="false">
+
+
+        <RadioButton android:id="@+id/easy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Easy"
+            android:onClick="onDifficultyButtonClicked"
+            android:layout_gravity="center"
+            android:textColor="#3D3D3D"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:enabled="true"
+            android:layout_marginLeft="-1dp" />
+
+        <RadioButton android:id="@+id/medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Normal"
+            android:onClick="onDifficultyButtonClicked"
+            android:textColor="#3D3D3D"
+            android:checked="false"
+            android:layout_marginLeft="11dp" />
+
+        <RadioButton android:id="@+id/hard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hard"
+            android:onClick="onDifficultyButtonClicked"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#3D3D3D"
+            android:layout_marginLeft="-2dp" />
+
+        <RadioButton android:id="@+id/expert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expert"
+            android:onClick="onDifficultyButtonClicked"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#3D3D3D"
+            android:layout_marginLeft="4dp" />
+
+    </RadioGroup>
+
+</RelativeLayout>
