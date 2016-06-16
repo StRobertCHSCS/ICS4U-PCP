@@ -91,6 +91,10 @@ def user_prompt():
             user_help()
             prompt = True
 
+        elif "EXIT" in user_res:
+            #exit()
+            prompt = True
+
         else:
             print "invalid command"
             speak("invalid command")
@@ -109,7 +113,6 @@ def email_prompt():
     print ans
 
     if ans == "yes":
-        print ans
         print "get ready to email:"
         speak("get ready to email")
         send_email()
@@ -234,6 +237,7 @@ def send_to_printer():
 
     # sends something to default printer
     print "sent", ans, "to printer"
+    user_prompt()
 
 
 def user_help():
@@ -246,6 +250,16 @@ def user_help():
     speak("You can send emails, print, check the time, ask for a joke," +
           " if mic cant pick up audio, try changing locations or checking internet connection")
 
+    user_prompt()
+
+def exit():
+    """
+    exits program by not calling the user prompt function at the end
+    :return: None
+    """
+
+    print "exiting program, goodbye"
+    speak("exiting program, goodbye")
 
 def main():
     user_prompt()
