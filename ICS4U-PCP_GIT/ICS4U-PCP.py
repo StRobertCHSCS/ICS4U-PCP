@@ -5,46 +5,68 @@ from time import sleep
 import sys
 import threading
 
-# -------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Global Varibles
-# -------------------------------------------------------
-
+# ------------------------------------------------------------------------------
 IS_DEBUG = True
 WORD_START_PAUSE = 0.2   # Initial word speed. Lower is Faster
-ENTER_Y_OFFSET = 5
-GO_NEXT = False
-is_word_down_thread_stop = False
+
 ENG_FILE = "words.dat"
 PY_FILE = "python.dat"
+GO_NEXT = False
+LEVEL = 1
+USER_ENT = ""
+ENTER_Y_OFFSET = 5
+EXIT_GAME = False
+WORDS_GOALS = 1
+
+EXC_Y = 20
+GOOD_Y = 30
+AVG_Y = 40
+MISS_Y = 0
+
+EXC_COUNT = 0
+GOOD_COUNT = 0
+AVG_COUNT = 0
+MISS_COUNT = 0
+
+ACCU_SCORE = 0   # overall score
+BEST_SCORE_PER_ROUND = 0
+BEST_COMBO_PER_ROUND = 0
+HIT_PER_ROUND = 0
+MISS_PER_ROUND = 0
+ACCU_HIT_PER_ROUND = 0
+ACCU_MISS_PER_ROUND = 0
+
+MAX_Y = 0            # current screen Y
+MAX_X = 0            # current screen X
+REQ_Y = 40           # required screen size Y
+REQ_X = 40          # required screen size X
+
+STDSCR = ""
+
+THREAD_OBJ = ""
+is_word_down_thread_stop = False    # True: Stop falling words.
+                                    # False: Start falling words
+
+NEW_WORD_FREQ = 10  # lower, sooner
+ENG_WORDS = []
+ENG_WORDS_LEN = 0
+PY_WORDS = []
+PY_WORDS_LEN = 0
+
 ent = ""
 test_val = 1
 SCR_Y_MAX = 40
 SCR_X_MAX = 60
-EXIT_GAME = False
 
-MAX_Y = 0            # current screen Y
-MAX_X = 0            # current screen X
-REQ_Y = 55/2         # required screen size Y
-REQ_X = 200/2        # required screen size X
 
-ENG_WORDS = []
-ENG_WORDS_LEN = 0
-NEW_WORD_FREQ = 10  # lower, sooner
-PY_WORDS = []
-PY_WORDS_LEN = 0
-STDSCR = ""
-MIN_WORD_LEN = 0
-MAX_WORD_LEN = 5
-WORD = ""
-THREAD_OBJ = ""
-is_word_down_thread_stop = False    # True: Stop falling words.
-                                    # False: Start falling words
-is_demo = False
 
 # ------------------------------------------------------------------------------
 # class Word
 # ------------------------------------------------------------------------------
 # Create a word object placed in a panel
+
 
 class Word(object):
   """
@@ -146,38 +168,6 @@ class Word(object):
     # y, x
     curses.panel.update_panels(); STDSCR.refresh()
 
-def drawCoor():
-  STDSCR.clear()
-  STDSCR.border(0)
-  STDSCR.refresh()
-  for x in range(MAX_X):
-    STDSCR.addstr(2,x, str(x%10))
-    if (x % 10 == 0):
-      STDSCR.addstr(1,x, str(x//10))
-
-  for y in range(MAX_Y):
-    STDSCR.addstr(y,2, str(y%10))
-    if (y % 10 == 0):
-      STDSCR.addstr(y,1, str(y//10))
-
-  STDSCR.refresh()
-
-def my_raw_input(stdscr, r, c, prompt_string):
-    curses.echo()
-    stdscr.addstr(r, c, prompt_string)
-    stdscr.refresh()
-    input = stdscr.getstr(r + 1, c, 20)
-    return input  #       ^^^^  reading input at next line
-
-def clear_line(y):
-  empty = " " * SCR_X_MAX
-  STDSCR.addstr(y, 1, empty)
-
-def debug(msg, level):
-  y = SCR_Y_MAX - 10 + level
-  clear_line(y)
-                                                 # Initializing value
-saved =""
 #------------------------------------------------------------------------------
 # main
 #------------------------------------------------------------------------------
@@ -198,7 +188,7 @@ def main(stdscr):
   curses.init_pair(7,curses.COLOR_BLUE,curses.COLOR_BLACK)
 
   # mouse cursor set - none
-  curses.curs_set(1)
+  curses.curs_set(0)
 
   # Set up for debug
   global STDSCR
@@ -434,7 +424,6 @@ def gameScreen(pauseSec, diffc, ptype):
     #exit whenever i want
     THREAD_OBJ.daemon = True
     THREAD_OBJ.start()
-
     saved = ""
 
     y_entered = MAX_Y - ENTER_Y_OFFSET
@@ -517,8 +506,93 @@ def userstats():
   stat_win.addstr(6,6,"user name: ")
   stat_win.addstr(7,6,"level#: ")
   stat_win.addstr(8,6,"score#: ")
+###############################################################################
+#
+# Draws
+#
+###############################################################################
+# ------------------------------------------------------------------------------
+# Draw goal
+# ------------------------------------------------------------------------------
+def drawGoal(current, goal):
+  goal_win = curses.newwin(3,18, 3, 90)
+  goal_win.addstr(1,2,"CURRENT: " + str(current) + "/" +str(goal))
+  goal_win.box()
+
+  goal_pan = curses.panel.new_panel(goal_win)
+  curses.panel.update_panels()
+  goal_win.noutrefresh();curses.doupdate()
+  return goal_pan
+
+# ------------------------------------------------------------------------------
+# Draw life bar
+# ------------------------------------------------------------------------------
+def drawLife(lose):
+  left = True
+
+  life_win = curses.newwin(MAX_Y-3 ,3, 3, 3)
+
+  lose_weight = 1
+  if lose_weight * lose > MAX_Y-3:
+    left = False
+  for y in range(lose_weight * lose, MAX_Y-3):
+    life_win.addch(y, 1, ord('='))
+  life_win.box()
+
+  life_pan = curses.panel.new_panel(life_win)
+  life_pan.top()
+  curses.panel.update_panels()
+  life_win.noutrefresh();curses.doupdate()
+
+  return life_pan, left
+
+#------------------------------------------------------------------------------
+# Draw score
+#------------------------------------------------------------------------------
+def drawScore(score = 0):
+  # Create a score window/panel
+  l = 3
+  w = 50
+  score_win = curses.newwin(l,w,3,10)
+  score_win.addstr(1,2,"SCORE: " + str(score) + " TOTAL: " +str(ACCU_SCORE))
+  score_win.box()
+  score_pan = curses.panel.new_panel(score_win)
+  curses.panel.update_panels()
+  score_win.noutrefresh();curses.doupdate()
+  return score_pan
+
+#------------------------------------------------------------------------------
+# Draw combos
+#------------------------------------------------------------------------------
+def drawCombo(combo = 0, score = 0):
+  """
+  draws combo panel on the screen
+  to show combo score of the user
+  :param combo: int - amount of combos
+  :param score: int - score of the user
+  :return: panel - the panel that contains the combo scores
+  """
+  # Create a combo window/panel
+  l = 3
+  w = 22
+  combo_win = curses.newwin(l, w,3,61)
+  combo_win.addstr(1,2, "COMBO: " + str(combo) + " ( +"+ str(score) + ")")
+  combo_win.box()
+  combo_pan = curses.panel.new_panel(combo_win)
+  combo_pan.top()
+  curses.panel.update_panels()
+  combo_win.noutrefresh();curses.doupdate()
+  return combo_pan
 
 
+###############################################################################
+#
+# MISC.
+#
+###############################################################################
+# -------------------------------------------------------------------
+# start fall word
+# -------------------------------------------------------------------
 def start_fall_word(pauseSec, is_demo, diffc, ptype):
   count_worddown = 0
   word_wordObj = {}
@@ -526,33 +600,58 @@ def start_fall_word(pauseSec, is_demo, diffc, ptype):
   #comboTimerCount = 1
   #showCombo = False
 
-  ## Create a combo window/panel
+  # Create a combo window/panel
   combo_win = curses.newwin(10,10,5,5)
   combo_pan = curses.panel.new_panel(combo_win)
   combo_pan.hide()
 
   # init
+  global ACCU_SCORE
   global EXIT_GAME
   global GO_NEXT
-  ##
+  global HIT_PER_ROUND, MISS_PER_ROUND, LEVEL, ACCU_HIT_PER_ROUND, ACCU_MISS_PER_ROUND
+  global EXC_COUNT, GOOD_COUNT, AVG_COUNT, MISS_COUNT
+  EXC_COUNT = 0
+  GOOD_COUNT = 0
+  AVG_COUNT = 0
+  MISS_COUNT = 0
+  MISS_PER_ROUND = 0
+  HIT_PER_ROUND = 0
+  GO_NEXT = False
+  comboTimerCount = 1
+  showCombo = False
   new_word_interval = 0
-  #combo_count = 0
-  #lastSaved = ""
+  combo_count = 0
+  lastSaved = ""
   lose_count = 0
-  #score_count = 0
+  score_count = 0
+  dummyCombo = ""
+  word_wordObj = {}
+  count_worddown = 0
+  words_current = 0
 
-  #dummyCombo = ""
-  #dummy = drawLife(lose_count)
-  # Score
-
+  # Score and line
   if not is_demo:
-    dummyScore = 0
-    dummy = drawLife(lose_count)
+    STDSCR.hline(EXC_Y, 0,'-',MAX_X)
+    STDSCR.hline(GOOD_Y,0,'-',MAX_X)
+    STDSCR.hline(AVG_Y, 0,'-',MAX_X)
+    STDSCR.hline(MISS_Y,0,'-',MAX_X)
+
+    STDSCR.addstr(EXC_Y, 6, " Excellent ")
+    STDSCR.addstr(GOOD_Y,6, " Good ")
+    STDSCR.addstr(AVG_Y, 6, " Average ")
+    STDSCR.addstr(MISS_Y,6, " Miss ")
+
+    dummyScore = drawScore(0)
+    dummy,is_life_left = drawLife(lose_count)
+    dummyGoal = drawGoal(words_current, WORDS_GOALS)
 
   while not is_word_down_thread_stop:
     #
     # Words falling down
-    if getPauseSec(count_worddown, 0.1):
+    #
+    if getPauseSec(count_worddown, pauseSec):
+      # how often create a new word?
       if new_word_interval % NEW_WORD_FREQ  == 0:
         wordObj = Word(diffc, ptype)
         word_wordObj[wordObj.word] = wordObj
@@ -564,39 +663,122 @@ def start_fall_word(pauseSec, is_demo, diffc, ptype):
         wordObj = word_wordObj[word]
 
         # Y boundary
-        if wordObj.getY() >= MAX_Y-3:
+        if wordObj.getY() >= MISS_Y:
+          MISS_COUNT += 1
           del word_wordObj[word]
           wordObj.delWord()
           lose_count += 1
-
+          #draw life bar
           if not is_demo:
-            dummy = drawLife(lose_count)
-
+            dummy,is_life_left = drawLife(lose_count)
+            #exit if there's no life
+            if not is_life_left:
+              EXIT_GAME = True
         else:
           wordObj.moveDown()
-    new_word_interval += 1
+      new_word_interval += 1
+      count_worddown = 0
+
+    if not is_demo:
+      #
+      # Check what a user types
+      #
+      if lastSaved != USER_ENT:
+        # Score!
+        if word_wordObj.get(USER_ENT):
+          #word_wordObj - dictionary type
+          # value - object made through Word class
+          # key - word str
+          wordObj = word_wordObj[USER_ENT]
+          if wordObj.getY() < EXC_Y:
+            EXC_COUNT += 1
+          elif wordObj.getY() < GOOD_Y:
+            GOOD_COUNT += 1
+          else:
+            AVG_COUNT += 1
+
+          combo_count += 1
+          score_count += 1
+          wordObj.delWord()
+          words_current += 1
+          HIT_PER_ROUND += 1
+          ACCU_HIT_PER_ROUND += 1
+
+          dummyGoal = drawGoal(words_current, WORDS_GOALS)
+          # completed the goal. Go to the next level
+          if words_current >= WORDS_GOALS:
+            GO_NEXT = True
+
+          del word_wordObj[USER_ENT]
+
+          # show combo and score
+          bonus = 13 * combo_count
+          cu_score = 300 * score_count  + bonus
+
+          ACCU_SCORE += cu_score
+
+          if showCombo:
+            dummyCombo.hide()
+          dummyScore = drawScore(cu_score)
+          dummyCombo = drawCombo(combo_count, bonus)
+          comboTimerCount = 0
+          showCombo = True
+
+        # Incorrect!
+        else:
+          MISS_PER_ROUND += 1
+          ACCU_MISS_PER_ROUND += 1
+          combo_count = 0
+
+        lastSaved = USER_ENT
+
+      #
+      # Duration of combo box
+      #
+      if showCombo:
+        comboTimerCount += 1
+        STDSCR.addstr(40,5,str(comboTimerCount))
+        if getPauseSec(comboTimerCount, 0.3):
+          STDSCR.refresh()
+          dummyCombo.hide()
+          comboTimerCount = 0
+          showCombo = False
+
     count_worddown += 1
 
-    #if not is_demo:
-    #  # Check what a user types
-    #  if lastSaved != ent:
-    #    if word_wordObj.get(ent):
-    #      combo_count += 1
-    #      score_count += 10
-    #      word_wordObj[ent].remove_same(ent)
-    #      del word_wordObj[ent]
+#------------------------------------------------------------------------------
+# stop thread
+#------------------------------------------------------------------------------
+def stop_thread():
+  """
+  stops thread on the screen
+  :return: None
+  """
+  global is_word_down_thread_stop
+  is_word_down_thread_stop = True
+  # wait untill THREAD_OBJ stops
+  while THREAD_OBJ.isAlive():
+    pass
+  is_word_down_thread_stop = False
 
-    #      # show combo and score
-    #      each_score = 300
-    #      bonus = 13 * (combo_count)
-    #      cu_score = 300 * score_count  + bonus
 
-    #      showCombo = True
-    #    # Miss!
-    #    else:
-    #      combo_count = 0
+#------------------------------------------------------------------------------
+# get pause sec
+#------------------------------------------------------------------------------
+def getPauseSec(count, sec):
+  """
+  divide count by sec and check if the remainder is 0
+  :param count: int - count
+  :param sec: int - sec
+  :return: boolean - remainder is 0
+  """
 
-    #    lastSaved = ent
+  if count < 1:
+    count = 1
+
+  weight = 5000000
+  msum = count % (weight * sec)
+  return msum == 0
 
 
 def readEngWord():
@@ -653,72 +835,39 @@ def printError(msg):
   #exit program
   sys.exit()
 
-###############################################################################
-#
-# Draws
-#
-###############################################################################
 
-# ------------------------------------------------------------------------------
-# Draw life bar
-# ------------------------------------------------------------------------------
-def drawLife(lose):
-  global EXIT_NOW
+def drawCoor():
+  STDSCR.clear()
+  STDSCR.border(0)
+  STDSCR.refresh()
+  for x in range(MAX_X):
+    STDSCR.addstr(2,x, str(x%10))
+    if (x % 10 == 0):
+      STDSCR.addstr(1,x, str(x//10))
 
-  life_win = curses.newwin(MAX_Y-3 ,3, 3, 3)
+  for y in range(MAX_Y):
+    STDSCR.addstr(y,2, str(y%10))
+    if (y % 10 == 0):
+      STDSCR.addstr(y,1, str(y//10))
 
-  if 1 * lose > MAX_Y-3:
-    EXIT_NOW =True
-  for y in range(1 * lose, MAX_Y-3):
-    #print("drawLife")
-    life_win.addch(y, 1, ord('='))
-  life_win.box()
+  STDSCR.refresh()
 
-  life_pan = curses.panel.new_panel(life_win)
-  life_pan.top();
-  curses.panel.update_panels();
-  life_win.noutrefresh();curses.doupdate()
-  return life_pan
+def my_raw_input(stdscr, r, c, prompt_string):
+    curses.echo()
+    stdscr.addstr(r, c, prompt_string)
+    stdscr.refresh()
+    input = stdscr.getstr(r + 1, c, 20)
+    return input  #       ^^^^  reading input at next line
 
-#------------------------------------------------------------------------------
-# Draw combos
-#------------------------------------------------------------------------------
-def drawCombo(combo = 0, score = 0):
-  # Create a combo window/panel
-  l = 3
-  w = 40
-  #if LAST_COMBO != "":
-  #  LAST_COMBO.hide()
-  combo_win = curses.newwin(l, w,3,60)
-  combo_win.addstr(1,2, "COMBO: " + str(combo) + " ( +"+ str(score) + ")")
-  combo_win.box()
-  combo_pan = curses.panel.new_panel(combo_win)
-  combo_pan.top()
-  curses.panel.update_panels();
-  combo_win.noutrefresh();curses.doupdate()
-  return combo_pan
+def clear_line(y):
+  empty = " " * SCR_X_MAX
+  STDSCR.addstr(y, 1, empty)
 
-#------------------------------------------------------------------------------
-# stop thread
-#------------------------------------------------------------------------------
-def stop_thread():
-  global is_word_down_thread_stop
-  is_word_down_thread_stop = True
-  # wait untill THREAD_OBJ stops
-  while THREAD_OBJ.isAlive():
-    pass
-  is_word_down_thread_stop = False
+def debug(msg, level):
+  y = SCR_Y_MAX - 10 + level
+  clear_line(y)
 
-#------------------------------------------------------------------------------
-# get pause sec
-#------------------------------------------------------------------------------
-def getPauseSec(count, sec):
-  if count < 1:
-    count = 1
 
-  weight = 5000000
-  msum = count % (weight * sec)
-  return msum == 0
 
 ###############################################################################
 # START
