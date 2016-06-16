@@ -48,3 +48,14 @@ class WidgetDrawer(Widget):
             def setPos(xpos, ypos):
                 self.x = xpos
                 self.y = ypos
+class Obstacle(WidgetDrawer):
+    #obstacles the player will dodge
+    x_velocity = NumericProperty(0)
+    y_velocity = NumericProperty(0)
+    def move(self):
+        self.x = self.x + self.x_velocity
+        self.y = self.y + self.y_velocity
+    def update(self):
+        self.move()
+
+class XWing(WidgetDrawer):
