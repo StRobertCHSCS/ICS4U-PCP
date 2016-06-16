@@ -37,4 +37,14 @@ class WidgetDrawer(Widget):
         self.x = xpos
         self.y = ypos
 
+class rapper(WidgetDrawer):
+
+    velocity_x = NumericProperty(0)
+    velocity_y = NumericProperty(0)
+
+    def move(self):
+
+        self.x = self.x + self.velocity_x
+        self.y = self.y + self.velocity_y
+
 
