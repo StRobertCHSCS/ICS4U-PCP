@@ -66,7 +66,6 @@ def user_prompt():
 
     while prompt == False:
 
-        usage_list = ["EMAIL", "PRINTER", "JOKE"]
         print "what would you like to do? Email,? Check printer?"
         speak("what would you like to do?")
         user_res = listen().upper()
@@ -92,10 +91,9 @@ def user_prompt():
             user_help()
             prompt = True
 
-
-
         else:
             print "invalid command"
+            speak("invalid command")
             prompt = False
 
 
@@ -160,9 +158,11 @@ def send_email():
         print msg
         server.sendmail(user_dict[user], contact_dict[send_to], msg)
         print "email sent"
+        speak("email sent")
 
     else:
         print "that name is not in your contacts "
+        speak("that name is not in your contacts ")
 
     server.quit()
     user_prompt()
@@ -249,6 +249,5 @@ def user_help():
 
 def main():
     user_prompt()
-
 
 main()
