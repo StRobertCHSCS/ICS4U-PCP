@@ -47,4 +47,8 @@ class rapper(WidgetDrawer):
         self.x = self.x + self.velocity_x
         self.y = self.y + self.velocity_y
 
+    def update(self):
+
+        self.move()
+
 
