@@ -59,3 +59,27 @@ class Obstacle(WidgetDrawer):
         self.move()
 
 class XWing(WidgetDrawer):
+    impulse = 3
+    g = -0.1
+
+    x_velocity = NumericProperty(0)
+    y_velocity = NumericProperty(0)
+
+    def move(self):
+        self.x = self.x + self.x_velocity
+        self.y = self.y + self.y_velocity
+
+        if self.y is Window.height * 0.95:
+            self.impulse = -3
+
+    def Determine_Velocity(self):
+        self.g = self.g *1.05
+        if self.g < -4:
+            self.g = -4
+        self.velocity_y = self.impulse + self.g
+        self.impulse = 0.95 * self.impulse
+
+    def update(self):
+        self.Determine_Velocity()
+        self.move()
+
