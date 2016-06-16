@@ -3,7 +3,7 @@ import speech_recognition
 import pyttsx
 from random import randint
 import time
-#printer stuff
+# printer stuff
 import tempfile
 import win32api
 import win32print
@@ -11,19 +11,20 @@ import win32print
 speech_engine = pyttsx.init('sapi5')  # see http://pyttsx.readthedocs.org/en/latest/engine.html#pyttsx.init
 speech_engine.setProperty('rate', 150)
 
-contact_dict = {"MATTHEW":"matthew.hope16@ycdsbk12.ca", "MATT": "matt-hope@hotmail.com",
+contact_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "MATT": "matt-hope@hotmail.com",
                 "ANDREW": "andrewhope772@gmail.com"}
 
-user_dict = {"MATTHEW":"matthew.hope16@ycdsbk12.ca" ,"ANDREW": "andrewhope772@gmail.com"}
+user_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "ANDREW": "andrewhope772@gmail.com"}
 
-pass_dict = {"MATTHEW":"Mh1097465", "ANDREW": "temp"}
+pass_dict = {"MATTHEW": "Mh1097465", "ANDREW": "temp"}
+
 
 def speak(text):
     """
-
-    :rtype: object
+    :param text: string : text that the computer will say to the user
+    :return: None
     """
-    
+
     speech_engine.say(text)
     speech_engine.runAndWait()
 
@@ -32,6 +33,10 @@ recognizer = speech_recognition.Recognizer()
 
 
 def listen():
+    """
+    listens for user input
+    :return: the user input as a string
+    """
 
     with speech_recognition.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source)
@@ -50,13 +55,18 @@ def listen():
 
     return ""
 
+
 def user_prompt():
+    """
+    asks user what they would like the computer to do
+    :return: None
+    """
 
     prompt = False
 
     while prompt == False:
 
-        usage_list = ["EMAIL","PRINTER","JOKE"]
+        usage_list = ["EMAIL", "PRINTER", "JOKE"]
         print "what would you like to do? Email,? Check printer?"
         speak("what would you like to do?")
         user_res = listen().upper()
@@ -78,6 +88,11 @@ def user_prompt():
             send_to_printer()
             prompt = True
 
+        elif "HELP" in user_res:
+            user_help()
+            prompt = True
+
+
 
         else:
             print "invalid command"
@@ -85,6 +100,10 @@ def user_prompt():
 
 
 def email_prompt():
+    """
+    prompts user for if they want to send email
+    :return: None
+    """
 
     print "do you want to send an email"
     speak("do you want to send an email? ")
@@ -103,7 +122,12 @@ def email_prompt():
         speak("okay, no email then")
         user_prompt()
 
+
 def send_email():
+    """
+    connects to gmail server, sends email from users address to one of their contacts
+    :return: None
+    """
 
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
@@ -123,14 +147,12 @@ def send_email():
         else:
             user_valid = False
 
-
-
-    server.login(user_dict[user],pass_dict[user]) # logs into the gmail server
+    server.login(user_dict[user], pass_dict[user])  # logs into the gmail server
 
     speak("who do you want to send this to")
     send_to = listen().upper()
     print send_to
-# you need a while loop here
+    # you need a while loop here
     if send_to in contact_dict:
 
         speak("what do you want to say to" + contact_dict[send_to])
@@ -145,8 +167,13 @@ def send_email():
     server.quit()
     user_prompt()
 
+
 def joke():
-    joke_num = randint(1,3)
+    """
+    ramdomly picks one of three different jokes and tells to  user
+    :return: None
+    """
+    joke_num = randint(1, 3)
 
     if joke_num == 1:
         print"why are there fences in a grave yard? because people were dying to get in "
@@ -160,42 +187,68 @@ def joke():
         print "I sold my vacuum the other day, all it was doing was collecting dust "
         speak("I sold my vacuum the other day... all it was doing was collecting dust")
 
-#user_prompt()
+
+user_prompt()
+
+
 # tells user 1 of three random jokes
 
 def date_time():
+    """
+    tells user what the date and time are
+    :return: None
+    """
 
     localtime = time.asctime(time.localtime(time.time()))
     print "the current time is: ", localtime
     speak("the current time is" + localtime)
     user_prompt()
-     #tells user the date and time
+    # tells user the date and time
+
+
 def send_to_printer():
+    """
+    creates temporary file and prints text to the default printer
+    :return: None
+    """
 
     print "what do you want to print"
     speak("what do you want to print")
     ans = listen()
     print ans
 
-    filename = tempfile.mktemp (".txt")
-    open (filename, "w").write (ans)
-    win32api.ShellExecute (
-      0,
-      "print",
-      filename,
-      #
-      # If this is None, the default printer will
-      # be used anyway.
-      #
-      '/d:"%s"' % win32print.GetDefaultPrinter (),
-      ".",
-      0
+    filename = tempfile.mktemp(".txt")
+    open(filename, "w").write(ans)
+    win32api.ShellExecute(
+            0,
+            "print",
+            filename,
+            #
+            # If this is None, the default printer will
+            # be used anyway.
+            #
+            '/d:"%s"' % win32print.GetDefaultPrinter(),
+            ".",
+            0
     )
 
     # sends something to default printer
-    print "sent",ans,"to printer"
+    print "sent", ans, "to printer"
+
+
+def user_help():
+    """
+    tells user what the program can do
+    :return: None
+    """
+
+    print "You can send emails, print, check the time, ask for a joke, if mic cant pick up audio, try changing locations or checking internet connection"
+    speak("You can send emails, print, check the time, ask for a joke," +
+          " if mic cant pick up audio, try changing locations or checking internet connection")
+
 
 def main():
     user_prompt()
+
 
 main()
