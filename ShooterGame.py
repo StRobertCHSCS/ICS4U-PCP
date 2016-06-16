@@ -11,6 +11,7 @@ Created on:        06/16/2016
 # Import necessary library
 import pygame
 from pygame.locals import *
+import math
 
 ### Initialize the game
 
@@ -56,8 +57,14 @@ while 1:
     screen.blit(objective, (0,410))
     screen.blit(objective, (0,510))
 
-    # Draw the various objects onto the screen
-    screen.blit(player, player_position)
+    # Complicated math formula involving trigonometry
+    # For rotation of the player based on the mouse cursor
+    mouse_position = pygame.mouse.get_pos()
+    angle = math.atan2(mouse_position[1] - (player_position[1] + 32), mouse_position[0] - (player_position[0] + 26))
+    player_rotation = pygame.transform.rotate(player, 360 - angle * 57.29)
+    player_position2 = (player_position[0] - player_rotation.get_rect().width / 2,
+                        player_position[1] - player_rotation.get_rect().height / 2)
+    screen.blit(player_rotation, player_position2)
 
     # Update the screen
     pygame.display.flip()
