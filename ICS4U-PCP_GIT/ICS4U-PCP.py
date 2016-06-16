@@ -1,4 +1,3 @@
-
 import sys
 import curses
 import curses.panel
@@ -128,6 +127,7 @@ class Word(object):
     self.win = win
     self.panel = curses.panel.new_panel(win)
     self.panel.bottom()
+
 
   def getX(self):
     return self.x
@@ -365,7 +365,6 @@ def mainGameScreen():
 
           main_rc = 1
           gameScreen(WORD_START_PAUSE, diffc, ptype)
-          gameOverScreen()
           break
 
         # reset
@@ -465,6 +464,7 @@ def gameScreen(pauseSec, diffc, ptype):
 
     if GO_NEXT:
       STDSCR.addstr(5,20,"****** Completed ********")
+      showCurrentScoreScreen()
       pauseSec = pauseSec /2
 
       #speed
@@ -501,6 +501,8 @@ def statScreen():
     miss = ""
     acc = ""
 
+    #1    2       3      4     5    6
+    #split by comma
     user, level, score, hit, miss, acc = line.split(',')
     user = user.strip("'")
     level = level.strip()
@@ -509,8 +511,16 @@ def statScreen():
     miss = miss.strip()
     acc = acc.strip()
 
-  rank = 1
+    formatline = '{0:20} {1:5} {2:8} {3:8} {4:8} {5:8}'.format(
+                    user,level,score,hit,miss,acc+"%")
 
+    if int(score) in score_formatline:
+      score_formatline[int(score)].append(formatline)
+    else:
+      score_formatline[int(score)] = [ formatline ]
+
+  rank = 1
+  # display only top 10
   scores = list(score_formatline.keys())
   scores.sort()
   scores.reverse()
@@ -536,21 +546,55 @@ def statScreen():
     if rank >= 11:
       break
 
+  ofile.close()
   test_pan = curses.panel.new_panel(stat_win)
   test_pan.top()
   curses.panel.update_panels()
   STDSCR.noutrefresh(); curses.doupdate()
 
-def gameOverScreen():
+
+#------------------------------------------------------------------------------
+# Show Current Score screen
+#  - show after each game
+#------------------------------------------------------------------------------
+
+def showCurrentScoreScreen():
   STDSCR.clear()
   STDSCR.refresh()
+  if IS_DEBUG:
+    drawCoor()
+  global LEVEL
 
-  if ACCU_HIT_PER_ROUND + ACCU_MISS_PER_ROUND == 0:
+  l = 20
+  w = 50
+  x = 3
+  y = 3
+
+  if (HIT_PER_ROUND + MISS_PER_ROUND)  == 0:
     accuracy = 0
   else:
-    accuracy = float(ACCU_HIT_PER_ROUND)/ (ACCU_HIT_PER_ROUND+ ACCU_MISS_PER_ROUND) * 100
+    accuracy = (float(HIT_PER_ROUND)/ (HIT_PER_ROUND + MISS_PER_ROUND)) * 100
 
-  win1 = curses.newwin(20,20, 5, 5)
+  accuracy = float("{0:.2f}".format(accuracy))
+  goal_win = curses.newwin(l, w, y, x)
+  goal_win.addstr(1,1, "LEVEL: " +  str(LEVEL))
+  goal_win.addstr(2,1, "SCORE: " +  str(ACCU_SCORE))
+  goal_win.addstr(3,1, "HIT: "   +  str(HIT_PER_ROUND))
+  goal_win.addstr(4,1, "MISS: "  +  str(MISS_PER_ROUND))
+  goal_win.addstr(5,1, "Accuracy: "  +  str(accuracy) + "%")
+  goal_win.addstr(6,1, "Excellent "  +  str(EXC_COUNT))
+  goal_win.addstr(7,1, "Good:     "  +  str(GOOD_COUNT))
+  goal_win.addstr(8,1, "Average:  "  +  str(AVG_COUNT))
+
+  goal_pan = curses.panel.new_panel(goal_win)
+  curses.panel.update_panels()
+  goal_win.noutrefresh();curses.doupdate()
+  goal_pan.hide()
+  LEVEL += 1
+
+  accuracy = float("{0:.2f}".format(accuracy))
+
+  win1 = curses.newwin(30,30, 5, 5)
   win1.addstr(1,1,"Game over")
   win1.addstr(2,1, "BEST LEVEL: " +  str(LEVEL))
   win1.addstr(3,1, "TOTAL SCORE: " +  str(ACCU_SCORE))
@@ -563,11 +607,10 @@ def gameOverScreen():
 
   curses.echo()
   msg = "Enter your name: "
-  STDSCR.addstr(11, 20,msg)
-  STDSCR.addstr(12, 20 + len(msg),"")
+  STDSCR.addstr(19, 20,msg)
+  STDSCR.addstr(19, 20 + len(msg),"__________________")
   uinput = STDSCR.getstr(19, 20 + len(msg), 20)
   # save to the file
-
   if uinput != "":
     to_save = []
     to_save.append(str(uinput.decode('ascii')))
@@ -586,7 +629,6 @@ def gameOverScreen():
 # Draw goal
 # ------------------------------------------------------------------------------
 def drawGoal(current, goal):
-
   goal_win = curses.newwin(3,18, 3, 90)
   goal_win.addstr(1,2,"CURRENT: " + str(current) + "/" +str(goal))
   goal_win.box()
@@ -668,7 +710,6 @@ def drawCombo(combo , score ):
 # start fall word
 # -------------------------------------------------------------------
 def start_fall_word(pauseSec, is_demo, diffc, ptype):
-
   # Create a combo window/panel
   combo_win = curses.newwin(10,10,5,5)
   combo_pan = curses.panel.new_panel(combo_win)
@@ -802,9 +843,9 @@ def start_fall_word(pauseSec, is_demo, diffc, ptype):
 
         lastSaved = USER_ENT
 
-      #
+
       # Duration of combo box
-      #
+
       if showCombo:
         comboTimerCount += 1
         STDSCR.addstr(40,5,str(comboTimerCount))
@@ -856,6 +897,10 @@ def slow():
   for i in range(1,999999):
     pass
 
+
+# ------------------------------------------------------------------------------
+# Draw coordinates
+# ------------------------------------------------------------------------------
 def drawCoor():
   STDSCR.clear()
   #draw line 0 - off 1 - on
@@ -931,4 +976,7 @@ def printError(msg):
   #exit program
   sys.exit()
 
+###############################################################################
+# START
+###############################################################################
 curses.wrapper(main)
