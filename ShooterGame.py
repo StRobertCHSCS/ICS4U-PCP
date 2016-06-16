@@ -24,6 +24,10 @@ screen=pygame.display.set_mode((width, height))
 keys = [False, False, False, False]
 player_position = [600,300]
 
+# Bullet
+accuracy = [0,0]
+bullets = []
+
 ### Load images
 
 # The character that the player will control
@@ -37,6 +41,9 @@ background = pygame.transform.scale(background, (100, 100))
 # The girls that the player must protect
 objective = pygame.image.load("image/girl.png")
 objective = pygame.transform.scale(objective, (90, 90))
+
+# The bullet that the character will shoot
+bullet = pygame.image.load("image/bullet.png")
 
 ### Loop until game is completed
 while 1:
@@ -65,6 +72,27 @@ while 1:
     player_position2 = (player_position[0] - player_rotation.get_rect().width / 2,
                         player_position[1] - player_rotation.get_rect().height / 2)
     screen.blit(player_rotation, player_position2)
+
+    # Code for player firing bullet
+    for i in bullets:
+
+        # Initialize and set up basic info
+        index = 0
+        velx = math.cos(i[0]) * 10
+        vely = math.sin(i[0]) * 10
+        i[1] += velx
+        i[2] += vely
+
+        # If out of boundary, delete it.
+        if i[1] < -64 or i[1] > 1200 or i[2] <- 64 or i[2] > 600:
+            bullets.pop(index)
+
+        index+=1
+
+        # Calculate bullet's rotation and draw it on the screen
+        for projectile in bullets:
+            bullet2 = pygame.transform.rotate(bullet, 360 - projectile[0] * 57.29)
+            screen.blit(bullet2, (projectile[1], projectile[2]))
 
     # Update the screen
     pygame.display.flip()
@@ -98,6 +126,13 @@ while 1:
                 keys[2] = False
             elif event.key == pygame.K_d:
                 keys[3] = False
+
+        # Complicated math formula for bullet and its rotation
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            position = pygame.mouse.get_pos()
+            accuracy[1] += 1
+            bullets.append([math.atan2(position[1] - (player_position2[1] + 32), position[0]
+                                      - (player_position2[0] + 26)),player_position2[0] + 32, player_position2[1] + 32])
 
     # While status is true, move the player (direction depends on which key)
     if keys[0]:
