@@ -1,16 +1,16 @@
-from random import randint
-import curses.panel
-import time
-from time import sleep
+
 import sys
+import curses
+import curses.panel
 import threading
+from random import randint
 
 # ------------------------------------------------------------------------------
-# Global Varibles
+# Global variables
 # ------------------------------------------------------------------------------
-IS_DEBUG = True
+IS_DEBUG = False
 WORD_START_PAUSE = 0.2   # Initial word speed. Lower is Faster
-
+DATA_FILE = "data.dat"
 ENG_FILE = "words.dat"
 PY_FILE = "python.dat"
 GO_NEXT = False
@@ -55,24 +55,16 @@ ENG_WORDS_LEN = 0
 PY_WORDS = []
 PY_WORDS_LEN = 0
 
-ent = ""
-test_val = 1
-SCR_Y_MAX = 40
-SCR_X_MAX = 60
-
-
-
 # ------------------------------------------------------------------------------
 # class Word
 # ------------------------------------------------------------------------------
 # Create a word object placed in a panel
 
-
 class Word(object):
   """
   Representation of words
   """
-  def __init__(self, diffc,  ptype):
+  def __init__(self, diffc="hard", ptype="coding"):
     """
     selects a word according to user difficulty
     :param diffc: str - difficulty selected by user
@@ -137,7 +129,6 @@ class Word(object):
     self.panel = curses.panel.new_panel(win)
     self.panel.bottom()
 
-
   def getX(self):
     return self.x
 
@@ -145,27 +136,14 @@ class Word(object):
     return self.y
 
   def moveDown(self):
+    # y, x
     self.panel.move(self.y, self.x)
     curses.panel.update_panels()
     self.win.noutrefresh(); curses.doupdate()
     self.y += 1
 
-  def getPanel(self):
-    return self.panel
-
-  def _eq__(self,other):
-    return self.word == other.word
-
-  def __str__(self):
-    return self.word
-
   def delWord(self):
     self.panel.hide()
-    curses.panel.update_panels(); STDSCR.refresh()
-
-  # Debug
-  def display(self):
-    # y, x
     curses.panel.update_panels(); STDSCR.refresh()
 
 #------------------------------------------------------------------------------
@@ -178,7 +156,7 @@ def main(stdscr):
   :return: None
   """
 
-  # make colours
+  #make colours
   curses.init_pair(1,curses.COLOR_RED,curses.COLOR_BLACK)
   curses.init_pair(2,curses.COLOR_GREEN,curses.COLOR_BLACK)
   curses.init_pair(3,curses.COLOR_YELLOW,curses.COLOR_BLACK)
@@ -187,7 +165,9 @@ def main(stdscr):
   curses.init_pair(6,curses.COLOR_CYAN,curses.COLOR_BLACK)
   curses.init_pair(7,curses.COLOR_BLUE,curses.COLOR_BLACK)
 
-  # mouse cursor set - none
+  global EXIT_GAME
+
+  #mouse cursor
   curses.curs_set(0)
 
   # Set up for debug
@@ -242,18 +222,17 @@ def mainGameScreen():
   """
   STDSCR.clear()
   STDSCR.refresh()
-
   # debug
   if IS_DEBUG:
     drawCoor()
 
   # Draw Title
-  title1 = r'TTTTTT\ EEEEE\  X   X\ TTTTT\      BBBB\  L\       A    SSSSS\ TTTTT\ EEEEE\ RRRR   '
-  title2 = r'\\T\\\  E\\\\\   X X\  \\T\\\      B\\\B\ L\      A\A   S\\\\\ \\T\\\ E\\\\\ R\\\R\ '
-  title3 = r'  T\    EEEEE\    X\     T\        BBBB\\ L\     AAAAA  SSSSS\   T\   EEEEE\ RRRR\\ '
-  title4 = r'  T\    E\\\\\   X\X     T\        B\\\B\ L\     A\  A\ \\\\S\   T\   E\\\\\ R\ R\  '
-  title5 = r'  T\    EEEEE\  X\  X\   T\        BBBB\\ LLLLL\ A\  A\ SSSSS\   T\   EEEEE\ R\  R\ '
-  title6 = r'  \\    \\\\\\  \\  \\   \\        \\\\\  \\\\\\ \\  \\ \\\\\\   \\   \\\\\\ \\  \\ '
+  title1 = r'TTTTT\ EEEEE\ X   X\ TTTTT\      BBBB\  L\       A    SSSSS\ TTTTT\ EEEEE\ RRRR   '
+  title2 = r'\\T\\\ E\\\\\  X X\  \\T\\\      B\\\B\ L\      A\A   S\\\\\ \\T\\\ E\\\\\ R\\\R\ '
+  title3 = r'  T\   EEEEE\   X\     T\        BBBB\\ L\     AAAAA  SSSSS\   T\   EEEEE\ RRRR\\ '
+  title4 = r'  T\   E\\\\\  X\X     T\        B\\\B\ L\     A\  A\ \\\\S\   T\   E\\\\\ R\ R\  '
+  title5 = r'  T\   EEEEE\ X\  X\   T\        BBBB\\ LLLLL\ A\  A\ SSSSS\   T\   EEEEE\ R\  R\ '
+  title6 = r'  \\   \\\\\\ \\  \\   \\        \\\\\  \\\\\\ \\  \\ \\\\\\   \\   \\\\\\ \\  \\ '
 
   #                         h      l           y             x
   title_win = curses.newwin(9, len(title1)+4, 5, int(MAX_X/2 - len(title1)/2))
@@ -305,7 +284,9 @@ def mainGameScreen():
     elif chr(event) == 's':
       title_panel.hide()
       menu_panel.hide()
+      #statsScreen
       main_rc = 1
+      statScreen()
 
     #Play
     elif chr(event) == 'p':
@@ -384,6 +365,7 @@ def mainGameScreen():
 
           main_rc = 1
           gameScreen(WORD_START_PAUSE, diffc, ptype)
+          gameOverScreen()
           break
 
         # reset
@@ -453,6 +435,7 @@ def gameScreen(pauseSec, diffc, ptype):
 
         msg = " " * len(msg)
         enter_win.addstr(0,0,msg)
+        STDSCR.addstr(4,135,"Press tab to exit and ESC to reset")
 
         msg = "> " + str(saved)
         enter_win.addstr(0,0,msg)
@@ -492,29 +475,118 @@ def gameScreen(pauseSec, diffc, ptype):
 
     if EXIT_GAME:
       break
-
 # ------------------------------------------------------------------------------
 # Stat Screen
 # ------------------------------------------------------------------------------
-def userstats():
-  stat_win = curses.newwin(30, 10, 10, 15)
-  stat_win.addstr(5,6,"This is userstats window")
-  stat_win.box()
-  score_formatline = []
 
+def statScreen():
   stop_thread()
-  stat_win.addstr(6,6,"user name: ")
-  stat_win.addstr(7,6,"level#: ")
-  stat_win.addstr(8,6,"score#: ")
-###############################################################################
-#
-# Draws
-#
-###############################################################################
+  ofile = open(DATA_FILE, "r")
+
+  length = 75
+  stat_win = curses.newwin(30, length, 10, MAX_X/2 - length/2)
+  score_formatline = {}
+  for line in ofile:
+
+    # remove white spaces
+    line = line.strip()
+    # remove [ ]
+    line = line.lstrip('[')
+    line = line.rstrip(']')
+
+    user = ""
+    level = ""
+    score = ""
+    hit = ""
+    miss = ""
+    acc = ""
+
+    user, level, score, hit, miss, acc = line.split(',')
+    user = user.strip("'")
+    level = level.strip()
+    score = score.strip()
+    hit = hit.strip()
+    miss = miss.strip()
+    acc = acc.strip()
+
+  rank = 1
+
+  scores = list(score_formatline.keys())
+  scores.sort()
+  scores.reverse()
+
+  formatline = 'Best Top 10 users'
+  stat_win.addstr(rank -1-1-1-1 + 10 ,5,formatline,curses.A_BOLD)
+
+  formatline = '{0:20} {1:5} {2:8} {3:8} {4:8} {5:8}'.format(
+                  "Name","Level","Score","Hit","Miss","Accuracy")
+  stat_win.addstr(rank -1-1 + 10 ,5,formatline)
+  formatline = '{0:20} {1:5} {2:8} {3:8} {4:8} {5:8}'.format(
+                "-"*20,"-"*5,"-"*8,"-"*8,"-"*8,"-"*8)
+  stat_win.addstr(rank -1 + 10 ,5,formatline,curses.A_BOLD)
+
+  for score in scores:
+  # top comes first
+    for line in score_formatline[score]:
+      if rank >= 11:
+        break
+      stat_win.addstr(rank + 10 ,5,line,curses.A_BOLD)
+      rank += 1
+
+    if rank >= 11:
+      break
+
+  test_pan = curses.panel.new_panel(stat_win)
+  test_pan.top()
+  curses.panel.update_panels()
+  STDSCR.noutrefresh(); curses.doupdate()
+
+def gameOverScreen():
+  STDSCR.clear()
+  STDSCR.refresh()
+
+  if ACCU_HIT_PER_ROUND + ACCU_MISS_PER_ROUND == 0:
+    accuracy = 0
+  else:
+    accuracy = float(ACCU_HIT_PER_ROUND)/ (ACCU_HIT_PER_ROUND+ ACCU_MISS_PER_ROUND) * 100
+
+  win1 = curses.newwin(20,20, 5, 5)
+  win1.addstr(1,1,"Game over")
+  win1.addstr(2,1, "BEST LEVEL: " +  str(LEVEL))
+  win1.addstr(3,1, "TOTAL SCORE: " +  str(ACCU_SCORE))
+  win1.addstr(4,1, "HIT: " + str(ACCU_HIT_PER_ROUND))
+  win1.addstr(5,1, "MISS: " + str(ACCU_MISS_PER_ROUND))
+  win1.addstr(6,1, "OVERALL Accuracy: " + str(accuracy) + "%")
+
+  win1.noutrefresh(); curses.doupdate()
+  goal_pan = curses.panel.new_panel(win1)
+
+  curses.echo()
+  msg = "Enter your name: "
+  STDSCR.addstr(11, 20,msg)
+  STDSCR.addstr(12, 20 + len(msg),"")
+  uinput = STDSCR.getstr(19, 20 + len(msg), 20)
+  # save to the file
+
+  if uinput != "":
+    to_save = []
+    to_save.append(str(uinput.decode('ascii')))
+    to_save.append(LEVEL)
+    to_save.append(ACCU_SCORE)
+    to_save.append(ACCU_HIT_PER_ROUND)
+    to_save.append(ACCU_MISS_PER_ROUND)
+    to_save.append(accuracy)
+    mfile = open(DATA_FILE,"a")
+    mfile.write(str(to_save)+"\n")
+    mfile.close()
+
+  curses.noecho()
+
 # ------------------------------------------------------------------------------
 # Draw goal
 # ------------------------------------------------------------------------------
 def drawGoal(current, goal):
+
   goal_win = curses.newwin(3,18, 3, 90)
   goal_win.addstr(1,2,"CURRENT: " + str(current) + "/" +str(goal))
   goal_win.box()
@@ -527,6 +599,7 @@ def drawGoal(current, goal):
 # ------------------------------------------------------------------------------
 # Draw life bar
 # ------------------------------------------------------------------------------
+
 def drawLife(lose):
   left = True
 
@@ -550,6 +623,7 @@ def drawLife(lose):
 # Draw score
 #------------------------------------------------------------------------------
 def drawScore(score = 0):
+
   # Create a score window/panel
   l = 3
   w = 50
@@ -564,7 +638,7 @@ def drawScore(score = 0):
 #------------------------------------------------------------------------------
 # Draw combos
 #------------------------------------------------------------------------------
-def drawCombo(combo = 0, score = 0):
+def drawCombo(combo , score ):
   """
   draws combo panel on the screen
   to show combo score of the user
@@ -594,18 +668,13 @@ def drawCombo(combo = 0, score = 0):
 # start fall word
 # -------------------------------------------------------------------
 def start_fall_word(pauseSec, is_demo, diffc, ptype):
-  count_worddown = 0
-  word_wordObj = {}
-
-  #comboTimerCount = 1
-  #showCombo = False
 
   # Create a combo window/panel
   combo_win = curses.newwin(10,10,5,5)
   combo_pan = curses.panel.new_panel(combo_win)
   combo_pan.hide()
 
-  # init
+  #  init
   global ACCU_SCORE
   global EXIT_GAME
   global GO_NEXT
@@ -676,6 +745,7 @@ def start_fall_word(pauseSec, is_demo, diffc, ptype):
               EXIT_GAME = True
         else:
           wordObj.moveDown()
+
       new_word_interval += 1
       count_worddown = 0
 
@@ -780,22 +850,48 @@ def getPauseSec(count, sec):
   msum = count % (weight * sec)
   return msum == 0
 
+def slow():
+  for i in range(1,999999/2):
+    pass
+  for i in range(1,999999):
+    pass
 
+def drawCoor():
+  STDSCR.clear()
+  #draw line 0 - off 1 - on
+  STDSCR.border(0)
+  STDSCR.refresh()
+  for x in range(MAX_X):
+    STDSCR.addstr(2,x, str(x%10))
+    if x % 10 == 0:
+      STDSCR.addstr(1,x, str(x//10))
+
+  for y in range(MAX_Y):
+    STDSCR.addstr(y,2, str(y%10))
+    if (y % 10 == 0):
+      STDSCR.addstr(y,1, str(y//10))
+
+  STDSCR.refresh()
+
+# ------------------------------------------------------------------------------
+# Read English words
+# ------------------------------------------------------------------------------
 def readEngWord():
   global ENG_WORDS
   global ENG_WORDS_LEN
-                     # OPEN FILE
-  eng_file  = open(ENG_FILE,"r")
-  ENG_WORDS = eng_file.readlines()
+  mfile = open(ENG_FILE,"r")
+  ENG_WORDS = mfile.readlines()
   ENG_WORDS_LEN = len(ENG_WORDS)
 
-
+# ------------------------------------------------------------------------------
+# Read Python commands
+# ------------------------------------------------------------------------------
 def readPhyWord():
   global PY_WORDS
   global PY_WORDS_LEN
   #read files
-  py_file = open(PY_FILE,"r")
-  PY_WORDS = py_file.readlines()
+  mfile = open(PY_FILE,"r")
+  PY_WORDS = mfile.readlines()
   PY_WORDS_LEN = len(PY_WORDS)
 
 # ------------------------------------------------------------------------------
@@ -835,41 +931,4 @@ def printError(msg):
   #exit program
   sys.exit()
 
-
-def drawCoor():
-  STDSCR.clear()
-  STDSCR.border(0)
-  STDSCR.refresh()
-  for x in range(MAX_X):
-    STDSCR.addstr(2,x, str(x%10))
-    if (x % 10 == 0):
-      STDSCR.addstr(1,x, str(x//10))
-
-  for y in range(MAX_Y):
-    STDSCR.addstr(y,2, str(y%10))
-    if (y % 10 == 0):
-      STDSCR.addstr(y,1, str(y//10))
-
-  STDSCR.refresh()
-
-def my_raw_input(stdscr, r, c, prompt_string):
-    curses.echo()
-    stdscr.addstr(r, c, prompt_string)
-    stdscr.refresh()
-    input = stdscr.getstr(r + 1, c, 20)
-    return input  #       ^^^^  reading input at next line
-
-def clear_line(y):
-  empty = " " * SCR_X_MAX
-  STDSCR.addstr(y, 1, empty)
-
-def debug(msg, level):
-  y = SCR_Y_MAX - 10 + level
-  clear_line(y)
-
-
-
-###############################################################################
-# START
-###############################################################################
 curses.wrapper(main)
