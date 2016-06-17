@@ -178,4 +178,19 @@
         android:visibility="gone"
         android:layout_alignParentBottom="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Summer Songs"
+        android:id="@+id/summer_song"
+        android:textColor="#ffffff"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#000000"
+        android:typeface="normal"
+        android:textSize="15dp" />
+
 </RelativeLayout>
