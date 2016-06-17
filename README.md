@@ -6,12 +6,12 @@ Welcome to this shooting game. Your goal is to protect your objective (girls) fr
 ## Technical Requirements
 ### Knowledge
 
-W - Move up
-A - Move Left
-S - Move Down
-D - Move Right
+1. W - Move up
+2. A - Move Left
+3. S - Move Down
+4. D - Move Right
 
-Mouse Right Click - Shoot bullet
+5. Mouse Right Click - Shoot bullet
 
 ### Hardware
 Any platform where you can download python, pygame, python editor and run them successfully.
