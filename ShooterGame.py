@@ -57,8 +57,22 @@ slime = pygame.image.load("image/slime.png")
 slime = pygame.transform.scale(slime, (50,50))
 slime1 = slime
 
+# For the health meter
+health_bar = pygame.image.load("image/healthbar.png")
+health = pygame.image.load("image/health.png")
+
+# Ending
+lose_message = pygame.image.load("image/lose_message.png")
+lose_message = pygame.transform.scale(lose_message, (1200,600))
+win_message = pygame.image.load("image/win_message.png")
+win_message = pygame.transform.scale(win_message, (1200,600))
+
+# Conditions for lose and win
+running = 1
+exitcode = 0
+
 ### Loop until game is completed
-while 1:
+while running:
 
     # To spawn enemies at constant pattern
     enemy_timer -= 1
@@ -162,6 +176,18 @@ while 1:
     for enemy in enemies:
         screen.blit(slime1, enemy)
 
+    # Draw the time display which indicates how long the game will last
+    font = pygame.font.Font(None, 46)
+    survivedtext = font.render(str((30000 - pygame.time.get_ticks()) / 60000)+ ":" + str((30000 - pygame.time.get_ticks()) / 1000 % 60).zfill(2), True, (0,0,0))
+    textRect = survivedtext.get_rect()
+    textRect.topright = [1195, 5]
+    screen.blit(survivedtext, textRect)
+
+    # Draw the health meter, displaying amount of health left
+    screen.blit(health_bar, (5,5))
+    for health1 in range(health_value):
+        screen.blit(health, (health1+8,8))
+
     # Update the screen
     pygame.display.flip()
 
@@ -211,3 +237,53 @@ while 1:
         player_position[0] -= 5
     elif keys[3]:
         player_position[0] += 5
+
+    # Check whether player loses or wins
+
+    # Win condition
+    if pygame.time.get_ticks() >= 30000:
+        running=0
+        exitcode=1
+
+    # Lose condition
+    elif health_value <= 0:
+        running=0
+        exitcode=0
+
+    # Calculate accuracy percentage (given that player landed at least one shot)
+    elif accuracy[1] != 0:
+        accuracy1 = accuracy[0] * 1.0 / accuracy[1]*100
+
+    else:
+        accuracy1 = 0
+
+# Display ending based one whether player wins or loses
+
+# Player loses
+if exitcode == 0:
+    pygame.font.init()
+    font = pygame.font.Font(None, 46)
+    text = font.render("Accuracy: "+str(accuracy1)+"%", True, (255,0,0))
+    textRect = text.get_rect()
+    textRect.centerx = screen.get_rect().centerx
+    textRect.centery = screen.get_rect().centery+24
+    screen.blit(lose_message, (0,0))
+    screen.blit(text, textRect)
+
+# Player wins
+else:
+    pygame.font.init()
+    font = pygame.font.Font(None, 46)
+    text = font.render("Accuracy: "+str(accuracy1)+"%", True, (0,255,0))
+    textRect = text.get_rect()
+    textRect.centerx = screen.get_rect().centerx
+    textRect.centery = screen.get_rect().centery+24
+    screen.blit(win_message, (0,0))
+    screen.blit(text, textRect)
+
+while 1:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit(0)
+    pygame.display.flip()
