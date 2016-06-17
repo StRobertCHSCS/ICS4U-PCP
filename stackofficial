@@ -82,7 +82,7 @@ task main()
 		while (i == 2)
 		{
 			cubePushandStack();
-			checkCubeColor();
+			//checkCubeColor();
 			i++;
 		}
 	}
