@@ -67,6 +67,19 @@ lose_message = pygame.transform.scale(lose_message, (1200,600))
 win_message = pygame.image.load("image/win_message.png")
 win_message = pygame.transform.scale(win_message, (1200,600))
 
+# All the audio
+
+# 3.1 - Load audio
+objective_damage = pygame.mixer.Sound("audio/objective_damage.wav")
+enemy_death = pygame.mixer.Sound("audio/enemy_death.wav")
+bullet_fire = pygame.mixer.Sound("audio/bullet.wav")
+objective_damage.set_volume(0.05)
+enemy_death.set_volume(0.05)
+bullet_fire.set_volume(0.05)
+pygame.mixer.music.load('audio/bgm.mp3')
+pygame.mixer.music.play(-1, 0.0)
+pygame.mixer.music.set_volume(0.35)
+
 # Conditions for lose and win
 running = 1
 exitcode = 0
@@ -149,6 +162,7 @@ while running:
         enemy_rect.left = enemy[0]
 
         if enemy_rect.left < 64:
+            objective_damage.play()
             health_value -= random.randint(5, 20)
             enemies.pop(index)
 
@@ -164,6 +178,7 @@ while running:
 
             # If it does, eliminate both the bullet and the enemy
             if enemy_rect.colliderect(bullet_rect):
+                enemy_death.play()
                 accuracy[0] += 1
                 enemies.pop(index)
                 bullets.pop(index1)
@@ -184,9 +199,9 @@ while running:
     screen.blit(survivedtext, textRect)
 
     # Draw the health meter, displaying amount of health left
-    screen.blit(health_bar, (5,5))
+    screen.blit(health_bar, (100,10))
     for health1 in range(health_value):
-        screen.blit(health, (health1+8,8))
+        screen.blit(health, (health1+103,13))
 
     # Update the screen
     pygame.display.flip()
@@ -223,6 +238,7 @@ while running:
 
         # Complicated math formula for bullet and its rotation
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            bullet_fire.play()
             position = pygame.mouse.get_pos()
             accuracy[1] += 1
             bullets.append([math.atan2(position[1] - (player_position2[1] + 32), position[0]
