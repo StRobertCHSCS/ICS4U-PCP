@@ -152,6 +152,17 @@ class GUI(Widget):
                 self.gameOver()
                 Clock.unschedule(self.update)
             obstacle.update()
+class ClientApp(App):
+
+    def build(self):
+        parent = Widget()
+        app = GUI()
+        Clock.schedule_interval(app.update, 1.0/60.0)
+        parent.add_widget(app)
+        return parent
+
+if __name__ == '__main__' :
+    ClientApp().run()
 
 
 
