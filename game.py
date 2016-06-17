@@ -137,7 +137,26 @@ class GUI(Widget):
         restartButton.bind(on_release = restart_button)
         self.parent.add_widget(restartButton)
 
-        def update(self, dt):
+    def update(self, dt):
+        self.ship.update()
+        tmpCount = randint(1, 1800)
+        if tmpCount > self.probability:
+            self.addObstacle()
+            if self.probability < 1300:
+                self.probability = 1300
+            self.probability = self.probability - 1
+
+        for obstacle in self.obstacleList:
+            if obstacle.collide_widget(self.xwing):
+                print 'Death'
+                self.gameOver()
+                Clock.unschedule(self.update)
+            obstacle.update()
+
+
+
+
+
 
 
 
