@@ -10,7 +10,6 @@ Welcome to this shooting game. Your goal is to protect your objective (girls) fr
 2. A - Move Left
 3. S - Move Down
 4. D - Move Right
-
 5. Mouse Right Click - Shoot bullet
 
 ### Hardware
