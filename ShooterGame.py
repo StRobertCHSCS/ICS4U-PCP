@@ -11,6 +11,7 @@ Created on:        06/16/2016
 # Import necessary library
 import pygame
 from pygame.locals import *
+import random
 import math
 
 ### Initialize the game
@@ -27,6 +28,12 @@ player_position = [600,300]
 # Bullet
 accuracy = [0,0]
 bullets = []
+
+# Enemy related
+enemy_timer = 100
+enemy_timer2 = 0
+enemies = [[1200,100]]
+health_value = 194
 
 ### Load images
 
@@ -45,8 +52,16 @@ objective = pygame.transform.scale(objective, (90, 90))
 # The bullet that the character will shoot
 bullet = pygame.image.load("image/bullet.png")
 
+# Enemies that need to be defeated
+slime = pygame.image.load("image/slime.png")
+slime = pygame.transform.scale(slime, (50,50))
+slime1 = slime
+
 ### Loop until game is completed
 while 1:
+
+    # To spawn enemies at constant pattern
+    enemy_timer -= 1
 
     # Clear the screen
     screen.fill(0)
@@ -93,6 +108,59 @@ while 1:
         for projectile in bullets:
             bullet2 = pygame.transform.rotate(bullet, 360 - projectile[0] * 57.29)
             screen.blit(bullet2, (projectile[1], projectile[2]))
+
+    # Draw the enemy slime
+
+    if enemy_timer == 0:
+        enemies.append([1200, random.randint(50, 550)])
+        enemy_timer = 100 - (enemy_timer2 * 2)
+
+        if enemy_timer2 >= 35:
+            enemy_timer2 = 35
+
+        else:
+            enemy_timer2 += 5
+
+    index = 0
+
+    for enemy in enemies:
+
+        if enemy[0] < -64:
+            enemies.pop(index)
+        enemy[0] -= 5
+
+        # Allow the enemies to attack the objective
+        enemy_rect = pygame.Rect(slime1.get_rect())
+        enemy_rect.top = enemy[1]
+        enemy_rect.left = enemy[0]
+
+        if enemy_rect.left < 64:
+            health_value -= random.randint(5, 20)
+            enemies.pop(index)
+
+        # Check if bullet collides with slime
+        index1 = 0
+
+        for i in bullets:
+
+            # Set up rectangles to check collision
+            bullet_rect = pygame.Rect(bullet.get_rect())
+            bullet_rect.left = i[1]
+            bullet_rect.top = i[2]
+
+            # If it does, eliminate both the bullet and the enemy
+            if enemy_rect.colliderect(bullet_rect):
+                accuracy[0] += 1
+                enemies.pop(index)
+                bullets.pop(index1)
+
+            index1 += 1
+
+        # Next slime
+        index += 1
+
+    for enemy in enemies:
+        screen.blit(slime1, enemy)
 
     # Update the screen
     pygame.display.flip()
