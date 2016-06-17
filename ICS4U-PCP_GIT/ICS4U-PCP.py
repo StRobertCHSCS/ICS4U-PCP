@@ -4,9 +4,7 @@ import curses.panel
 import threading
 from random import randint
 
-# ------------------------------------------------------------------------------
 # Global variables
-# ------------------------------------------------------------------------------
 IS_DEBUG = False
 WORD_START_PAUSE = 0.2   # Initial word speed. Lower is Faster
 DATA_FILE = "data.dat"
@@ -47,7 +45,6 @@ STDSCR = ""
 THREAD_OBJ = ""
 is_word_down_thread_stop = False    # True: Stop falling words.
                                     # False: Start falling words
-
 NEW_WORD_FREQ = 10  # lower, sooner
 ENG_WORDS = []
 ENG_WORDS_LEN = 0
@@ -365,6 +362,7 @@ def mainGameScreen():
 
           main_rc = 1
           gameScreen(WORD_START_PAUSE, diffc, ptype)
+          gameOverScreen()
           break
 
         # reset
@@ -464,6 +462,7 @@ def gameScreen(pauseSec, diffc, ptype):
 
     if GO_NEXT:
       STDSCR.addstr(5,20,"****** Completed ********")
+      dummy = drawContinue()
       showCurrentScoreScreen()
       pauseSec = pauseSec /2
 
@@ -551,13 +550,12 @@ def statScreen():
   test_pan.top()
   curses.panel.update_panels()
   STDSCR.noutrefresh(); curses.doupdate()
-
+  dummy = drawContinue()
 
 #------------------------------------------------------------------------------
 # Show Current Score screen
 #  - show after each game
 #------------------------------------------------------------------------------
-
 def showCurrentScoreScreen():
   STDSCR.clear()
   STDSCR.refresh()
@@ -569,7 +567,6 @@ def showCurrentScoreScreen():
   w = 50
   x = 3
   y = 3
-
   if (HIT_PER_ROUND + MISS_PER_ROUND)  == 0:
     accuracy = 0
   else:
@@ -589,8 +586,23 @@ def showCurrentScoreScreen():
   goal_pan = curses.panel.new_panel(goal_win)
   curses.panel.update_panels()
   goal_win.noutrefresh();curses.doupdate()
+  dummy = drawContinue()
   goal_pan.hide()
   LEVEL += 1
+
+
+# ------------------------------------------------------------------------------
+# Game over screen
+# ------------------------------------------------------------------------------
+def gameOverScreen():
+  STDSCR.clear()
+  STDSCR.refresh()
+  if IS_DEBUG:
+    drawCoor()
+  if ACCU_HIT_PER_ROUND + ACCU_MISS_PER_ROUND == 0:
+    accuracy = 0
+  else:
+    accuracy = float(ACCU_HIT_PER_ROUND)/ (ACCU_HIT_PER_ROUND+ ACCU_MISS_PER_ROUND) * 100
 
   accuracy = float("{0:.2f}".format(accuracy))
 
@@ -624,6 +636,25 @@ def showCurrentScoreScreen():
     mfile.close()
 
   curses.noecho()
+  dummy = drawContinue()
+  # will return back to main screen
+
+def drawContinue():
+  msg = "Press any to continue..."
+  w = len(str(msg)) + 2
+  l = 3
+  y = 40
+  x = 20
+  win = curses.newwin(l, w, y, x)
+  win.addstr(1,1,msg)
+  win.box()
+
+  pan = curses.panel.new_panel(win)
+  curses.panel.update_panels()
+  win.noutrefresh();curses.doupdate()
+  STDSCR.getch()
+  pan.hide()
+  return pan
 
 # ------------------------------------------------------------------------------
 # Draw goal
@@ -665,7 +696,12 @@ def drawLife(lose):
 # Draw score
 #------------------------------------------------------------------------------
 def drawScore(score = 0):
-
+  """
+  draws score panel on the screen
+  to show score of the user
+  :param score: int - the score of the user
+  :return: panel - the panel that contains the user scores
+  """
   # Create a score window/panel
   l = 3
   w = 50
@@ -843,9 +879,9 @@ def start_fall_word(pauseSec, is_demo, diffc, ptype):
 
         lastSaved = USER_ENT
 
-
+      #
       # Duration of combo box
-
+      #
       if showCombo:
         comboTimerCount += 1
         STDSCR.addstr(40,5,str(comboTimerCount))
@@ -902,6 +938,10 @@ def slow():
 # Draw coordinates
 # ------------------------------------------------------------------------------
 def drawCoor():
+  """
+  draws coordinates on the screen while debugging
+  :return: None
+  """
   STDSCR.clear()
   #draw line 0 - off 1 - on
   STDSCR.border(0)
@@ -975,6 +1015,8 @@ def printError(msg):
   curses.endwin()
   #exit program
   sys.exit()
+
+
 
 ###############################################################################
 # START
