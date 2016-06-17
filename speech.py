@@ -7,6 +7,8 @@ import time
 import tempfile
 import win32api
 import win32print
+import os
+
 
 speech_engine = pyttsx.init('sapi5')  # see http://pyttsx.readthedocs.org/en/latest/engine.html#pyttsx.init
 speech_engine.setProperty('rate', 150)
@@ -17,6 +19,12 @@ contact_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "MATT": "matt-hope@hotm
 user_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "ANDREW": "andrewhope772@gmail.com"}
 
 pass_dict = {"MATTHEW": "Mh1097465", "ANDREW": "temp"}
+
+music_dict = {"SONG ONE":"C:\Users\Matthew\Desktop\song1.mp3", "SONG TWO" : ""}
+
+program_dict = {"NOTES":"C:\Users\Matthew\Desktop\openme.txt", "EDITOR": "C:\Program Files\Sublime Text 3\sublime_text.exe" }
+
+
 
 
 def speak(text):
@@ -87,12 +95,21 @@ def user_prompt():
             send_to_printer()
             prompt = True
 
-        elif "HELP" in user_res:
-            user_help()
+        elif "RUN" in user_res or "FILE" in user_res or "PROGRAM" in user_res:
+            open_program()
             prompt = True
 
+        elif "SONG" in user_res or "MUSIC" in user_res:
+            play_music()
+            prompt = True
+
+        elif "HELP" in user_res:
+             user_help()
+             prompt = True
+
         elif "EXIT" in user_res:
-            #exit()
+            print "hi"
+            exit_program()
             prompt = True
 
         else:
@@ -153,7 +170,7 @@ def send_email():
     speak("who do you want to send this to")
     send_to = listen().upper()
     print send_to
-    # you need a while loop here
+
     if send_to in contact_dict:
 
         speak("what do you want to say to" + contact_dict[send_to])
@@ -191,10 +208,7 @@ def joke():
         speak("I sold my vacuum the other day... all it was doing was collecting dust")
 
 
-user_prompt()
-
-
-# tells user 1 of three random jokes
+    user_prompt()
 
 def date_time():
     """
@@ -218,7 +232,7 @@ def send_to_printer():
     print "what do you want to print"
     speak("what do you want to print")
     ans = listen()
-    print ans
+    print ans.upper
 
     filename = tempfile.mktemp(".txt")
     open(filename, "w").write(ans)
@@ -239,6 +253,71 @@ def send_to_printer():
     print "sent", ans, "to printer"
     user_prompt()
 
+def open_program():
+    """
+    opens a program of the users choice
+    :return:
+    """
+
+    print "which program or file do you want to open?"
+    speak("which program or file do you want to open?")
+    ans = listen().upper()
+    print ans
+
+    if ans == "NOTEPAD":
+        try:
+            print "yes"
+            os.startfile("C:\Users\Matthew\Desktop\openme.txt")
+
+        except Exception, e:
+            print "no"
+            print str(e)
+
+    elif ans == "SUBLIME TEXT":
+        try:
+            print "yes"
+            os.startfile("C:\Program Files\Sublime Text 3\sublime_text.exe")
+
+        except Exception, e:
+            print"no"
+            print str(e)
+
+    user_prompt()
+
+def play_music():
+    """
+    prompts user for which song they want to play and opens it
+    :return: None
+    """
+
+    print "which song do you want to play"
+    speak("which song do you want to play")
+    ans = listen()
+    print ans
+
+    if ans.upper() in music_dict:
+
+        try:
+            if ans == "SONG ONE":
+
+                print "playing", ans
+                speak("playing" + ans)
+                os.startfile("C:\Users\Matthew\Desktop\song One.mp3") # fix space problem
+
+            elif ans == "SONG TWO":
+                print "playing", ans
+                speak("playing" + ans)
+                os.startfile("C\Users\Matthew\Desktop\song Two.mp3")
+
+        except Exception, e:
+            print"no"
+            print str(e)
+
+    else:
+        print "that song is not on the list"
+        speak("That song is not on the list ")
+        play_music()
+
 
 def user_help():
     """
@@ -252,7 +331,7 @@ def user_help():
 
     user_prompt()
 
-def exit():
+def exit_program():
     """
     exits program by not calling the user prompt function at the end
     :return: None
@@ -261,7 +340,9 @@ def exit():
     print "exiting program, goodbye"
     speak("exiting program, goodbye")
 
+
 def main():
     user_prompt()
+
 
 main()
