@@ -13,7 +13,7 @@ from kivy.core.window import Window
 from kivy.properties import NumericProperty
 from kivy.clock import Clock
 from kivy.graphics import Rectangle
-from random import
+from random import *
 from kivy.config import Config
 
 
@@ -100,3 +100,45 @@ class GUI(Widget):
 
     def addObstacle(self):
         imageNumber = randint(1, 6)
+        imageStr = './obstacle_' + str(imageNumber) + '.png'
+        tmpObstacle = Obstacle(imageStr)
+        tmpObstacle.x = Window.width*0.99
+
+        ypos = randint(1, 16)
+        ypos = ypos*Window.height*0.625
+        tmpObstacle.y = ypos
+        y_velocity = randint (-1, 1)
+        tmpObstacle.y_velocity = 0.1 * y_velocity
+        tmpObstacle.x_velocity =  1
+
+        self.obstacleList.append(tmpObstacle)
+        self.add_widget(tmpObstacle)
+
+    def on_touch_down(self, touch):
+        self.xwing.impulse = 3
+        self.xwing.g = -0.1
+
+    def gameOver(self):
+        restartButton = MyButton(text = 'Restart')
+        def restart_button(obj):
+            print 'restart button pushed'
+            for obstacle in self.obstacleList:
+                self.remove_widget(obstacle)
+                self.xwing.xpos = Window.width * 0.25
+                self.xwing.ypos = Window.height * 0.5
+                self.probability = 1600
+
+            self.obstacleList = []
+            self.parent.remove_widget(restartButton)
+            Clock.unschedule(self.update)
+            Clock.schedule_interval(self.update, 1.0/60.0)
+        restartButton.size = (Window.width * .3, Window.width * .1)
+        restartButton.pos = Window.width * 0.5 - restartButton.width / 2, Window.height * 0.5
+        restartButton.bind(on_release = restart_button)
+        self.parent.add_widget(restartButton)
+
+        def update(self, dt):
+
+
+
+
