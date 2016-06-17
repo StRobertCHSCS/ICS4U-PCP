@@ -93,7 +93,7 @@ class Game(Widget):
         self.bind(size=self.size_callback)
         self.size = Background().size
 
-        # player's object - the rock
+        # player's object
         self.player = PlayerObj(pos=(self.width / 4, self.height / 2))
         self.add_widget(self.player)
 
