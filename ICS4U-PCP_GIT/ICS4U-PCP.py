@@ -1,10 +1,25 @@
+"""
+-------------------------------------------------------------------------------
+Name:	   textblaster.py
+Purpose:
+           to create a program with the reference of SNAKES GAME
+           (https://gist.githubusercontent.com/sanchitgangwar/2158089/raw/5f3d0003801acfe1a29c4b24f2c8975efacf6f66/snake.py)
+           that can help computer learners who want to practice
+           and improve their typing skills (speed,accuracy)
+           and review python-terms easily and interestingly.
+
+Author:    choi.A
+
+Created:   18/06/2016
+------------------------------------------------------------------------------
+"""
+
 import sys
 import curses
 import curses.panel
 import threading
 from random import randint
 
-# Global variables
 IS_DEBUG = False
 WORD_START_PAUSE = 0.2   # Initial word speed. Lower is Faster
 DATA_FILE = "data.dat"
@@ -43,19 +58,14 @@ REQ_X = 40          # required screen size X
 STDSCR = ""
 
 THREAD_OBJ = ""
-is_word_down_thread_stop = False    # True: Stop falling words.
-                                    # False: Start falling words
+is_word_down_thread_stop = False    # True: Stop falling words. # False: Start falling words
 NEW_WORD_FREQ = 10  # lower, sooner
 ENG_WORDS = []
 ENG_WORDS_LEN = 0
 PY_WORDS = []
 PY_WORDS_LEN = 0
 
-# ------------------------------------------------------------------------------
-# class Word
-# ------------------------------------------------------------------------------
 # Create a word object placed in a panel
-
 class Word(object):
   """
   Representation of words
@@ -125,14 +135,25 @@ class Word(object):
     self.panel = curses.panel.new_panel(win)
     self.panel.bottom()
 
-
   def getX(self):
+    """
+    gets x coordinate of words
+    :return: int - x coordinate of words
+    """
     return self.x
 
   def getY(self):
+    """
+    get y coordinate of words
+    :return: int - y coordinate of words
+    """
     return self.y
 
   def moveDown(self):
+    """
+    moves words down by 1
+    :return: None
+    """
     # y, x
     self.panel.move(self.y, self.x)
     curses.panel.update_panels()
@@ -140,12 +161,13 @@ class Word(object):
     self.y += 1
 
   def delWord(self):
+    """
+    hides words from the screen
+    :return: None
+    """
     self.panel.hide()
     curses.panel.update_panels(); STDSCR.refresh()
 
-#------------------------------------------------------------------------------
-# main
-#------------------------------------------------------------------------------
 def main(stdscr):
   """
   set up for the game to start and runs by calling the main page
@@ -204,14 +226,6 @@ def main(stdscr):
 
   curses.endwin()
 
-###############################################################################
-#
-# Screens
-#
-###############################################################################
-#------------------------------------------------------------------------------
-# main Game screen
-#------------------------------------------------------------------------------
 def mainGameScreen():
   """
   makes the main screen of the game
@@ -377,9 +391,6 @@ def mainGameScreen():
 
   return main_rc
 
-#------------------------------------------------------------------------------
-# game screen
-#------------------------------------------------------------------------------
 def gameScreen(pauseSec, diffc, ptype):
   """
   makes game screen on the user screen to run the game
@@ -474,11 +485,12 @@ def gameScreen(pauseSec, diffc, ptype):
 
     if EXIT_GAME:
       break
-# ------------------------------------------------------------------------------
-# Stat Screen
-# ------------------------------------------------------------------------------
 
 def statScreen():
+  """
+  shows the top rankers of the game
+  :return: None
+  """
   stop_thread()
   ofile = open(DATA_FILE, "r")
 
@@ -552,11 +564,11 @@ def statScreen():
   STDSCR.noutrefresh(); curses.doupdate()
   dummy = drawContinue()
 
-#------------------------------------------------------------------------------
-# Show Current Score screen
-#  - show after each game
-#------------------------------------------------------------------------------
 def showCurrentScoreScreen():
+  """
+  shows the user stats at the end of every level
+  :return: None
+  """
   STDSCR.clear()
   STDSCR.refresh()
   if IS_DEBUG:
@@ -590,11 +602,11 @@ def showCurrentScoreScreen():
   goal_pan.hide()
   LEVEL += 1
 
-
-# ------------------------------------------------------------------------------
-# Game over screen
-# ------------------------------------------------------------------------------
 def gameOverScreen():
+  """
+  shows the user stats on the screen when the game is over
+  :return: None
+  """
   STDSCR.clear()
   STDSCR.refresh()
   if IS_DEBUG:
@@ -640,6 +652,11 @@ def gameOverScreen():
   # will return back to main screen
 
 def drawContinue():
+  """
+  draws enter panel on the screen
+  in order to go to the next screen
+  :return: panel - the panel that contains message
+  """
   msg = "Press any to continue..."
   w = len(str(msg)) + 2
   l = 3
@@ -656,10 +673,13 @@ def drawContinue():
   pan.hide()
   return pan
 
-# ------------------------------------------------------------------------------
-# Draw goal
-# ------------------------------------------------------------------------------
 def drawGoal(current, goal):
+  """
+  draws the game goal and current words counts on the screen
+  :param current: int - the current words counts
+  :param goal: int - the game goal in order to pass the level
+  :return: panel - the panel that contains game goal and current words counts
+  """
   goal_win = curses.newwin(3,18, 3, 90)
   goal_win.addstr(1,2,"CURRENT: " + str(current) + "/" +str(goal))
   goal_win.box()
@@ -669,11 +689,13 @@ def drawGoal(current, goal):
   goal_win.noutrefresh();curses.doupdate()
   return goal_pan
 
-# ------------------------------------------------------------------------------
-# Draw life bar
-# ------------------------------------------------------------------------------
-
 def drawLife(lose):
+  """
+  draws life pnael on the screen
+  to show the game lives of the user
+  :param lose: int - the miss count of the user
+  :return: panel - the life bar of the user contains user lives
+  """
   left = True
 
   life_win = curses.newwin(MAX_Y-3 ,3, 3, 3)
@@ -692,9 +714,6 @@ def drawLife(lose):
 
   return life_pan, left
 
-#------------------------------------------------------------------------------
-# Draw score
-#------------------------------------------------------------------------------
 def drawScore(score = 0):
   """
   draws score panel on the screen
@@ -713,9 +732,6 @@ def drawScore(score = 0):
   score_win.noutrefresh();curses.doupdate()
   return score_pan
 
-#------------------------------------------------------------------------------
-# Draw combos
-#------------------------------------------------------------------------------
 def drawCombo(combo , score ):
   """
   draws combo panel on the screen
@@ -736,16 +752,16 @@ def drawCombo(combo , score ):
   combo_win.noutrefresh();curses.doupdate()
   return combo_pan
 
-
-###############################################################################
-#
-# MISC.
-#
-###############################################################################
-# -------------------------------------------------------------------
-# start fall word
-# -------------------------------------------------------------------
 def start_fall_word(pauseSec, is_demo, diffc, ptype):
+  """
+  falls words down on the user screen
+  :param pauseSec: int - amount of puase time
+  :param is_demo: boolean - whether demo or gameplay
+  :param diffc: str - difficulty of the game
+  :param ptype: str - user selected game type
+  :return: None
+  """
+
   # Create a combo window/panel
   combo_win = curses.newwin(10,10,5,5)
   combo_pan = curses.panel.new_panel(combo_win)
@@ -893,9 +909,6 @@ def start_fall_word(pauseSec, is_demo, diffc, ptype):
 
     count_worddown += 1
 
-#------------------------------------------------------------------------------
-# stop thread
-#------------------------------------------------------------------------------
 def stop_thread():
   """
   stops thread on the screen
@@ -908,10 +921,6 @@ def stop_thread():
     pass
   is_word_down_thread_stop = False
 
-
-#------------------------------------------------------------------------------
-# get pause sec
-#------------------------------------------------------------------------------
 def getPauseSec(count, sec):
   """
   divide count by sec and check if the remainder is 0
@@ -933,10 +942,6 @@ def slow():
   for i in range(1,999999):
     pass
 
-
-# ------------------------------------------------------------------------------
-# Draw coordinates
-# ------------------------------------------------------------------------------
 def drawCoor():
   """
   draws coordinates on the screen while debugging
@@ -958,20 +963,24 @@ def drawCoor():
 
   STDSCR.refresh()
 
-# ------------------------------------------------------------------------------
-# Read English words
-# ------------------------------------------------------------------------------
 def readEngWord():
+  """
+  reads english words from a data file called ENG_FILE
+  and stores each word in a variable called ENG+WORDS
+  :return: None
+  """
   global ENG_WORDS
   global ENG_WORDS_LEN
   mfile = open(ENG_FILE,"r")
   ENG_WORDS = mfile.readlines()
   ENG_WORDS_LEN = len(ENG_WORDS)
 
-# ------------------------------------------------------------------------------
-# Read Python commands
-# ------------------------------------------------------------------------------
 def readPhyWord():
+  """
+  reads Python commands from a data file called PY_FILE
+  and stores each command in a variable called PY_WORDS.
+  :return: None
+  """
   global PY_WORDS
   global PY_WORDS_LEN
   #read files
@@ -979,9 +988,6 @@ def readPhyWord():
   PY_WORDS = mfile.readlines()
   PY_WORDS_LEN = len(PY_WORDS)
 
-# ------------------------------------------------------------------------------
-# Check requirements
-# ------------------------------------------------------------------------------
 def checkReq():
   """
   checks whether the game screen fits the user screen size
@@ -997,9 +1003,6 @@ def checkReq():
                "Current: " + str(MAX_X) + " X " + str(MAX_Y) + ". "
                "Required: " + str(REQ_X) + " X " + str(REQ_Y) )
 
-# ------------------------------------------------------------------------------
-# Print error message
-# ------------------------------------------------------------------------------
 def printError(msg):
   """
   prints the given error message
@@ -1015,8 +1018,6 @@ def printError(msg):
   curses.endwin()
   #exit program
   sys.exit()
-
-
 
 ###############################################################################
 # START
