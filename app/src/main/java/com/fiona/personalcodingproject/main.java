@@ -10,27 +10,32 @@ import android.widget.VideoView;
 
 
 public class main extends Activity {
+    // references to button
     Button button;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // connect to activity_play_video XML file
         setContentView(R.layout.activity_play_video);
     }
 }
 // Rapunzel video
 public class main2 extends AppCompatActivity {
     @Override
+    // content view is set
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.laughing_fullscreen);
-
+        // connect to videoView XML layout
         VideoView videoView = (VideoView)findViewById(R.id.videoView);
         MediaController mediaController=new MediaController(this);
         mediaController.setAnchorView(videoView);
+        // stream video (Rapunzel Youtube Video)
         Uri uri=Uri.parse("rtsp://r13---sn-vgqs7ner.googlevideo.com/Cj0LENy73wIaNAlIBfErgNgqRxMYDSANFC0Z82FXMOCoAUIASARgtdjU2NCE9btPigELRWxtS3N2ZHdDN00M/35338A718972CBCCF0C6F3E86A99F7CC7DB64B5C.50242B3E06D30B98C682E6F92F1A9C2018BB5A65/yt6/1/video.3gp");
         videoView.setMediaController(mediaController);
         videoView.setVideoURI(uri);
         videoView.requestFocus();
+        // start video
         videoView.start();
     }
 }
