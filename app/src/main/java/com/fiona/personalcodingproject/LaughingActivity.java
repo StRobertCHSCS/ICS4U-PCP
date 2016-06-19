@@ -19,10 +19,16 @@ public class LaughingActivity extends Activity {
         super.onCreate(savedInstanceState);
         // connect to laughing_fullscreen XML file
         setContentView(R.layout.laughing_fullscreen);
-        addListenerOnButton();
+        addListenerOnButton1();
+        addListenerOnButton2();
+        addListenerOnButton3();
+        addListenerOnButton4();
+        addListenerOnButton5();
+        addListenerOnButton6();
+
     }
 
-    public void addListenerOnButton() {
+    public void addListenerOnButton1() {
         final Context context = this;
         // connect the button to the Rapunzel Image Button
         button = (ImageButton)findViewById(R.id.RapunzelButton);
@@ -36,7 +42,7 @@ public class LaughingActivity extends Activity {
         });
 
     }
-    public void addListenerOnButton() {
+    public void addListenerOnButton2() {
         final Context context = this;
         // connect the button to the LionKing Image Button
         button = (ImageButton) findViewById(R.id.LionKingButton);
@@ -50,7 +56,7 @@ public class LaughingActivity extends Activity {
         });
     }
 
-    public void addListenerOnButton() {
+    public void addListenerOnButton3() {
         final Context context = this;
         // connect the button to the Elsa Image Button
         button = (ImageButton) findViewById(R.id.ElsaButton);
@@ -64,7 +70,7 @@ public class LaughingActivity extends Activity {
         });
     }
 
-    public void addListenerOnButton() {
+    public void addListenerOnButton4() {
         final Context context = this;
         // connect the button to the Aladdin Image Button
         button = (ImageButton) findViewById(R.id.AladdinButton);
@@ -78,7 +84,7 @@ public class LaughingActivity extends Activity {
         });
     }
 
-    public void addListenerOnButton() {
+    public void addListenerOnButton5() {
         final Context context = this;
         // connect the button to the Mulan Image Button
         button = (ImageButton) findViewById(R.id.MulanButton);
@@ -92,7 +98,7 @@ public class LaughingActivity extends Activity {
         });
     }
 
-    public void addListenerOnButton() {
+    public void addListenerOnButton6() {
         final Context context = this;
         // connect the button to the Pocahontas Image Button
         button = (ImageButton) findViewById(R.id.PocahontasButton);
