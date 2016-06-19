@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/pick_song"
+        android:id="@+id/textView3"
+        android:layout_gravity="center_horizontal"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:typeface="monospace" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:id="@+id/imageView2"
+        android:background="@drawable/white_square"/>
+
+    <ImageButton
+        android:layout_width="400dp"
+        android:layout_height="130dp"
+        android:id="@+id/river_button"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/calm2"
+        android:baselineAlignBottom="false" />
+
+    <ImageButton
+        android:layout_width="400dp"
+        android:layout_height="130dp"
+        android:id="@+id/rain_button"
+        android:src="@drawable/calm3"/>
+
+    <ImageButton
+        android:layout_width="400dp"
+        android:layout_height="130dp"
+        android:id="@+id/waves_button"
+        android:src="@drawable/calm"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:id="@+id/imageView3"
+        android:background="@drawable/white_square"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

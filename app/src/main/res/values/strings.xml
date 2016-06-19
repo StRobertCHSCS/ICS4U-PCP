@@ -1,5 +1,24 @@
 <resources>
     <string name="app_name">Bliss_Countdown</string>
     <string name="days_left">Summer is in...</string>
-    <string name="yourevent">Summer is Here!</string>
+    <string name="days"> DAYS </string>
+    <string name="hours"> HOURS </string>
+    <string name="minutes"> MINUTES </string>
+    <string name="seconds"> SECONDS </string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
+    <string name="pick_song">Pick a Song!</string>
+    <string name="soothing_sounds">Soothing Sounds</string>
+    <string name="summer_songs">Summer Songs</string>
+    <string name="countdown_button">Countdown</string>
+    <string name="youtube_button">Upbeat Music</string>
+    <string name="soothing_songs">Soothing Songs</string>
+    <string name="yiruma_river">River Flows in You</string>
+    <string name="yiruma">Yiruma</string>
+    <string name="yiruma_rain">Kiss the Rain</string>
+    <string name="nature">Beloved</string>
+    <string name="calvin_summer">Summer - Calvin Harris</string>
+    <string name="olaf_summer">Olaf - In Summer</string>
+    <string name="cake_summer">Cake by the Ocean - DNCE</string>
 </resources>
