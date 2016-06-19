@@ -2,15 +2,15 @@
 
 ## Objective
 State the objective of the project
-Create an Android app using Android Studio.
+Create a game using Kivy.
 
 ## Technical Requirements
 ### Knowledge
-Learn to code and use Android Studio
+Learn to code and use Kivy
 ### Hardware
 NA
 ### Required Software
-Android Studio
+Kivy
 
 ## Install and Set Up
 Outline the steps required to install and run your project
