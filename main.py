@@ -5,26 +5,21 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
-from kivy.core.window import Window
 from kivy.properties import NumericProperty
-from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 
-from kivy.graphics import Rectangle, Color, Canvas
+from kivy.graphics import Rectangle
 from functools import partial
 from random import *
 
-#setup graphics
 from kivy.config import Config
 Config.set('graphics','resizable',0)
 
-#Graphics fix
 from kivy.core.window import Window;
 Window.clearcolor = (0,0,0,1.)
-#Window.clearcolor = (1,0,0,1.)
+
 
 class MyButton(Button):
 #class used to get uniform button styles
@@ -160,7 +155,7 @@ class Ship(WidgetDrawer):
         if self.grav < -4:
             self.grav = -4
     #ship has a property called impulse
-    #which is added whenever the player touches to calculate a and v of the ship
+    #added whenever the player touches to calculate v of the ship
 
         self.velocity_y = self.impulse + self.grav
         self.impulse = 0.95*self.impulse
@@ -372,15 +367,14 @@ class ClientApp(App):
                 except:
                     pass
             if self.sm.buttonText == 'about':
-                self.aboutText = Label(text=('Created by Ryan Choi'))
+                self.aboutText = Label(text=('Created by Ryan Choi, PCP Project ICS4U 2016'))
                 self.aboutText.pos = (Window.width * 0.45, Window.height * 0.35)
                 self.parent.add_widget(self.aboutText)
-                # bind a callback function that repsonds to event 'on_button_release' by calling function check_button
 
         self.sm.bind(on_button_release=check_button)
         # setup listeners for smartstartmenu
         self.parent.add_widget(self.sm)
-        self.parent.add_widget(self.app)  # use this hierarchy to make it easy to deal w/buttons
+        self.parent.add_widget(self.app)
         return self.parent
 
 
