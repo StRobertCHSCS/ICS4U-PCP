@@ -1,0 +1,62 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
+    tools:context="com.fiona.personalcodingproject.LaughingActivity">
+
+    // Rapunzel Button
+    <ImageButton
+        android:layout_width="205dp"
+        android:layout_height="200dp"
+        android:id="@+id/RapunzelButton"
+        android:layout_gravity="left|top"
+        android:background="@drawable/rapunzel"
+        android:onClick="RVideo"/>
+
+    // Lion King Button
+    <ImageButton
+        android:layout_width="205dp"
+        android:layout_height="200dp"
+        android:id="@+id/LionKingButton"
+        android:layout_gravity="right|top"
+        android:background="@drawable/lionking"
+        android:onClick="LKVideo"/>
+
+    // Elsa Button
+    <ImageButton
+        android:layout_width="205dp"
+        android:layout_height="200dp"
+        android:id="@+id/ElsaButton"
+        android:layout_gravity="left|center_vertical"
+        android:background="@drawable/elsa"
+        android:onClick="EVideo"/>
+
+    // Aladdin Button
+    <ImageButton
+        android:layout_width="205dp"
+        android:layout_height="200dp"
+        android:id="@+id/AladdinButton"
+        android:layout_gravity="right|center_vertical"
+        android:background="@drawable/Aladdin"
+        android:onClick="EVideo"/>
+
+    // Mulan Button
+    <ImageButton
+        android:layout_width="205dp"
+        android:layout_height="200dp"
+        android:id="@+id/MulanButton"
+        android:layout_gravity="left|bottom"
+        android:background="@drawable/mulan"
+        android:onClick="MVideo"/>
+
+    // Pocahontas Button
+    <ImageButton
+        android:layout_width="205dp"
+        android:layout_height="200dp"
+        android:id="@+id/PocahontasButton"
+        android:layout_gravity="right|bottom"
+        android:background="@drawable/pocahontas"
+        android:onClick="PVideo"/>
+
+</FrameLayout>
