@@ -34,5 +34,75 @@ public class LaughingActivity extends Activity {
                     startActivity(intent);
             }
         });
+
+    }
+    public void addListenerOnButton() {
+        final Context context = this;
+        // connect the button to the LionKing Image Button
+        button = (ImageButton) findViewById(R.id.LionKingButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            // connect main class to the LaughingActivity class (main class activated after LaughingActivity class)
+            public void onClick(View v) {
+                Intent intent = new Intent(context, main.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void addListenerOnButton() {
+        final Context context = this;
+        // connect the button to the Elsa Image Button
+        button = (ImageButton) findViewById(R.id.ElsaButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            // connect main class to the LaughingActivity class (main class activated after LaughingActivity class)
+            public void onClick(View v) {
+                Intent intent = new Intent(context, main.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void addListenerOnButton() {
+        final Context context = this;
+        // connect the button to the Aladdin Image Button
+        button = (ImageButton) findViewById(R.id.AladdinButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            // connect main class to the LaughingActivity class (main class activated after LaughingActivity class)
+            public void onClick(View v) {
+                Intent intent = new Intent(context, main.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void addListenerOnButton() {
+        final Context context = this;
+        // connect the button to the Mulan Image Button
+        button = (ImageButton) findViewById(R.id.MulanButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            // connect main class to the LaughingActivity class (main class activated after LaughingActivity class)
+            public void onClick(View v) {
+                Intent intent = new Intent(context, main.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public void addListenerOnButton() {
+        final Context context = this;
+        // connect the button to the Pocahontas Image Button
+        button = (ImageButton) findViewById(R.id.PocahontasButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            // connect main class to the LaughingActivity class (main class activated after LaughingActivity class)
+            public void onClick(View v) {
+                Intent intent = new Intent(context, main.class);
+                startActivity(intent);
+            }
+        });
     }
 }
