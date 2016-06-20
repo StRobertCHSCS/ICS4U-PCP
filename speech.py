@@ -1,6 +1,6 @@
 import smtplib
 import speech_recognition
-import pyttsx
+import pyttsx #text to speech
 from random import randint
 import time
 # printer stuff
@@ -16,13 +16,13 @@ speech_engine.setProperty('rate', 150)
 contact_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "MATT": "matt-hope@hotmail.com",
                 "ANDREW": "andrewhope772@gmail.com"}
 
-user_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "ANDREW": "andrewhope772@gmail.com"}
+user_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "ANDREW": "temp"}
 
-pass_dict = {"MATTHEW": "Mh1097465", "ANDREW": "temp"}
+pass_dict = {"MATTHEW": "temp", "ANDREW": "temp"}
 
 music_dict = {"SONG ONE":"C:\Users\Matthew\Desktop\song1.mp3", "SONG TWO" : ""}
 
-program_dict = {"NOTES":"C:\Users\Matthew\Desktop\openme.txt", "EDITOR": "C:\Program Files\Sublime Text 3\sublime_text.exe" }
+program_dict = {"NOTES":"C:\Users\Matthew\Desktop\openme.txt", "SUBLIME TEXT": "C:\Program Files\Sublime Text 3\sublime_text.exe" }
 
 
 
@@ -292,7 +292,7 @@ def play_music():
 
     print "which song do you want to play"
     speak("which song do you want to play")
-    ans = listen()
+    ans = listen().upper()
     print ans
 
     if ans.upper() in music_dict:
