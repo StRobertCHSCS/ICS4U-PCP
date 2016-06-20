@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Kill_Player : MonoBehaviour {
 
+    // call Level_manager script and set it to variable
     public Level_manager level_manager;
 
     // Use this for initialization
@@ -15,6 +16,7 @@ public class Kill_Player : MonoBehaviour {
 	
 	}
 
+    // check if the respawn collider meets player
     void OnTriggerEnter2D(Collider2D collide)
     {
         if(collide.name == "Scorpion")

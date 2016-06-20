@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// create game class
 public class NewBehaviourScript : MonoBehaviour
 {
 
+    // create all variables 
     private Rigidbody2D myRigidbody;
 
     private bool facingRight;
@@ -20,7 +22,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     public GameObject NinjaStar_Projectile;
 
-    [SerializeField]
+    [SerializeField] // SerializeField will allow to change variable parameters from Inspector in Unity
     private float movementSpeed;
 
     [SerializeField]
@@ -43,11 +45,13 @@ public class NewBehaviourScript : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
+        // set all the components 
         facingRight = true;
         myRigidbody = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
 	}
 
+    // update everytime 
     void Update()
     {
         HandleInput();
@@ -67,7 +71,7 @@ public class NewBehaviourScript : MonoBehaviour
 	
 	}
 
-
+    // handles all the movement 
     private void HandleMovement(float horizontal)
 
     {
@@ -87,7 +91,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
-
+    // handle attack 
     private void HandleAttacks()
     {
         if (punch && !this.myAnimator.GetCurrentAnimatorStateInfo(0).IsTag("Punch"))
@@ -97,6 +101,7 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
+    // handle all the keyboard inputs
     private void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -114,6 +119,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     }
 
+    // handle the fliping of the character from left - right
     private void Flip(float horizontal)
     {
         if (horizontal > 0 && !facingRight || horizontal < 0 && facingRight)
@@ -126,12 +132,14 @@ public class NewBehaviourScript : MonoBehaviour
         }
     }
 
+    // handle reset values for the movements
     private void ResetValues()
     {
         punch = false;
         jump = false;
     }
 
+    // handle the collision between ground and player
     private bool IsGrounded()
     {
         if (myRigidbody.velocity.y <= 0)

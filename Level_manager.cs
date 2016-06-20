@@ -5,6 +5,7 @@ public class Level_manager : MonoBehaviour {
 
     public GameObject current_respawnpoint;
 
+    // call player script and set it to variable
     private NewBehaviourScript scorpion;
 
 	// Use this for initialization
@@ -18,6 +19,7 @@ public class Level_manager : MonoBehaviour {
 	
 	}
 
+    // check to see if collider hits player and then have player respawn at specific spot
     public void Respawn_Player()
     {
         Debug.Log("Player Respawn");

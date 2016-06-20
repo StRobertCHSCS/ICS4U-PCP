@@ -3,9 +3,10 @@ using System.Collections;
 
 public class Ninja_StarController : MonoBehaviour {
 
+    // set variables
     public float star_speed;
 
-    public NewBehaviourScript scorpion;
+    public NewBehaviourScript scorpion; // call player script and set it to a variable
 
 	// Use this for initialization
 	void Start () {
@@ -24,6 +25,7 @@ public class Ninja_StarController : MonoBehaviour {
 	
 	}
 
+    // check to see if projectile hits enemy 
     void OnTriggerEnter2D(Collider2D star_collide)
     {
         if(star_collide.tag == "Enemy")
