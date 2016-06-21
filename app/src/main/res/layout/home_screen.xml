@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/home_background"
+    android:weightSum="1">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:id="@+id/imageView"
+        android:src="@drawable/bliss" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:id="@+id/imageButton"
+        android:src="@drawable/black"/>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:text="@string/countdown_button"
+            android:id="@+id/countdown_button"
+            android:background="#004063"
+            android:textStyle="bold"
+            android:typeface="sans" />
+
+    </TableRow>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:text="@string/youtube_button"
+        android:id="@+id/youtube_button"
+        android:background="#2f6bb1"
+        android:typeface="sans"
+        android:textStyle="bold"
+        android:layout_weight="0.26" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:text="@string/soothing_songs"
+        android:id="@+id/soothing_songs"
+        android:background="#FF7FA8D7"
+        android:typeface="sans"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:id="@+id/imageButton2"
+        android:src="@drawable/black" />
+
+</LinearLayout>
