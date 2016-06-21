@@ -1,16 +1,13 @@
 # ICS4U Personal Coding Project
 
-## Objective
-State the objective of the project
+## PCP Learning Log
+Complete a learning log entry whenever you work on acquiring skills for this project. This could be:
 
-## Technical Requirements
-### Knowledge
-### Hardware
-### Required Software
+- exploring documentation online (wikis, other github pages, package libraries)
+- reviewing technical books
+- online interactive tutorials (i.e Codecademy)
+- watching educational youtube videos
+- reviewing documentation around development environment setup
 
-## Install and Set Up
-Outline the steps required to install and run your project
-
-## Usage
-Outline anything the user needs to know to use your application
+https://docs.google.com/a/ycdsbk12.ca/forms/d/135YiNzNhBMmPK3avR3NajFtbc7VtXma4-zLXcpYa7DI/viewform
 

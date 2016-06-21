@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:weightSum="1">
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:id="@+id/CH"
+        android:layout_weight="0.05"
+        android:src="@drawable/calvin"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="@string/calvin_summer"
+        android:id="@+id/textView"
+        android:background="#000000"
+        android:textStyle="bold"
+        android:textColor="#ffffff"
+        android:layout_gravity="center_horizontal" />
+
+    <ImageButton
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:id="@+id/olaf"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/olaf"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="@string/olaf_summer"
+        android:id="@+id/olaf_text"
+        android:layout_gravity="center_horizontal"
+        android:background="#000000"
+        android:textStyle="bold"
+        android:textColor="#fff" />
+
+    <ImageButton
+        android:layout_width="400dp"
+        android:layout_height="130dp"
+        android:id="@+id/DNCE"
+        android:src="@drawable/cake"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text="@string/cake_summer"
+        android:id="@+id/textView2"
+        android:layout_gravity="center_horizontal"
+        android:background="#000000"
+        android:textStyle="bold"
+        android:textColor="#fff" />
+
+</LinearLayout>
