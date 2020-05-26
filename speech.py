@@ -13,10 +13,9 @@ import os
 speech_engine = pyttsx.init('sapi5')  # see http://pyttsx.readthedocs.org/en/latest/engine.html#pyttsx.init
 speech_engine.setProperty('rate', 150)
 
-contact_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "MATT": "matt-hope@hotmail.com",
-                "ANDREW": "andrewhope772@gmail.com"}
+contact_dict = {"MATTHEW": "matthew.template@mail.ca"}
 
-user_dict = {"MATTHEW": "matthew.hope16@ycdsbk12.ca", "ANDREW": "temp"}
+user_dict = {"MATTHEW": "matthew.template@mail.ca", "ANDREW": "temp"}
 
 pass_dict = {"MATTHEW": "temp", "ANDREW": "temp"}
 
